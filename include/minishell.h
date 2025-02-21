@@ -1,35 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: otaniyuhi <otaniyuhi@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/02/21 12:30:29 by otaniyuhi        ###   ########.fr       */
+/*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
+/*   Updated: 2025/02/21 11:58:43 by otaniyuhi        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/minishell.h"
+#ifndef MINISHELL_H
+# define MINISHELL_H
 
-int	main(void)
-{
-	char	*input;
+# include <limits.h>
+# include <readline/history.h>
+# include <readline/readline.h>
+# include <stdio.h>
+# include <stdlib.h> //PATH_MAX
+# include <string.h> //strcmp🚨
+# include <unistd.h> //getcwd
 
-	printf("Enter commands:\n");
-	printf("  'clear'   : Clear command history.\n");
-	printf("  'replace' : Replace current line with a preset message.\n");
-	printf("  'exit'    : Exit the program.\n\n");
-	while (1)
-	{
-		input = prompt();
-		if (input)
-		{
-			printf("%s\n", input);
-			free(input);
-		}
-		else
-			break ;
-	}
-	return (0);
-}
+/* PROMPT */
+char	*prompt(void);
+
+#endif
