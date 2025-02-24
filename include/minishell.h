@@ -6,16 +6,18 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/02/23 15:17:19 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/02/24 17:15:03 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# include "../libft/libft.h"
 # include <limits.h>
 # include <readline/history.h>
 # include <readline/readline.h>
+# include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h> //PATH_MAX
 # include <string.h> //strcmp🚨
@@ -43,5 +45,11 @@ typedef struct s_token
 	char			*value;
 	struct s_token	*next;
 }					t_token;
+
+/* lexer prototype */
+void				append_word_token(const char *input, size_t *i,
+						t_token **tokens);
+t_token				*create_new_token(t_token_type type, const char *value);
+void				append_token(t_token **head, t_token *new_node);
 
 #endif
