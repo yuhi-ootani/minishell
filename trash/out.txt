@@ -1,0 +1,14 @@
+a
+b
+en.subject.pdf
+err.txt
+file1.txt
+file2.txt
+include
+libft
+Makefile
+minishell
+out.txt
+README.md
+srcs
+tests

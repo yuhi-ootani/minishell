@@ -6,7 +6,7 @@
 #    By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 11:52:00 by otaniyuhi         #+#    #+#              #
-#    Updated: 2025/02/23 16:17:55 by oyuhi            ###   ########.fr        #
+#    Updated: 2025/02/25 17:40:58 by oyuhi            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,10 +22,12 @@ LIBFT_REPO = https://github.com/yuhi-ootani/lifbt_all.git
 LIBFT_DIR = libft
 MAIN_DIR = srcs/main
 PROMPT_DIR = srcs/prompt
+LEXER_DIR = srcs/lexer
+PARSER_DIR = srcs/parser
 INC_DIR = includes
 
 
-SRCS = $(MAIN_DIR)/main.c $(PROMPT_DIR)/prompt.c
+SRCS = $(MAIN_DIR)/main.c $(PROMPT_DIR)/prompt.c  $(LEXER_DIR)/lexer.c $(LEXER_DIR)/token_word.c $(PARSER_DIR)/parser.c 
 OBJS = $(SRCS:.c=.o)
 
 all: $(LIBFT) $(NAME) 

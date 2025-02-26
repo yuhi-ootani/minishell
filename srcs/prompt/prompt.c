@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prompt.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: otaniyuhi <otaniyuhi@student.42.fr>        +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:32:43 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/02/21 12:29:08 by otaniyuhi        ###   ########.fr       */
+/*   Updated: 2025/02/26 11:26:48 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ char	*prompt(void)
 	while (1)
 	{
 		cwd = get_current_directory();
-		printf("%s ", cwd);
+		printf("🐾 %s 🐾 ", cwd);
 		free(cwd);
 		input = readline("$>");
 		if (input == NULL)

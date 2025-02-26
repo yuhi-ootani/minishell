@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 14:32:39 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/02/24 17:17:22 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/02/26 13:17:08 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	append_redirection_token(const char *input, size_t *i, t_token **tokens)
 		(*i)++;
 		if (input[*i] == '<')
 		{
-			append_token(tokens, create_new_token(TOKEN_APPEND, "<<"));
+			append_token(tokens, create_new_token(TOKEN_HEREDOC, "<<"));
 			(*i)++;
 		}
 		else
@@ -63,7 +63,7 @@ void	append_redirection_token(const char *input, size_t *i, t_token **tokens)
 		(*i)++;
 		if (input[*i] == '>')
 		{
-			append_token(tokens, create_new_token(TOKEN_HEREDOC, ">>"));
+			append_token(tokens, create_new_token(TOKEN_APPEND, ">>"));
 			(*i)++;
 		}
 		else
@@ -139,6 +139,26 @@ t_token	*lexer(const char *input)
 	return (tokens);
 }
 
+void	free_tokens(t_token *tokens)
+{
+	t_token	*tmp;
+
+	while (tokens)
+	{
+		tmp = tokens;
+		tokens = tokens->next;
+		free(tmp->value);
+		free(tmp);
+	}
+}
+
+// ██╗   ██╗████████╗██╗██╗     ███████╗
+// ██║   ██║╚══██╔══╝██║██║     ██╔════╝
+// ██║   ██║   ██║   ██║██║     ███████╗
+// ██║   ██║   ██║   ██║██║     ╚════██║
+// ╚██████╔╝   ██║   ██║███████╗███████║
+//  ╚═════╝    ╚═╝   ╚═╝╚══════╝╚══════╝
+
 void	print_tokens(t_token *tokens)
 {
 	const char	*type_str;
@@ -180,27 +200,14 @@ void	print_tokens(t_token *tokens)
 	}
 }
 
-void	free_tokens(t_token *tokens)
-{
-	t_token	*tmp;
-
-	while (tokens)
-	{
-		tmp = tokens;
-		tokens = tokens->next;
-		free(tmp->value);
-		free(tmp);
-	}
-}
-
-int	main(int argc, char **argv)
-{
-	if (argc == 2)
-	{
-		t_token *tokens = lexer(argv[1]);
-		printf("Input: %s\nTokens:\n", argv[1]);
-		print_tokens(tokens);
-		free_tokens(tokens);
-	}
-	return (0);
-}
+// int	main(int argc, char **argv)
+// {
+// 	if (argc == 2)
+// 	{
+// 		t_token *tokens = lexer(argv[1]);
+// 		printf("Input: %s\nTokens:\n", argv[1]);
+// 		print_tokens(tokens);
+// 		free_tokens(tokens);
+// 	}
+// 	return (0);
+// }
