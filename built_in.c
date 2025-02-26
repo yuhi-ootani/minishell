@@ -1,133 +1,121 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   built_in.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/24 10:16:32 by knemcova          #+#    #+#             */
+/*   Updated: 2025/02/26 14:43:28 by knemcova         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-
-void builtin_commands(char **args, char **envp)
+int	builtin_commands(char **args, char **envp)
 {
-    if (ft_strcmp(args[0], "echo") == 0)
-        ft_echo(args);
-    else if (ft_strcmp(args[0], "pwd") == 0)
-        ft_pwd();
-    else if (ft_strcmp(args[0], "export") == 0)
-        ft_export(args);
-    else if (ft_strcmp(args[0], "unset") == 0)
-        ft_unset(args[1]);
-    else if (ft_strcmp(args[0], "env") == 0)
-        ft_env(envp);
-    else if (ft_strcmp(args[0], "exit") == 0)
-        ft_exit();
-    if (ft_strcmp(args[0], "cd") == 0)
-    {
-        ft_cd(args[1]);
-        return 1;
-    }
-    return 0; 
+	if (ft_strcmp(args[0], "echo") == 0)
+		ft_echo(args);
+	else if (ft_strcmp(args[0], "pwd") == 0)
+		ft_pwd();
+	else if (ft_strcmp(args[0], "export") == 0)
+		ft_export(args);
+	else if (ft_strcmp(args[0], "unset") == 0)
+		ft_unset(args[1]);
+	else if (ft_strcmp(args[0], "env") == 0)
+		ft_env(envp);
+	else if (ft_strcmp(args[0], "exit") == 0)
+		ft_exit(args);
+	if (ft_strcmp(args[0], "cd") == 0)
+	{
+		ft_cd(args[1]);
+		return (1);
+	}
+	return (0);
 }
 
-void ft_echo(char **args)
+void	ft_cd(char *path)
 {
-    int i = 1;
-    int new_line = 1;
+	char	*home;
 
-    if (args[1] && strcmp(args[1], "-n") == 0)
-    {
-        new_line = 0;
-        i++;
-    }
+	if (!path || *path == '\0')
+	{
+		home = getenv("HOME");
+		if (!home || *home == '\0')
+		{
+			fprintf(stderr, "cd: HOME not set\n");
+			return ;
+		}
+		path = home;
+	}
+	if (chdir(path) != 0)
+	{
+		fprintf(stderr, "cd: %s: %s\n", strerror(errno), path);
+	}
+}
+// ok
+/*the info about working directory is allocated in a place called PBC,
+from which the function getcwd can read the info a chdir can change it.*/
 
-    while (args[i])
-    {
-        if (args[i][0] == '$')
-        {
-            char *env_value = getenv(args[i] + 1);
-            if (env_value)
-                printf("%s", env_value);
-            else
-                printf("");
-        }
-        else
-            printf("%s", args[i]);
-        if (args[i + 1])
-            printf(" ");
-        i++;
-    }
+void	ft_export(char **args)
+{
+	char	*var;
+	char	*value;
+	int		i;
 
-    if (new_line)
-        printf("\n");
+	if (!args[1] || ft_strchr(args[1], '=') == NULL)
+	{
+		fprintf(stderr, "export: invalid format. Use VAR=value\n");
+		return ;
+	}
+	i = 0;
+	while (args[1][i] && args[1][i] != '=')
+		i++;
+	if (i > 0)
+	{
+		var = ft_strndup(args[1], i);
+		value = ft_strdup(args[1] + i + 1);
+	}
+	else
+	{
+		fprintf(stderr, "export: invalid format. Use VAR=value\n");
+		return ;
+	}
+	if (setenv(var, value, 1) != 0)
+		perror("export");
+	free(var);
+	free(value);
 }
 
-
-void ft_cd(char *path)
+void	ft_unset(char *var)
 {
-    char *home;
-
-    if (!path || *path == '\0')
-    {
-        home = getenv("HOME");
-        if (!home || *home == '\0')
-        {
-            fprintf(stderr, "cd: HOME not set\n");
-            return;
-        }
-        path = home;
-    }
-
-    if (chdir(path) != 0)
-        perror("cd");
+	if (!var)
+	{
+		fprintf(stderr, "unset: argument not found\n");
+		return ;
+	}
+	if (unsetenv(var) != 0)
+		perror("unset");
 }
 
-
-void ft_pwd()
+void	ft_exit(char **args)
 {
-    char cwd[1024];
+	int	exit_code;
 
-    if (getcwd(cwd, sizeof(cwd)) != NULL)
-        printf("%s\n", cwd);
-    else
-        perror("pwd");
-}
-
-void ft_export(char **args)
-{
-    char *var;
-    char *value;
-
-    if (!args[1] || strchr(args[1], '=') == NULL) // Ensure correct format
-    {
-        fprintf(stderr, "export: invalid format. Use VAR=value\n");
-        return;
-    }
-
-    var = strtok(args[1], "=");    // Get variable name
-    value = strtok(NULL, "=");     // Get value
-
-    if (!var || !value)
-    {
-        fprintf(stderr, "export: invalid format. Use VAR=value\n");
-        return;
-    }
-
-    if (setenv(var, value, 1) != 0) // Set the environment variable
-        perror("export");
-}
-
-void ft_unset(char *var)
-{
-    if (!var)
-    {
-        fprintf(stderr, "unset: argument not found\n");
-        return;
-    }
-    if (unsetenv(var) != 0)
-        perror("unset");
-}
-
-void ft_env(char **envp)
-{
-    for (int i = 0; envp[i]; i++)
-        printf("%s\n", envp[i]);
-}
-
-void ft_exit()
-{
-    exit(0);
+	exit_code = 0;
+	if (args[1] && args[2])
+	{
+		fprintf(stderr, "exit: too many arguments\n");
+		return ;
+	}
+	if (args[1])
+	{
+		if (!ft_isnumber(args[1]))
+		{
+			fprintf(stderr, "exit: %s: numeric argument required\n", args[1]);
+			exit(2);
+		}
+		exit_code = ft_atoi(args[1]);
+	}
+	exit(exit_code % 256);
 }
