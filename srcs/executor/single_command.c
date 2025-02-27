@@ -3,33 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   single_command.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/02/26 15:18:54 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/02/26 17:41:44 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-t_buildin_cmd	is_builtin(char *cmd_str)
+t_buildin_cmd	is_builtin(char *command_str)
 {
-	if (strcmp(cmd_str, "echo") == 0)
-		return (ECHO);
-	else if (strcmp(cmd_str, "cd") == 0)
-		return (CD);
-	else if (strcmp(cmd_str, "pwd") == 0)
-		return (PWD);
-	else if (strcmp(cmd_str, "export") == 0)
-		return (EXPORT);
-	else if (strcmp(cmd_str, "unset") == 0)
-		return (UNSET);
-	else if (strcmp(cmd_str, "env") == 0)
-		return (ENV);
-	else if (strcmp(cmd_str, "exit") == 0)
-		return (EXIT);
+	if (strcmp(command_str, "echo") == 0)
+		return (FT_ECHO);
+	else if (strcmp(command_str, "cd") == 0)
+		return (FT_CD);
+	else if (strcmp(command_str, "pwd") == 0)
+		return (FT_PWD);
+	else if (strcmp(command_str, "export") == 0)
+		return (FT_EXPORT);
+	else if (strcmp(command_str, "unset") == 0)
+		return (FT_UNSET);
+	else if (strcmp(command_str, "env") == 0)
+		return (FT_ENV);
+	else if (strcmp(command_str, "exit") == 0)
+		return (FT_EXIT);
 	else
-		return (NOT_BUILDIN);
+		return (FT_NOT_BUILDIN);
 }
 
 void	single_command_executor(t_command *command)
@@ -38,7 +38,7 @@ void	single_command_executor(t_command *command)
 		ft_export, ft_unset, ft_env, ft_exit};
 
 	t_buildin_cmd buildin_cmd_nbr = is_builtin(command->args[0]);
-	if (buildin_cmd_nbr != NOT_BUILDIN)
+	if (buildin_cmd_nbr != FT_NOT_BUILDIN)
 		builtin_funcs[buildin_cmd_nbr](command); // Execute the function
 	else
 		printf("Command not found: %s\n", command->args[0]);

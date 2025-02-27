@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+         #
+#    By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 11:52:00 by otaniyuhi         #+#    #+#              #
-#    Updated: 2025/02/25 17:40:58 by oyuhi            ###   ########.fr        #
+#    Updated: 2025/02/26 17:32:32 by knemcova         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,9 +25,12 @@ PROMPT_DIR = srcs/prompt
 LEXER_DIR = srcs/lexer
 PARSER_DIR = srcs/parser
 INC_DIR = includes
+SIGNALS_DIR = srcs/signals
+BUILTINS = srcs/builtins
+UTILS = srcs/utils
+EXECUTOR = srcs/executor
 
-
-SRCS = $(MAIN_DIR)/main.c $(PROMPT_DIR)/prompt.c  $(LEXER_DIR)/lexer.c $(LEXER_DIR)/token_word.c $(PARSER_DIR)/parser.c 
+SRCS = $(MAIN_DIR)/main.c $(PROMPT_DIR)/prompt.c $(LEXER_DIR)/lexer.c $(LEXER_DIR)/token_word.c $(PARSER_DIR)/parser.c $(SIGNALS_DIR)/signals.c $(BUILTINS)/built_in.c $(BUILTINS)/echo_pwd_env.c $(UTILS)/utils.c $(EXECUTOR)/single_command.c
 OBJS = $(SRCS:.c=.o)
 
 all: $(LIBFT) $(NAME) 

@@ -6,11 +6,11 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 10:17:05 by knemcova          #+#    #+#             */
-/*   Updated: 2025/02/26 10:49:53 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/02/27 09:08:52 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../../include/minishell.h"
 
 int	ft_isnumber(char *str)
 {
@@ -41,22 +41,3 @@ void	ft_putendl(char *s)
 	}
 	write(1, "\n", 1);
 }
-
-char	*ft_strndup(const char *s, size_t n)
-{
-	char	*copy;
-	size_t	i;
-
-	copy = (char *)malloc(n + 1);
-	if (!copy)
-		return (NULL);
-	i = 0;
-	while (i < n && s[i] != '\0')
-	{
-		copy[i] = s[i];
-		i++;
-	}
-	copy[i] = '\0';
-	return (copy);
-}
-// add to libft

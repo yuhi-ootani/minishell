@@ -6,18 +6,30 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:14:15 by knemcova          #+#    #+#             */
-/*   Updated: 2025/02/24 16:08:01 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/02/27 09:57:52 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../../include/minishell.h"
 
-static int	counts_arguments(char **args)
+// void	ft_env(char **envp)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	while (envp[i])
+// 	{
+// 		printf("%s\n", envp[i]);
+// 		i++;
+// 	}
+// }
+
+static int	counts_arguments(t_command *command)
 {
 	int	size;
 
 	size = 0;
-	while (args[size])
+	while (command->args[size])
 		size++;
 	return (size);
 }
@@ -53,24 +65,24 @@ static void	print_argument(char *arg)
 	}
 }
 
-int	ft_echo(char **args)
+int	ft_echo(t_command *command)
 {
 	int	i;
 	int	n_option;
 
 	i = 1;
 	n_option = 0;
-	if (counts_arguments(args) > 1)
+	if (counts_arguments(command) > 1)
 	{
-		while (args[i] && ft_strcmp(args[i], "-n") == 0)
+		while (command->args[i] && ft_strcmp(command->args[i], "-n") == 0)
 		{
 			n_option = 1;
 			i++;
 		}
-		while (args[i])
+		while (command->args[i])
 		{
-			print_argument(args[i]);
-			if (args[i + 1])
+			print_argument(command->args[i]);
+			if (command->args[i + 1])
 				write(1, " ", 1);
 			i++;
 		}
@@ -80,28 +92,35 @@ int	ft_echo(char **args)
 	return (0);
 }
 
-int	ft_pwd(void)
+int	ft_pwd(t_command *command)
 {
 	char	cwd[PATH_MAX];
 
-	if (getcwd(cwd, PATH_MAX))
+	(void)command;
+
+	if (getcwd(cwd, sizeof(cwd)) != NULL)
 	{
 		ft_putendl_fd(cwd, 1);
 		return (0);
 	}
 	else
-		return (1);
-}
-
-void	ft_env(char **envp)
-{
-	int	i;
-
-	i = 0;
-	while (envp[i])
 	{
-		printf("%s\n", envp[i]);
-		i++;
+		perror("pwd");
+		return (1);
 	}
 }
-// its okay now but maybe it will be hard to change values
+
+int	ft_env(t_command *command)
+{
+	extern char **environ;
+	int	i;
+
+	(void)command;
+	i = 0;
+	while (environ[i])
+	{
+		printf("%s\n", environ[i]);
+		i++;
+	}
+	return (0);
+}
