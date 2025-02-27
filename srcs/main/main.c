@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/02/27 11:25:49 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/02/27 16:38:30 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,14 +129,17 @@ void	free_commands(t_command *head)
 // 	return (0);
 // }
 
-int	main(void)
+int	main(int argc, char **argv, char **envp)
 {
 	char		*input;
 	t_token		*tokens_list;
 	t_command	*command_list;
 
+	(void)argc;
+	(void)argv;
+	(void)envp;
 	setup_signals();
-	printf("Enter commands:\n");
+	// printf("Enter commands:\n");
 	while (1)
 	{
 		if (g_signal)
@@ -153,19 +156,22 @@ int	main(void)
 			input = prompt();
 		if (input)
 		{
+			if (!input[0])
+				continue ;
 			printf("Input: %s\n", input);
 			tokens_list = lexer(input);
-			free(input);
-			if (tokens_list)
-				print_tokens(tokens_list);
+			// if (tokens_list)
+			// 	print_tokens(tokens_list);
 			command_list = parser(tokens_list);
+			// if (command_list)
+			// {
+			// 	printf("asdfsdf");
+			// 	print_commands(command_list);
+			single_command_executor(command_list, envp);
+			// }
+			free(input);
 			free_tokens(tokens_list);
-			if (is_builtin(command_list->args[0]) != FT_NOT_BUILDIN)
-				single_command_executor(command_list);
-			else
-				printf("Command not found: %s\n", command_list->args[0]);
-			if (command_list)
-				free_commands(command_list);
+			free_commands(command_list);
 		}
 		else
 			break ;
