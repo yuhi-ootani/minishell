@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/02/27 11:55:45 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/02/27 15:16:33 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ char	*search_command_in_path(const char *command)
 		if (access(full_command_path, F_OK | X_OK) == 0)
 			return (ft_array_free(splited_paths), full_command_path);
 		free(full_command_path);
+		i++;
 	}
-	printf("command not found");
 	ft_array_free(splited_paths);
 	return (NULL);
 }
@@ -63,7 +63,7 @@ int	execute_external_command(t_command *command, char **envp)
 			command_path = strdup(command->args[0]);
 		if (execve(command_path, command->args, envp) == -1)
 		{
-			perror("execve");
+			fprintf(stderr, "%s: command not found\n", command->args[0]);
 			free(command_path);
 			exit(EXIT_FAILURE);
 		}

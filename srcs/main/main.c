@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/02/27 11:58:44 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/02/27 15:23:37 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ void	free_commands(t_command *head)
 // 	return (0);
 // }
 
-int	main(int argc, char **argv, char **evnp)
+int	main(int argc, char **argv, char **envp)
 {
 	char		*input;
 	t_token		*tokens_list;
@@ -137,8 +137,9 @@ int	main(int argc, char **argv, char **evnp)
 
 	(void)argc;
 	(void)argv;
+	(void)envp;
 	setup_signals();
-	printf("Enter commands:\n");
+	// printf("Enter commands:\n");
 	while (1)
 	{
 		if (g_signal)
@@ -155,26 +156,25 @@ int	main(int argc, char **argv, char **evnp)
 			input = prompt();
 		if (input)
 		{
+			if (!input[0])
+				continue ;
 			printf("Input: %s\n", input);
 			tokens_list = lexer(input);
-			free(input);
-			if (tokens_list)
-				print_tokens(tokens_list);
+			// if (tokens_list)
+			// 	print_tokens(tokens_list);
 			command_list = parser(tokens_list);
+			// if (command_list)
+			// {
+			// 	printf("asdfsdf");
+			// 	print_commands(command_list);
+			single_command_executor(command_list, envp);
+			// }
+			free(input);
 			free_tokens(tokens_list);
-			if (is_builtin(command_list->args[0]) != FT_NOT_BUILDIN)
-				single_command_executor(command_list);
-			else
-				printf("Command not found: %s\n", command_list->args[0]);
-			if (command_list)
-			{
-				print_commands(command_list);
-				single_command_executor(command_list, evnp);
-				free_commands(command_list);
-			}
-			else
-				break ;
+			free_commands(command_list);
 		}
-		return (0);
+		else
+			break ;
 	}
+	return (0);
 }
