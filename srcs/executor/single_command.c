@@ -6,40 +6,109 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/02/26 15:18:54 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/02/27 10:57:16 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-t_buildin_cmd	is_builtin(char *cmd_str)
+char	*search_command_in_path(const char *command)
 {
-	if (strcmp(cmd_str, "echo") == 0)
+	char	*path_env;
+	char	**splited_paths;
+	int		i;
+	char	*tmp;
+	char	*full_command_path;
+
+	path_env = getenv("PATH");
+	if (!path_env)
+		return (NULL);
+	splited_paths = ft_split(path_env, ':');
+	i = 0;
+	while (splited_paths && splited_paths[i])
+	{
+		tmp = ft_strjoin(splited_paths[i], "/");
+		full_command_path = ft_strjoin(tmp, command);
+		free(tmp);
+		if (access(full_command_path, F_OK | X_OK) == 0)
+			return (ft_array_free(splited_paths), full_command_path);
+		free(full_command_path);
+	}
+	printf("command not found");
+	ft_array_free(splited_paths);
+	return (NULL);
+}
+
+int	execute_external_command(t_command *command, char **envp)
+{
+	pid_t	pid;
+	int		status;
+	char	*command_path;
+
+	pid = fork();
+	if (pid == 0)
+	{
+		if (strchr(command->args[0], '/') == NULL) // I think it needs modified
+		{
+			command_path = search_command_in_path(command->args[0]);
+			if (!command_path)
+			{
+				fprintf(stderr, "%s: command not found\n", command->args[0]);
+				// modified
+				exit(EXIT_FAILURE);
+				// modified
+			}
+		}
+		else
+			command_path = strdup(command->args[0]);
+		if (execve(command_path, command->args, envp) == -1)
+		{
+			perror("execve");
+			free(command_path);
+			exit(EXIT_FAILURE);
+		}
+	}
+	else if (pid < 0)
+	{
+		perror("fork"); // modified
+		return (-1);    // modified
+	}
+	if (waitpid(pid, &status, 0) == -1)
+	{
+		perror("waitpid");
+		return (-1);
+	}
+	return (status);
+}
+
+t_buildin_cmd	is_builtin(char *command_str)
+{
+	if (strcmp(command_str, "echo") == 0)
 		return (ECHO);
-	else if (strcmp(cmd_str, "cd") == 0)
+	else if (strcmp(command_str, "cd") == 0)
 		return (CD);
-	else if (strcmp(cmd_str, "pwd") == 0)
+	else if (strcmp(command_str, "pwd") == 0)
 		return (PWD);
-	else if (strcmp(cmd_str, "export") == 0)
+	else if (strcmp(command_str, "export") == 0)
 		return (EXPORT);
-	else if (strcmp(cmd_str, "unset") == 0)
+	else if (strcmp(command_str, "unset") == 0)
 		return (UNSET);
-	else if (strcmp(cmd_str, "env") == 0)
+	else if (strcmp(command_str, "env") == 0)
 		return (ENV);
-	else if (strcmp(cmd_str, "exit") == 0)
+	else if (strcmp(command_str, "exit") == 0)
 		return (EXIT);
 	else
 		return (NOT_BUILDIN);
 }
 
-void	single_command_executor(t_command *command)
+void	single_command_executor(t_command *command, char **envp)
 {
 	static int (*builtin_funcs[])(t_command *) = {ft_echo, ft_cd, ft_pwd,
 		ft_export, ft_unset, ft_env, ft_exit};
 
 	t_buildin_cmd buildin_cmd_nbr = is_builtin(command->args[0]);
 	if (buildin_cmd_nbr != NOT_BUILDIN)
-		builtin_funcs[buildin_cmd_nbr](command); // Execute the function
+		builtin_funcs[buildin_cmd_nbr](command);
 	else
-		printf("Command not found: %s\n", command->args[0]);
+		execute_external_command(command, envp);
 }

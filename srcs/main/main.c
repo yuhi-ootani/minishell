@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/02/26 13:08:48 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/02/27 10:58:54 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,12 +94,14 @@ void	free_commands(t_command *head)
 	}
 }
 
-int	main(void)
+int	main(int argc, char **argv, char **evnp)
 {
 	char		*input;
 	t_token		*tokens_list;
 	t_command	*command_list;
 
+	(void)argc;
+	(void)argv;
 	printf("Enter commands:\n");
 	printf("  'clear'   : Clear command history.\n");
 	printf("  'replace' : Replace current line with a preset message.\n");
@@ -119,6 +121,7 @@ int	main(void)
 			if (command_list)
 			{
 				print_commands(command_list);
+				single_command_executor(command_list, evnp);
 				free_commands(command_list);
 			}
 		}

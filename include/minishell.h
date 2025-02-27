@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/02/26 15:18:19 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/02/27 11:01:14 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,11 @@
 # include <readline/readline.h>
 # include <stdbool.h>
 # include <stdio.h>
-# include <stdlib.h> //PATH_MAX
-# include <string.h> //strcmp🚨
-# include <unistd.h> //getcwd
+# include <stdlib.h>    //PATH_MAX
+# include <string.h>    //strcmp🚨
+# include <sys/types.h> //pid_t
+# include <sys/wait.h>  //waitpid
+# include <unistd.h>    //getcwd
 
 //
 //
@@ -117,6 +119,10 @@ typedef enum e_buildin_cmd
 	EXIT,
 	NOT_BUILDIN,
 }						t_buildin_cmd;
+
+// prototype
+void					single_command_executor(t_command *command,
+							char **envp);
 
 // Builtin functions (implement separately)
 int						ft_echo(t_command *cmd);
