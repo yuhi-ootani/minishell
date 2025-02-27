@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/02/27 10:57:16 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/02/27 11:55:45 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,21 +84,21 @@ int	execute_external_command(t_command *command, char **envp)
 t_buildin_cmd	is_builtin(char *command_str)
 {
 	if (strcmp(command_str, "echo") == 0)
-		return (ECHO);
+		return (FT_ECHO);
 	else if (strcmp(command_str, "cd") == 0)
-		return (CD);
+		return (FT_CD);
 	else if (strcmp(command_str, "pwd") == 0)
-		return (PWD);
+		return (FT_PWD);
 	else if (strcmp(command_str, "export") == 0)
-		return (EXPORT);
+		return (FT_EXPORT);
 	else if (strcmp(command_str, "unset") == 0)
-		return (UNSET);
+		return (FT_UNSET);
 	else if (strcmp(command_str, "env") == 0)
-		return (ENV);
+		return (FT_ENV);
 	else if (strcmp(command_str, "exit") == 0)
-		return (EXIT);
+		return (FT_EXIT);
 	else
-		return (NOT_BUILDIN);
+		return (FT_NOT_BUILDIN);
 }
 
 void	single_command_executor(t_command *command, char **envp)
@@ -107,8 +107,8 @@ void	single_command_executor(t_command *command, char **envp)
 		ft_export, ft_unset, ft_env, ft_exit};
 
 	t_buildin_cmd buildin_cmd_nbr = is_builtin(command->args[0]);
-	if (buildin_cmd_nbr != NOT_BUILDIN)
-		builtin_funcs[buildin_cmd_nbr](command);
+	if (buildin_cmd_nbr != FT_NOT_BUILDIN)
+		builtin_funcs[buildin_cmd_nbr](command); // Execute the function
 	else
 		execute_external_command(command, envp);
 }

@@ -6,13 +6,14 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/02/27 10:58:54 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/02/27 11:58:44 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
 // Print a single command's information
+
 void	print_command(t_command *command, int cmd_index)
 {
 	int	i;
@@ -94,6 +95,40 @@ void	free_commands(t_command *head)
 	}
 }
 
+// int	main(void)
+// {
+// 	char		*input;
+// 	t_token		*tokens_list;
+// 	t_command	*command_list;
+
+// 	printf("Enter commands:\n");
+// 	printf("  'clear'   : Clear command history.\n");
+// 	printf("  'replace' : Replace current line with a preset message.\n");
+// 	printf("  'exit'    : Exit the program.\n\n");
+// 	while (1)
+// 	{
+// 		input = prompt();
+// 		if (input)
+// 		{
+// 			printf("Input: %s\n", input);
+// 			tokens_list = lexer(input);
+// 			free(input);
+// 			if (tokens_list)
+// 				print_tokens(tokens_list);
+// 			command_list = parser(tokens_list);
+// 			free_tokens(tokens_list);
+// 			if (command_list)
+// 			{
+// 				print_commands(command_list);
+// 				free_commands(command_list);
+// 			}
+// 		}
+// 		else
+// 			break ;
+// 	}
+// 	return (0);
+// }
+
 int	main(int argc, char **argv, char **evnp)
 {
 	char		*input;
@@ -102,13 +137,22 @@ int	main(int argc, char **argv, char **evnp)
 
 	(void)argc;
 	(void)argv;
+	setup_signals();
 	printf("Enter commands:\n");
-	printf("  'clear'   : Clear command history.\n");
-	printf("  'replace' : Replace current line with a preset message.\n");
-	printf("  'exit'    : Exit the program.\n\n");
 	while (1)
 	{
-		input = prompt();
+		if (g_signal)
+		{
+			g_signal = 0;
+			input = prompt();
+			if (!input)
+			{
+				printf("exit\n");
+				break ;
+			}
+		}
+		else
+			input = prompt();
 		if (input)
 		{
 			printf("Input: %s\n", input);
@@ -118,15 +162,19 @@ int	main(int argc, char **argv, char **evnp)
 				print_tokens(tokens_list);
 			command_list = parser(tokens_list);
 			free_tokens(tokens_list);
+			if (is_builtin(command_list->args[0]) != FT_NOT_BUILDIN)
+				single_command_executor(command_list);
+			else
+				printf("Command not found: %s\n", command_list->args[0]);
 			if (command_list)
 			{
 				print_commands(command_list);
 				single_command_executor(command_list, evnp);
 				free_commands(command_list);
 			}
+			else
+				break ;
 		}
-		else
-			break ;
+		return (0);
 	}
-	return (0);
 }

@@ -6,7 +6,7 @@
 #    By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 11:52:00 by otaniyuhi         #+#    #+#              #
-#    Updated: 2025/02/27 11:00:41 by oyuhi            ###   ########.fr        #
+#    Updated: 2025/02/27 12:00:46 by oyuhi            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,10 +26,17 @@ LEXER_DIR = srcs/lexer
 PARSER_DIR = srcs/parser
 EXECUTOR_DIR = srcs/executor
 INC_DIR = includes
+SIGNALS_DIR = srcs/signals
+BUILTINS_DIR = srcs/builtins
+UTILS_DIR = srcs/utils
+EXECUTOR_DIR = srcs/executor
 
 
-SRCS = $(MAIN_DIR)/main.c $(PROMPT_DIR)/prompt.c  $(LEXER_DIR)/lexer.c $(LEXER_DIR)/token_word.c $(PARSER_DIR)/parser.c \
-		$(EXECUTOR_DIR)/single_command.c
+
+		
+SRCS = $(MAIN_DIR)/main.c $(PROMPT_DIR)/prompt.c $(LEXER_DIR)/lexer.c $(LEXER_DIR)/token_word.c $(PARSER_DIR)/parser.c \ 
+       $(SIGNALS_DIR)/signals.c $(BUILTINS_DIR)/built_in.c $(BUILTINS_DIR)/echo_pwd_env.c $(UTILS_DIR)/utils.c \
+	   $(EXECUTOR)/single_command.c
 OBJS = $(SRCS:.c=.o)
 
 all: $(LIBFT) $(NAME) 
