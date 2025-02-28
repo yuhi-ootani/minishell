@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/02/27 15:16:33 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/02/27 18:06:58 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,46 +39,29 @@ char	*search_command_in_path(const char *command)
 	return (NULL);
 }
 
-int	execute_external_command(t_command *command, char **envp)
+void	execute_external_command(t_command *command, char **envp)
 {
-	pid_t	pid;
-	int		status;
 	char	*command_path;
 
-	pid = fork();
-	if (pid == 0)
+	if (strchr(command->args[0], '/') == NULL) // I think it needs modified
 	{
-		if (strchr(command->args[0], '/') == NULL) // I think it needs modified
-		{
-			command_path = search_command_in_path(command->args[0]);
-			if (!command_path)
-			{
-				fprintf(stderr, "%s: command not found\n", command->args[0]);
-				// modified
-				exit(EXIT_FAILURE);
-				// modified
-			}
-		}
-		else
-			command_path = strdup(command->args[0]);
-		if (execve(command_path, command->args, envp) == -1)
+		command_path = search_command_in_path(command->args[0]);
+		if (!command_path)
 		{
 			fprintf(stderr, "%s: command not found\n", command->args[0]);
-			free(command_path);
+			// modified
 			exit(EXIT_FAILURE);
+			// modified
 		}
 	}
-	else if (pid < 0)
+	else
+		command_path = strdup(command->args[0]);
+	if (execve(command_path, command->args, envp) == -1)
 	{
-		perror("fork"); // modified
-		return (-1);    // modified
+		fprintf(stderr, "%s: command not found\n", command->args[0]);
+		free(command_path);
+		exit(EXIT_FAILURE);
 	}
-	if (waitpid(pid, &status, 0) == -1)
-	{
-		perror("waitpid");
-		return (-1);
-	}
-	return (status);
 }
 
 t_buildin_cmd	is_builtin(char *command_str)
@@ -105,10 +88,59 @@ void	single_command_executor(t_command *command, char **envp)
 {
 	static int (*builtin_funcs[])(t_command *) = {ft_echo, ft_cd, ft_pwd,
 		ft_export, ft_unset, ft_env, ft_exit};
+	int pipefd[2];
+	int in_fd = STDIN_FILENO;
+	pid_t pid;
+	int status;
 
-	t_buildin_cmd buildin_cmd_nbr = is_builtin(command->args[0]);
-	if (buildin_cmd_nbr != FT_NOT_BUILDIN)
-		builtin_funcs[buildin_cmd_nbr](command); // Execute the function
-	else
-		execute_external_command(command, envp);
+	while (command)
+	{
+		if (command->next)
+		{
+			if (pipe(pipefd) < 0)
+			{
+				perror("pipe");
+				return ;
+			}
+		}
+		pid = fork();
+		if (pid == 0)
+		{
+			if (in_fd != STDIN_FILENO)
+			{
+				dup2(in_fd, STDIN_FILENO);
+				close(in_fd);
+			}
+			if (command->next)
+			{
+				dup2(pipefd[1], STDOUT_FILENO);
+				close(pipefd[0]);
+				close(pipefd[1]);
+			}
+			// handle_redirection(command);
+			t_buildin_cmd buildin_cmd_nbr = is_builtin(command->args[0]);
+
+			if (buildin_cmd_nbr != FT_NOT_BUILDIN)
+				builtin_funcs[buildin_cmd_nbr](command); // Execute the function
+			else
+				execute_external_command(command, envp);
+		}
+		else if (pid < 0)
+		{
+			perror("fork");     // modified
+			exit(EXIT_FAILURE); // modified
+		}
+
+		if (in_fd != STDIN_FILENO)
+			close(in_fd);
+
+		if (command->next)
+		{
+			close(pipefd[1]);
+			in_fd = pipefd[0];
+		}
+		command = command->next;
+	}
+	while (wait(&status) > 0)
+		;
 }
