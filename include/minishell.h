@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/02/27 16:42:54 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/01 17:26:51 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define MINISHELL_H
 
 # include "../libft/libft.h"
+# include <fcntl.h> //O_WRONLY O_APPEND O_CREAT
 # include <limits.h>
 # include <readline/history.h>
 # include <readline/readline.h>
@@ -32,6 +33,7 @@
 
 extern volatile sig_atomic_t	g_signal;
 
+// RubiFont
 // ▗▄▄▖ ▗▄▄▖  ▗▄▖ ▗▖  ▗▖▗▄▄▄▖
 // ▐▌ ▐▌▐▌ ▐▌▐▌ ▐▌▐▛▚▞▜▌  █
 // ▐▛▀▘ ▐▛▀▚▖▐▌ ▐▌▐▌  ▐▌  █
@@ -66,11 +68,11 @@ typedef struct s_token
 }								t_token;
 
 /* prototype */
-void							append_word_token(const char *input, size_t *i,
+void							add_word_token(const char *input, size_t *i,
 									t_token **tokens);
 t_token							*create_new_token(t_token_type type,
 									const char *value);
-void							append_token(t_token **head, t_token *new_node);
+void							add_token(t_token **head, t_token *new_node);
 t_token							*lexer(const char *input);
 void							print_tokens(t_token *tokens);
 void							free_tokens(t_token *tokens);
@@ -84,8 +86,11 @@ typedef struct s_command
 {
 	char						**args;
 	char						*input_file;
+	bool						is_heredoc;
+	char						**heredoc_files;
+	size_t						heredoc_count;
 	char						*out_file;
-	int							append;
+	bool						is_append;
 	struct s_command			*next;
 }								t_command;
 
@@ -110,6 +115,13 @@ typedef enum e_buildin_cmd
 // prototype
 void							single_command_executor(t_command *command,
 									char **envp);
+
+// ▗▄▄▖ ▗▄▄▄▖▗▄▄▄ ▗▄▄▄▖▗▄▄▖ ▗▄▄▄▖ ▗▄▄▖▗▄▄▄▖▗▄▄▄▖ ▗▄▖ ▗▖  ▗▖
+// ▐▌ ▐▌▐▌   ▐▌  █  █  ▐▌ ▐▌▐▌   ▐▌     █    █  ▐▌ ▐▌▐▛▚▖▐▌
+// ▐▛▀▚▖▐▛▀▀▘▐▌  █  █  ▐▛▀▚▖▐▛▀▀▘▐▌     █    █  ▐▌ ▐▌▐▌ ▝▜▌
+// ▐▌ ▐▌▐▙▄▄▖▐▙▄▄▀▗▄█▄▖▐▌ ▐▌▐▙▄▄▖▝▚▄▄▖  █  ▗▄█▄▖▝▚▄▞▘▐▌  ▐▌
+
+void							handle_redirection(t_command *command);
 
 // Builtin functions (implement separately)
 int								ft_echo(t_command *cmd);

@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/02/27 16:38:30 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/01 17:29:58 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 void	print_command(t_command *command, int cmd_index)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
 	printf("Command %d:\n", cmd_index);
@@ -25,7 +25,7 @@ void	print_command(t_command *command, int cmd_index)
 	{
 		while (command->args[i])
 		{
-			printf("  Arg %d: %s\n", i, command->args[i]);
+			printf("  Arg %ld: %s\n", i, command->args[i]);
 			i++;
 		}
 	}
@@ -36,10 +36,19 @@ void	print_command(t_command *command, int cmd_index)
 	// Print redirections, if any
 	if (command->input_file)
 		printf("  Input redirection: %s\n", command->input_file);
+	if (command->heredoc_count > 0)
+	{
+		i = 0;
+		while (i < command->heredoc_count)
+		{
+			printf("heredoc_files[%ld]:%s\n", i, command->heredoc_files[i]);
+			i++;
+		}
+	}
 	if (command->out_file)
 	{
 		printf("  Output redirection: %s\n", command->out_file);
-		printf("  Append mode: %s\n", command->append ? "Yes" : "No");
+		printf("  Append mode: %s\n", command->is_append ? "Yes" : "No");
 	}
 	printf("\n");
 }
@@ -163,12 +172,11 @@ int	main(int argc, char **argv, char **envp)
 			// if (tokens_list)
 			// 	print_tokens(tokens_list);
 			command_list = parser(tokens_list);
-			// if (command_list)
-			// {
-			// 	printf("asdfsdf");
-			// 	print_commands(command_list);
-			single_command_executor(command_list, envp);
-			// }
+			if (command_list)
+			{
+				print_commands(command_list);
+				single_command_executor(command_list, envp);
+			}
 			free(input);
 			free_tokens(tokens_list);
 			free_commands(command_list);

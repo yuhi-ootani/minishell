@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:34:11 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/02/24 17:14:20 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/01 15:14:32 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,14 +72,14 @@ static char	*extract_word(const char *input, size_t *i)
 	return (word);
 }
 
-void	append_word_token(const char *input, size_t *i, t_token **tokens)
+void	add_word_token(const char *input, size_t *i, t_token **tokens)
 {
 	char	*word;
 
 	word = extract_word(input, i);
 	if (word && *word != '\0')
 	{
-		append_token(tokens, create_new_token(TOKEN_WORD, word));
+		add_token(tokens, create_new_token(TOKEN_WORD, word));
 		free(word);
 	}
 	else if (*word == '\0')

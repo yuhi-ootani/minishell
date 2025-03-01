@@ -1,0 +1,7 @@
+a.out
+main.c
+outout.txt
+output.txt
+out.txt
+redirection.c
+single_command.c

@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/02/27 18:06:58 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/01 17:21:05 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ void	single_command_executor(t_command *command, char **envp)
 				close(pipefd[0]);
 				close(pipefd[1]);
 			}
-			// handle_redirection(command);
+			handle_redirection(command);
 			t_buildin_cmd buildin_cmd_nbr = is_builtin(command->args[0]);
 
 			if (buildin_cmd_nbr != FT_NOT_BUILDIN)

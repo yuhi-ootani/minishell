@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 14:32:39 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/02/26 13:17:08 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/01 15:15:47 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ t_token	*create_new_token(t_token_type type, const char *value)
 	return (token);
 }
 
-void	append_token(t_token **head, t_token *new_node)
+void	add_token(t_token **head, t_token *new_node)
 {
 	t_token	*temp;
 
@@ -45,35 +45,35 @@ void	append_token(t_token **head, t_token *new_node)
 	}
 }
 
-void	append_redirection_token(const char *input, size_t *i, t_token **tokens)
+void	add_redirection_token(const char *input, size_t *i, t_token **tokens)
 {
 	if (input[*i] == '<')
 	{
 		(*i)++;
 		if (input[*i] == '<')
 		{
-			append_token(tokens, create_new_token(TOKEN_HEREDOC, "<<"));
+			add_token(tokens, create_new_token(TOKEN_HEREDOC, "<<"));
 			(*i)++;
 		}
 		else
-			append_token(tokens, create_new_token(TOKEN_REDIR_IN, "<"));
+			add_token(tokens, create_new_token(TOKEN_REDIR_IN, "<"));
 	}
 	else if (input[*i] == '>')
 	{
 		(*i)++;
 		if (input[*i] == '>')
 		{
-			append_token(tokens, create_new_token(TOKEN_APPEND, ">>"));
+			add_token(tokens, create_new_token(TOKEN_APPEND, ">>"));
 			(*i)++;
 		}
 		else
-			append_token(tokens, create_new_token(TOKEN_REDIR_OUT, ">"));
+			add_token(tokens, create_new_token(TOKEN_REDIR_OUT, ">"));
 	}
 }
 
 #include <ctype.h>
 
-void	append_environment_token(const char *input, size_t *i, t_token **tokens)
+void	add_environment_token(const char *input, size_t *i, t_token **tokens)
 {
 	size_t	start;
 	char	*var;
@@ -82,7 +82,7 @@ void	append_environment_token(const char *input, size_t *i, t_token **tokens)
 	(*i)++;
 	if (input[*i] == '?')
 	{
-		append_token(tokens, create_new_token(TOKEN_ENV, "$?"));
+		add_token(tokens, create_new_token(TOKEN_ENV, "$?"));
 		(*i)++;
 	}
 	else
@@ -97,14 +97,14 @@ void	append_environment_token(const char *input, size_t *i, t_token **tokens)
 		var[0] = '$';
 		strncpy(var + 1, input + start, len);
 		var[len + 1] = '\0';
-		append_token(tokens, create_new_token(TOKEN_ENV, var));
+		add_token(tokens, create_new_token(TOKEN_ENV, var));
 		free(var);
 	}
 }
 
-void	append_pipe_token(size_t *i, t_token **tokens)
+void	add_pipe_token(size_t *i, t_token **tokens)
 {
-	append_token(tokens, create_new_token(TOKEN_PIPE, "|"));
+	add_token(tokens, create_new_token(TOKEN_PIPE, "|"));
 	(*i)++;
 }
 
@@ -127,15 +127,15 @@ t_token	*lexer(const char *input)
 		if (!input[i])
 			break ;
 		if (input[i] == '|')
-			append_pipe_token(&i, &tokens);
+			add_pipe_token(&i, &tokens);
 		else if (input[i] == '<' || input[i] == '>')
-			append_redirection_token(input, &i, &tokens);
+			add_redirection_token(input, &i, &tokens);
 		else if (input[i] == '$')
-			append_environment_token(input, &i, &tokens);
+			add_environment_token(input, &i, &tokens);
 		else
-			append_word_token(input, &i, &tokens);
+			add_word_token(input, &i, &tokens);
 	}
-	append_token(&tokens, create_new_token(TOKEN_EOF, NULL));
+	add_token(&tokens, create_new_token(TOKEN_EOF, NULL));
 	return (tokens);
 }
 
