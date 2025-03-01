@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_word.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:34:11 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/02/24 17:14:20 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/02/28 10:12:27 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ static bool	is_quote(const char *input, size_t *i, char *quote)
 static void	double_word_capacity(char *word, size_t *capacity)
 {
 	(*capacity) *= 2;
-	word = (char *)realloc(word, *capacity);
+	word = (char *)realloc(word, *capacity); //realloc
 	if (!word)
 		exit(EXIT_FAILURE); // exit status!!!
 }

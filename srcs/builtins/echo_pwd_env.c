@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:14:15 by knemcova          #+#    #+#             */
-/*   Updated: 2025/02/27 09:57:52 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/01 09:48:12 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ static void	print_argument(char *arg)
 	}
 }
 
+
 int	ft_echo(t_command *command)
 {
 	int	i;
@@ -97,7 +98,6 @@ int	ft_pwd(t_command *command)
 	char	cwd[PATH_MAX];
 
 	(void)command;
-
 	if (getcwd(cwd, sizeof(cwd)) != NULL)
 	{
 		ft_putendl_fd(cwd, 1);
@@ -112,8 +112,8 @@ int	ft_pwd(t_command *command)
 
 int	ft_env(t_command *command)
 {
-	extern char **environ;
-	int	i;
+	extern char	**environ;
+	int			i;
 
 	(void)command;
 	i = 0;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/02/27 16:38:30 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/02/27 18:22:02 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,6 @@ int	main(int argc, char **argv, char **envp)
 	(void)argv;
 	(void)envp;
 	setup_signals();
-	// printf("Enter commands:\n");
 	while (1)
 	{
 		if (g_signal)
