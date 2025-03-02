@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+         #
+#    By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 11:52:00 by otaniyuhi         #+#    #+#              #
-#    Updated: 2025/02/27 15:21:27 by oyuhi            ###   ########.fr        #
+#    Updated: 2025/03/01 15:48:16 by knemcova         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,8 +33,8 @@ EXECUTOR_DIR = srcs/executor
 
 
 SRCS = $(MAIN_DIR)/main.c $(PROMPT_DIR)/prompt.c $(LEXER_DIR)/lexer.c $(LEXER_DIR)/token_word.c $(PARSER_DIR)/parser.c \
-       $(SIGNALS_DIR)/signals.c $(BUILTINS_DIR)/built_in.c $(BUILTINS_DIR)/echo_pwd_env.c $(UTILS_DIR)/utils.c \
-	   $(EXECUTOR_DIR)/single_command.c
+       $(SIGNALS_DIR)/signals.c $(UTILS_DIR)/utils.c $(EXECUTOR_DIR)/single_command.c \
+	   $(BUILTINS_DIR)/ft_cd.c $(BUILTINS_DIR)/ft_echo.c $(BUILTINS_DIR)/ft_env.c $(BUILTINS_DIR)/ft_exit.c $(BUILTINS_DIR)/ft_export.c $(BUILTINS_DIR)/ft_unset.c $(BUILTINS_DIR)/ft_pwd.c
 OBJS = $(SRCS:.c=.o)
 
 all: $(LIBFT) $(NAME) 

@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/02/27 18:22:02 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/01 16:30:54 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,36 +95,42 @@ void	free_commands(t_command *head)
 	}
 }
 
-// int	main(void)
+// int	main(int argc, char **argv, char **envp)
 // {
 // 	char		*input;
 // 	t_token		*tokens_list;
 // 	t_command	*command_list;
 
-// 	printf("Enter commands:\n");
-// 	printf("  'clear'   : Clear command history.\n");
-// 	printf("  'replace' : Replace current line with a preset message.\n");
-// 	printf("  'exit'    : Exit the program.\n\n");
+// 	(void)argc;
+// 	(void)argv;
+// 	setup_signals();
 // 	while (1)
 // 	{
 // 		input = prompt();
-// 		if (input)
+// 		if (!input) // Pokud NULL, ukončí shell
 // 		{
-// 			printf("Input: %s\n", input);
-// 			tokens_list = lexer(input);
-// 			free(input);
-// 			if (tokens_list)
-// 				print_tokens(tokens_list);
-// 			command_list = parser(tokens_list);
-// 			free_tokens(tokens_list);
-// 			if (command_list)
-// 			{
-// 				print_commands(command_list);
-// 				free_commands(command_list);
-// 			}
-// 		}
-// 		else
+// 			printf("exit\n");
 // 			break ;
+// 		}
+// 		// if (!*input) // Pokud prázdný řetězec, pokračuje dál bez provedení
+// 		// {
+// 		// 	free(input);
+// 		// 	continue ;
+// 		// }
+// 		if (!input)
+// 		{
+// 			printf("exit\n");
+// 			exit(0);
+// 		}
+// 		// Tokenizace a zpracování příkazu
+// 		tokens_list = lexer(input);
+// 		command_list = parser(tokens_list);
+// 		if (command_list)
+// 			single_command_executor(command_list, envp); // Provede příkaz
+// 		// Uklidíme paměť
+// 		free(input);
+// 		free_tokens(tokens_list);
+// 		free_commands(command_list);
 // 	}
 // 	return (0);
 // }
@@ -134,46 +140,35 @@ int	main(int argc, char **argv, char **envp)
 	char		*input;
 	t_token		*tokens_list;
 	t_command	*command_list;
+	int			exit_code;
 
 	(void)argc;
 	(void)argv;
-	(void)envp;
 	setup_signals();
 	while (1)
 	{
-		if (g_signal)
+		input = prompt();
+		if (!input)
 		{
-			g_signal = 0;
-			input = prompt();
-			if (!input)
+			printf("exit\n");
+			break ;
+		}
+		if (*input)
+			add_history(input);
+		tokens_list = lexer(input);
+		command_list = parser(tokens_list);
+		if (command_list)
+		{
+			if (is_builtin(command_list->args[0]) == FT_EXIT)
 			{
-				printf("exit\n");
+				exit_code = ft_exit(command_list);
 				break ;
 			}
-		}
-		else
-			input = prompt();
-		if (input)
-		{
-			if (!input[0])
-				continue ;
-			printf("Input: %s\n", input);
-			tokens_list = lexer(input);
-			// if (tokens_list)
-			// 	print_tokens(tokens_list);
-			command_list = parser(tokens_list);
-			// if (command_list)
-			// {
-			// 	printf("asdfsdf");
-			// 	print_commands(command_list);
 			single_command_executor(command_list, envp);
-			// }
-			free(input);
-			free_tokens(tokens_list);
-			free_commands(command_list);
 		}
-		else
-			break ;
+		free(input);
+		free_tokens(tokens_list);
+		free_commands(command_list);
 	}
-	return (0);
+	return (exit_code);
 }

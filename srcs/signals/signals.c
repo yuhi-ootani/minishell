@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 13:41:58 by knemcova          #+#    #+#             */
-/*   Updated: 2025/02/27 11:24:57 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/01 17:55:15 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,10 @@ void	disable_ctrlc_display(void)
 
 void	handle_sigint(int signum)
 {
-	char	*cwd;
-
 	disable_ctrlc_display();
 	(void)signum;
 	g_signal = 1;
 	write(STDOUT_FILENO, "\n", 1);
-	cwd = get_current_directory();
-	printf("🐾 %s 🐾 $> ", cwd);
-	fflush(stdout);
-	free(cwd);
 }
 
 void	setup_signals(void)
@@ -47,3 +41,4 @@ void	setup_signals(void)
 	sigaction(SIGINT, &sa, NULL);
 	signal(SIGQUIT, SIG_IGN);
 }
+

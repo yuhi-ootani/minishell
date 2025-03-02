@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/02/27 16:42:54 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/01 16:28:41 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,7 @@ typedef enum e_buildin_cmd
 // prototype
 void							single_command_executor(t_command *command,
 									char **envp);
+t_buildin_cmd					is_builtin(char *command_str);
 
 // Builtin functions (implement separately)
 int								ft_echo(t_command *cmd);
@@ -127,7 +128,6 @@ void							setup_signals(void);
 void							handle_sigint(int signum);
 void							setup_signals(void);
 void							disable_ctrlc_display(void);
-
 // ▗▖ ▗▖▗▄▄▄▖▗▄▄▄▖▗▖    ▗▄▄▖
 // ▐▌ ▐▌  █    █  ▐▌   ▐▌
 // ▐▌ ▐▌  █    █  ▐▌    ▝▀▚▖
