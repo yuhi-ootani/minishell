@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/01 17:29:58 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/02 09:16:52 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,7 +175,7 @@ int	main(int argc, char **argv, char **envp)
 			if (command_list)
 			{
 				print_commands(command_list);
-				single_command_executor(command_list, envp);
+				command_executor(command_list, envp);
 			}
 			free(input);
 			free_tokens(tokens_list);

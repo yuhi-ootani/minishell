@@ -2,12 +2,45 @@
 
 #include "../../include/minishell.h"
 
+static bool	is_last_heredoc(t_command *command, size_t i)
+{
+	return (command->is_heredoc && strcmp(command->heredoc_files[i],
+			command->input_file) == 0);
+}
+
+static void	receive_input_in_child_process(t_command *command, int *pipefd)
+{
+	char	*line;
+	size_t	i;
+
+	close(pipefd[0]);
+	i = 0;
+	while (i < command->heredoc_count)
+	{
+		line = readline("> ");
+		if (!line)
+			break ;
+		if (strcmp(line, command->heredoc_files[i]) == 0)
+		{
+			free(line);
+			i++;
+			continue ;
+		}
+		if (is_last_heredoc(command, i))
+		{
+			write(pipefd[1], line, strlen(line));
+			write(pipefd[1], "\n", 1);
+		}
+		free(line);
+	}
+	close(pipefd[1]);
+	exit(EXIT_SUCCESS);
+}
+
 static void	handle_heredoc(t_command *command)
 {
 	int		pipefd[2];
 	pid_t	pid;
-	char	*line;
-	size_t	i;
 	int		status;
 
 	if (pipe(pipefd) == -1)
@@ -22,31 +55,7 @@ static void	handle_heredoc(t_command *command)
 		exit(EXIT_FAILURE);
 	}
 	if (pid == 0)
-	{
-		close(pipefd[0]);
-		i = 0;
-		while (i < command->heredoc_count)
-		{
-			line = readline("> ");
-			if (!line)
-				break ;
-			if (strcmp(line, command->heredoc_files[i]) == 0)
-			{
-				free(line);
-				i++;
-				continue ;
-			}
-			if (command->is_heredoc && strcmp(command->heredoc_files[i],
-					command->input_file) == 0)
-			{
-				write(pipefd[1], line, strlen(line));
-				write(pipefd[1], "\n", 1);
-			}
-			free(line);
-		}
-		close(pipefd[1]);
-		exit(EXIT_SUCCESS);
-	}
+		receive_input_in_child_process(command, pipefd);
 	close(pipefd[1]);
 	waitpid(pid, &status, 0);
 	if (command->is_heredoc)
