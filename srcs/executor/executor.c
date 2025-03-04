@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   single_command.c                                   :+:      :+:    :+:   */
+/*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/01 16:23:50 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/03 11:31:09 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,15 +84,40 @@ t_buildin_cmd	is_builtin(char *command_str)
 		return (FT_NOT_BUILDIN);
 }
 
-void	single_command_executor(t_command *command, char **envp)
+static void	execute_child_process(t_command *command, int input_fd, int *pipefd,
+		char **envp)
 {
+	t_buildin_cmd	buildin_index;
+
 	static int (*builtin_funcs[])(t_command *) = {ft_echo, ft_cd, ft_pwd,
 		ft_export, ft_unset, ft_env, ft_exit};
-	int pipefd[2];
-	int in_fd = STDIN_FILENO;
-	pid_t pid;
-	int status;
+	if (command->is_heredoc == false && input_fd != STDIN_FILENO)
+	{
+		dup2(input_fd, STDIN_FILENO);
+		close(input_fd);
+	}
+	handle_redirection(command);
+	if (command->next)
+	{
+		dup2(pipefd[1], STDOUT_FILENO);
+		close(pipefd[0]);
+		close(pipefd[1]);
+	}
+	buildin_index = is_builtin(command->args[0]);
+	if (buildin_index != FT_NOT_BUILDIN)
+		builtin_funcs[buildin_index](command); // Execute the function
+	else
+		execute_external_command(command, envp);
+}
 
+void	command_executor(t_command *command, char **envp)
+{
+	int		pipefd[2];
+	int		input_fd;
+	pid_t	pid;
+	int		status;
+
+	input_fd = STDIN_FILENO;
 	while (command)
 	{
 		if (command->next)
@@ -105,42 +130,90 @@ void	single_command_executor(t_command *command, char **envp)
 		}
 		pid = fork();
 		if (pid == 0)
-		{
-			if (in_fd != STDIN_FILENO)
-			{
-				dup2(in_fd, STDIN_FILENO);
-				close(in_fd);
-			}
-			if (command->next)
-			{
-				dup2(pipefd[1], STDOUT_FILENO);
-				close(pipefd[0]);
-				close(pipefd[1]);
-			}
-			// handle_redirection(command);
-			t_buildin_cmd buildin_cmd_nbr = is_builtin(command->args[0]);
-
-			if (buildin_cmd_nbr != FT_NOT_BUILDIN)
-				builtin_funcs[buildin_cmd_nbr](command); // Execute the function
-			else
-				execute_external_command(command, envp);
-		}
+			execute_child_process(command, input_fd, pipefd, envp);
 		else if (pid < 0)
 		{
 			perror("fork");     // modified
 			exit(EXIT_FAILURE); // modified
 		}
-
-		if (in_fd != STDIN_FILENO)
-			close(in_fd);
-
+		waitpid(pid, &status, 0);
+		if (input_fd != STDIN_FILENO)
+			close(input_fd);
 		if (command->next)
 		{
 			close(pipefd[1]);
-			in_fd = pipefd[0];
+			input_fd = pipefd[0];
 		}
 		command = command->next;
 	}
-	while (wait(&status) > 0)
-		;
 }
+
+// #define MAX_COMMANDS 1024
+
+// void	single_command_executor(t_command *command, char **envp)
+// {
+// 	pid_t pids[MAX_COMMANDS];
+// 	size_t i = 0;
+// 	static int (*builtin_funcs[])(t_command *) = {ft_echo, ft_cd, ft_pwd,
+// 		ft_export, ft_unset, ft_env, ft_exit};
+// 	int pipefd[2];
+// 	int in_fd = STDIN_FILENO;
+// 	// pid_t pid;
+// 	int status;
+
+// 	while (command)
+// 	{
+// 		if (command->next)
+// 		{
+// 			if (pipe(pipefd) < 0)
+// 			{
+// 				perror("pipe");
+// 				return ;
+// 			}
+// 		}
+// 		pids[i] = fork();
+// 		if (pids[i] == 0)
+// 		{
+// 			if (in_fd != STDIN_FILENO)
+// 			{
+// 				dup2(in_fd, STDIN_FILENO);
+// 				close(in_fd);
+// 			}
+// 			if (command->next)
+// 			{
+// 				dup2(pipefd[1], STDOUT_FILENO);
+// 				close(pipefd[0]);
+// 				close(pipefd[1]);
+// 			}
+// 			handle_redirection(command);
+// 			t_buildin_cmd buildin_index = is_builtin(command->args[0]);
+
+// 			if (buildin_index != FT_NOT_BUILDIN)
+// 				builtin_funcs[buildin_index](command); // Execute the function
+// 			else
+// 				execute_external_command(command, envp);
+// 		}
+// 		else if (pids[i] < 0)
+// 		{
+// 			perror("fork");     // modified
+// 			exit(EXIT_FAILURE); // modified
+// 		}
+
+// 		// waitpid(pid, &status, 0);
+
+// 		if (in_fd != STDIN_FILENO)
+// 			close(in_fd);
+
+// 		if (command->next)
+// 		{
+// 			close(pipefd[1]);
+// 			in_fd = pipefd[0];
+// 		}
+// 		command = command->next;
+// 		i++;
+// 	}
+
+// 	// Wait for all children after forking them all.
+// 	for (size_t j = 0; j < i; j++)
+// 		waitpid(pids[j], &status, 0);
+// }

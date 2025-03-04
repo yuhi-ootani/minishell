@@ -6,7 +6,7 @@
 #    By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 11:52:00 by otaniyuhi         #+#    #+#              #
-#    Updated: 2025/03/01 15:48:16 by knemcova         ###   ########.fr        #
+#    Updated: 2025/03/03 11:53:37 by knemcova         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,10 +30,14 @@ SIGNALS_DIR = srcs/signals
 BUILTINS_DIR = srcs/builtins
 UTILS_DIR = srcs/utils
 EXECUTOR_DIR = srcs/executor
-
-
-SRCS = $(MAIN_DIR)/main.c $(PROMPT_DIR)/prompt.c $(LEXER_DIR)/lexer.c $(LEXER_DIR)/token_word.c $(PARSER_DIR)/parser.c \
-       $(SIGNALS_DIR)/signals.c $(UTILS_DIR)/utils.c $(EXECUTOR_DIR)/single_command.c \
+	   
+SRCS = $(MAIN_DIR)/main.c \
+	   $(PROMPT_DIR)/prompt.c \
+	   $(LEXER_DIR)/lexer.c $(LEXER_DIR)/token_word.c \
+	   $(PARSER_DIR)/parser.c \
+       $(SIGNALS_DIR)/signals.c \
+	   $(UTILS_DIR)/utils.c \
+	   $(EXECUTOR_DIR)/executor.c $(EXECUTOR_DIR)/redirection.c \
 	   $(BUILTINS_DIR)/ft_cd.c $(BUILTINS_DIR)/ft_echo.c $(BUILTINS_DIR)/ft_env.c $(BUILTINS_DIR)/ft_exit.c $(BUILTINS_DIR)/ft_export.c $(BUILTINS_DIR)/ft_unset.c $(BUILTINS_DIR)/ft_pwd.c
 OBJS = $(SRCS:.c=.o)
 

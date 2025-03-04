@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 15:07:23 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/02/27 10:03:38 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/01 17:31:13 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,11 @@ t_command	*create_command_node(void)
 		syntax_error("create_command_node"); //
 	new_command->args = NULL;
 	new_command->input_file = NULL;
+	new_command->is_heredoc = false;
+	new_command->heredoc_files = NULL;
+	new_command->heredoc_count = 0;
 	new_command->out_file = NULL;
-	new_command->append = 0;
+	new_command->is_append = false;
 	new_command->next = NULL;
 	return (new_command);
 }
@@ -70,21 +73,28 @@ void	set_redirection(t_command *command, t_token_type token_type,
 	if (token_type == TOKEN_REDIR_IN)
 	{
 		command->input_file = strdup(filename); // strdup
+		command->is_heredoc = false;
 	}
 	else if (token_type == TOKEN_HEREDOC)
 	{
 		command->input_file = strdup(filename); // strdup
-												// optionally mark that this is a heredoc
+		command->heredoc_files = realloc(command->heredoc_files, sizeof(char *)
+				* (command->heredoc_count + 1));
+		if (!command->heredoc_files)
+			exit(EXIT_FAILURE); // to do
+		command->heredoc_files[command->heredoc_count] = strdup(filename);
+		command->heredoc_count++;
+		command->is_heredoc = true;
 	}
 	else if (token_type == TOKEN_REDIR_OUT)
 	{
 		command->out_file = strdup(filename); // strdup
-		command->append = 0;
+		command->is_append = false;
 	}
 	else if (token_type == TOKEN_APPEND)
 	{
 		command->out_file = strdup(filename); // strdup
-		command->append = 1;
+		command->is_append = true;
 	}
 }
 

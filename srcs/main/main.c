@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/01 16:30:54 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/04 19:59:06 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 void	print_command(t_command *command, int cmd_index)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
 	printf("Command %d:\n", cmd_index);
@@ -25,7 +25,7 @@ void	print_command(t_command *command, int cmd_index)
 	{
 		while (command->args[i])
 		{
-			printf("  Arg %d: %s\n", i, command->args[i]);
+			printf("  Arg %ld: %s\n", i, command->args[i]);
 			i++;
 		}
 	}
@@ -36,10 +36,19 @@ void	print_command(t_command *command, int cmd_index)
 	// Print redirections, if any
 	if (command->input_file)
 		printf("  Input redirection: %s\n", command->input_file);
+	if (command->heredoc_count > 0)
+	{
+		i = 0;
+		while (i < command->heredoc_count)
+		{
+			printf("heredoc_files[%ld]:%s\n", i, command->heredoc_files[i]);
+			i++;
+		}
+	}
 	if (command->out_file)
 	{
 		printf("  Output redirection: %s\n", command->out_file);
-		printf("  Append mode: %s\n", command->append ? "Yes" : "No");
+		printf("  Append mode: %s\n", command->is_append ? "Yes" : "No");
 	}
 	printf("\n");
 }
@@ -95,80 +104,76 @@ void	free_commands(t_command *head)
 	}
 }
 
-// int	main(int argc, char **argv, char **envp)
+// input = prompt();
+// if (!input)
 // {
-// 	char		*input;
-// 	t_token		*tokens_list;
-// 	t_command	*command_list;
-
-// 	(void)argc;
-// 	(void)argv;
-// 	setup_signals();
-// 	while (1)
+// 	printf("exit\n");
+// 	break ;
+// }
+// if (*input)
+// 	add_history(input);
+// tokens_list = lexer(input);
+// command_list = parser(tokens_list);
+// if (command_list)
+// {
+// 	if (is_builtin(command_list->args[0]) == FT_EXIT)
 // 	{
-// 		input = prompt();
-// 		if (!input) // Pokud NULL, ukončí shell
-// 		{
-// 			printf("exit\n");
-// 			break ;
-// 		}
-// 		// if (!*input) // Pokud prázdný řetězec, pokračuje dál bez provedení
-// 		// {
-// 		// 	free(input);
-// 		// 	continue ;
-// 		// }
-// 		if (!input)
-// 		{
-// 			printf("exit\n");
-// 			exit(0);
-// 		}
-// 		// Tokenizace a zpracování příkazu
-// 		tokens_list = lexer(input);
-// 		command_list = parser(tokens_list);
-// 		if (command_list)
-// 			single_command_executor(command_list, envp); // Provede příkaz
-// 		// Uklidíme paměť
-// 		free(input);
-// 		free_tokens(tokens_list);
-// 		free_commands(command_list);
+// 		exit_code = ft_exit(command_list);
+// 		break ;
 // 	}
-// 	return (0);
+// 	single_command_executor(command_list, envp);
+// }
+// free(input);
+// free_tokens(tokens_list);
+// free_commands(command_list);
+// }
+// return (exit_code);
 // }
 
 int	main(int argc, char **argv, char **envp)
 {
 	char		*input;
 	t_token		*tokens_list;
-	t_command	*command_list;
-	int			exit_code;
+	// t_command	*command_list;
 
 	(void)argc;
 	(void)argv;
+	(void)envp;
 	setup_signals();
 	while (1)
 	{
-		input = prompt();
-		if (!input)
+		if (g_signal)
 		{
-			printf("exit\n");
-			break ;
-		}
-		if (*input)
-			add_history(input);
-		tokens_list = lexer(input);
-		command_list = parser(tokens_list);
-		if (command_list)
-		{
-			if (is_builtin(command_list->args[0]) == FT_EXIT)
+			g_signal = 0;
+			input = prompt();
+			if (!input)
 			{
-				exit_code = ft_exit(command_list);
+				printf("exit\n");
 				break ;
 			}
-			single_command_executor(command_list, envp);
 		}
-		free(input);
-		free_tokens(tokens_list);
-		free_commands(command_list);
+		else
+			input = prompt();
+		if (input)
+		{
+			if (!input[0])
+				continue ;
+			printf("Input: %s\n", input);
+			tokens_list = lexer(input);
+			if (tokens_list)
+				print_tokens(tokens_list);
+			// command_list = parser(tokens_list);
+			// if (command_list)
+			// {
+			// 	print_commands(command_list);
+			// 	command_executor(command_list, envp);
+			// }
+			// free(input);
+			free_tokens(tokens_list);
+			// free_commands(command_list);
+		}
+		else
+			break ;
 	}
-	return (exit_code);
+	return (0);
 }
