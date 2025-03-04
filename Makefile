@@ -6,7 +6,7 @@
 #    By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 11:52:00 by otaniyuhi         #+#    #+#              #
-#    Updated: 2025/03/02 09:17:16 by oyuhi            ###   ########.fr        #
+#    Updated: 2025/03/04 19:56:41 by oyuhi            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,6 +29,7 @@ EXECUTOR_DIR = srcs/executor
 SIGNALS_DIR = srcs/signals
 BUILTINS_DIR = srcs/builtins
 UTILS_DIR = srcs/utils
+MANAGE_ENV_DIR = srcs/manage_env
 EXECUTOR_DIR = srcs/executor
 
 
@@ -39,7 +40,9 @@ SRCS = $(MAIN_DIR)/main.c \
        $(SIGNALS_DIR)/signals.c \
 	   $(BUILTINS_DIR)/built_in.c $(BUILTINS_DIR)/echo_pwd_env.c \
 	   $(UTILS_DIR)/utils.c \
-	   $(EXECUTOR_DIR)/executor.c $(EXECUTOR_DIR)/redirection.c
+	   $(EXECUTOR_DIR)/executor.c $(EXECUTOR_DIR)/redirection.c \
+	   $(MANAGE_ENV_DIR)/build_envp_array.c $(MANAGE_ENV_DIR)/init_env.C
+	   
 	   
 OBJS = $(SRCS:.c=.o)
 

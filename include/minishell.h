@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/02 09:17:04 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/04 20:05:59 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,18 @@
 # include <termios.h>
 
 extern volatile sig_atomic_t	g_signal;
+
+// ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖▗▄▄▄▖    ▗▄▄▄▖▗▖  ▗▖▗▖  ▗▖
+//   █  ▐▛▚▖▐▌  █    █      ▐▌   ▐▛▚▖▐▌▐▌  ▐▌
+//   █  ▐▌ ▝▜▌  █    █      ▐▛▀▀▘▐▌ ▝▜▌▐▌  ▐▌
+// ▗▄█▄▖▐▌  ▐▌▗▄█▄▖  █      ▐▙▄▄▖▐▌  ▐▌ ▝▚▞▘
+
+typedef struct s_env
+{
+	char						*name;
+	char						*value;
+	struct s_env				*next;
+}								t_env;
 
 // RubiFont
 // ▗▄▄▖ ▗▄▄▖  ▗▄▖ ▗▖  ▗▖▗▄▄▄▖
@@ -147,5 +159,10 @@ void							disable_ctrlc_display(void);
 
 int								ft_isnumber(char *str);
 void							ft_putendl(char *s);
+
+//
+//
+char							**build_envp_array(t_env *env);
+t_env							*env_duplication(char **envp_srcs);
 
 #endif
