@@ -25,6 +25,7 @@ MAIN_DIR = srcs/main
 PROMPT_DIR = srcs/prompt
 LEXER_DIR = srcs/lexer
 PARSER_DIR = srcs/parser
+EXPAND_DIR = srcs/expand
 EXECUTOR_DIR = srcs/executor
 SIGNALS_DIR = srcs/signals
 BUILTINS_DIR = srcs/builtins
@@ -35,6 +36,7 @@ SRCS = $(MAIN_DIR)/main.c \
 	   $(PROMPT_DIR)/prompt.c \
 	   $(LEXER_DIR)/lexer.c $(LEXER_DIR)/token_word.c \
 	   $(PARSER_DIR)/parser.c \
+	   $(EXPAND_DIR)/expand.c \
        $(SIGNALS_DIR)/signals.c \
 	   $(UTILS_DIR)/utils.c \
 	   $(EXECUTOR_DIR)/executor.c $(EXECUTOR_DIR)/redirection.c \

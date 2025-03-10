@@ -134,7 +134,7 @@ int	main(int argc, char **argv, char **envp)
 {
 	char		*input;
 	t_token		*tokens_list;
-	// t_command	*command_list;
+	t_command	*command_list;
 
 	(void)argc;
 	(void)argv;
@@ -162,15 +162,16 @@ int	main(int argc, char **argv, char **envp)
 			tokens_list = lexer(input);
 			if (tokens_list)
 				print_tokens(tokens_list);
-			// command_list = parser(tokens_list);
-			// if (command_list)
-			// {
-			// 	print_commands(command_list);
-			// 	command_executor(command_list, envp);
-			// }
-			// free(input);
+			command_list = parser(tokens_list);
+			if (command_list)
+			{
+				expand_commands(command_list);
+				print_commands(command_list);
+				command_executor(command_list, envp);
+			}
+			free(input);
 			free_tokens(tokens_list);
-			// free_commands(command_list);
+			free_commands(command_list);
 		}
 		else
 			break ;

@@ -147,5 +147,6 @@ void							disable_ctrlc_display(void);
 
 int								ft_isnumber(char *str);
 void							ft_putendl(char *s);
+void expand_commands(t_command *command_list);
 
 #endif

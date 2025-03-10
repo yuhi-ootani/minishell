@@ -147,7 +147,7 @@ t_command	*parser(t_token *token_list)
 	while (token_list && token_list->type != TOKEN_EOF)
 	{
 		type = token_list->type;
-		if (type == TOKEN_WORD || type == TOKEN_ENV)
+		if (type == TOKEN_WORD)
 			add_argument(current_command, token_list->value);
 		else if (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT
 			|| type == TOKEN_APPEND || type == TOKEN_HEREDOC)
