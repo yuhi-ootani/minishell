@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/11 16:02:16 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/11 16:21:02 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@
 # include <sys/types.h> //pid_t
 # include <sys/wait.h>  //waitpid
 # include <unistd.h>    //getcwd
-// kiki
 # include <ctype.h>
 # include <errno.h>
 # include <signal.h>

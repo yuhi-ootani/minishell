@@ -6,194 +6,50 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:14:15 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/04 12:24:15 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/11 14:46:14 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-#include <ctype.h>
-
-// typedef struct s_builder
+// static int	counts_arguments(t_command *command)
 // {
-// 	char		*str;
-// 	size_t		capacity;
-// 	size_t		len;
-// }				t_builder;
+// 	int	size;
 
-// static void	builder_init(t_builder *b)
-// {
-// 	b->capacity = 64;
-// 	b->len = 0;
-// 	b->str = malloc(b->capacity);
-// 	if (!b->str)
-// 		exit(EXIT_FAILURE);
+// 	size = 0;
+// 	while (command->args[size])
+// 		size++;
+// 	return (size);
 // }
 
-// static void	builder_append_char(t_builder *b, char c)
+// static void	print_argument(char *arg)
 // {
-// 	if (b->len + 1 >= b->capacity)
-// 	{
-// 		b->capacity *= 2;
-// 		b->str = realloc(b->str, b->capacity);
-// 		if (!b->str)
-// 			exit(EXIT_FAILURE);
-// 	}
-// 	b->str[b->len++] = c;
-// }
-
-// static void	builder_append_str(t_builder *b, const char *s)
-// {
-// 	size_t	i;
-
-// 	i = 0;
-// 	while (s[i])
-// 	{
-// 		builder_append_char(b, s[i]);
-// 		i++;
-// 	}
-// }
-
-// static char	*builder_finalize(t_builder *b)
-// {
-// 	builder_append_char(b, '\0');
-// 	return (b->str);
-// }
-
-
-// static void	process_dollar(const char *s, size_t *i, t_builder *b)
-// {
-// 	size_t	start;
-// 	size_t	j;
-// 	size_t	var_len;
-// 	char	*var_name;
+// 	int		single_quotes;
+// 	int		double_quotes;
 // 	char	*env_value;
 
-// 	start = *i + 1;
-// 	j = start;
-// 	while (s[j] && (isalnum(s[j]) || s[j] == '_'))
-// 		j++;
-// 	if (j == start)
+// 	single_quotes = (arg[0] == '\'' && arg[ft_strlen(arg) - 1] == '\'');
+// 	double_quotes = (arg[0] == '"' && arg[ft_strlen(arg) - 1] == '"');
+// 	if (double_quotes)
 // 	{
-// 		builder_append_char(b, s[*i]);
-// 		(*i)++;
-// 		return ;
+// 		arg[ft_strlen(arg) - 1] = '\0';
+// 		arg++;
 // 	}
-// 	var_len = j - start;
-// 	var_name = malloc(var_len + 1);
-// 	if (!var_name)
-// 		exit(EXIT_FAILURE);
-// 	memcpy(var_name, s + start, var_len);
-// 	var_name[var_len] = '\0';
-// 	env_value = getenv(var_name);
-// 	free(var_name);
-// 	if (env_value)
-// 		builder_append_str(b, env_value);
-// 	*i = j;
-// }
-
-// static char	*expand_env_variables(const char *s)
-// {
-// 	t_builder	b;
-// 	size_t		i;
-
-// 	i = 0;
-// 	builder_init(&b);
-// 	while (s[i])
+// 	if (!single_quotes && arg[0] == '$')
 // 	{
-// 		if (s[i] == '$')
-// 			process_dollar(s, &i, &b);
-// 		else
+// 		env_value = getenv(arg + 1);
+// 		if (env_value)
+// 			ft_putstr_fd(env_value, 1);
+// 	}
+// 	else
+// 	{
+// 		if (single_quotes)
 // 		{
-// 			builder_append_char(&b, s[i]);
-// 			i++;
+// 			arg[ft_strlen(arg) - 1] = '\0';
+// 			ft_putstr_fd(arg + 1, 1);
 // 		}
-// 	}
-// 	return (builder_finalize(&b));
-// }
-
-// /* --- POMOCNÉ FUNKCE PRO ZPRACOVÁNÍ SEGMENTŮ ARGUMENTU --- */
-// static size_t	process_single_quote(const char *arg, size_t i)
-// {
-// 	i++;
-// 	while (arg[i] && arg[i] != '\'')
-// 	{
-// 		write(1, &arg[i], 1);
-// 		i++;
-// 	}
-// 	if (arg[i] == '\'')
-// 		i++;
-// 	return (i);
-// }
-
-// static size_t	process_double_quote(const char *arg, size_t i)
-// {
-// 	size_t	start;
-// 	char	*segment;
-// 	char	*expanded;
-
-// 	i++;
-// 	start = i;
-// 	while (arg[i] && arg[i] != '"')
-// 		i++;
-// 	segment = ft_substr(arg, start, i - start);
-// 	expanded = expand_env_variables(segment);
-// 	ft_putstr_fd(expanded, 1);
-// 	free(segment);
-// 	free(expanded);
-// 	if (arg[i] == '"')
-// 		i++;
-// 	return (i);
-// }
-
-// static size_t	process_unquoted_segment(const char *arg, size_t i)
-// {
-// 	size_t	start;
-// 	char	*segment;
-// 	char	*expanded;
-
-// 	start = i;
-// 	while (arg[i] && arg[i] != '\'' && arg[i] != '"')
-// 		i++;
-// 	segment = ft_substr(arg, start, i - start);
-// 	expanded = expand_env_variables(segment);
-// 	ft_putstr_fd(expanded, 1);
-// 	free(segment);
-// 	free(expanded);
-// 	return (i);
-// }
-
-// static void	process_argument(char *arg)
-// {
-// 	size_t	i;
-
-// 	i = 0;
-// 	while (arg[i])
-// 	{
-// 		if (arg[i] == '\'')
-// 			i = process_single_quote(arg, i);
-// 		else if (arg[i] == '"')
-// 			i = process_double_quote(arg, i);
 // 		else
-// 			i = process_unquoted_segment(arg, i);
+// 			ft_putstr_fd(arg, 1);
 // 	}
-// }
-
-// /* --- OSTATNÍ FUNKCE --- */
-// static int	is_option_n(char *arg)
-// {
-// 	int	j;
-
-// 	if (!arg || arg[0] != '-')
-// 		return (0);
-// 	j = 1;
-// 	while (arg[j])
-// 	{
-// 		if (arg[j] != 'n')
-// 			return (0);
-// 		j++;
-// 	}
-// 	return (1);
 // }
 
 // int	ft_echo(t_command *command)
@@ -203,87 +59,55 @@
 
 // 	i = 1;
 // 	n_option = 0;
-// 	while (command->args[i] && is_option_n(command->args[i]))
+// 	if (counts_arguments(command) > 1)
 // 	{
-// 		n_option = 1;
-// 		i++;
+// 		while (command->args[i] && ft_strcmp(command->args[i], "-n") == 0)
+// 		{
+// 			n_option = 1;
+// 			i++;
+// 		}
+// 		while (command->args[i])
+// 		{
+// 			print_argument(command->args[i]);
+// 			if (command->args[i + 1])
+// 				write(1, " ", 1);
+// 			i++;
+// 		}
 // 	}
-// 	while (command->args[i])
-// 	{
-// 		process_argument(command->args[i]);
-// 		if (command->args[i + 1])
-// 			write(1, " ", 1);
-// 		i++;
-// 	}
-// 	if (!n_option)
+// 	if (n_option == 0)
 // 		write(1, "\n", 1);
 // 	return (0);
 // }
-
-static int	counts_arguments(t_command *command)
-{
-	int	size;
-
-	size = 0;
-	while (command->args[size])
-		size++;
-	return (size);
-}
-
-static void	print_argument(char *arg)
-{
-	int		single_quotes;
-	int		double_quotes;
-	char	*env_value;
-
-	single_quotes = (arg[0] == '\'' && arg[ft_strlen(arg) - 1] == '\'');
-	double_quotes = (arg[0] == '"' && arg[ft_strlen(arg) - 1] == '"');
-	if (double_quotes)
-	{
-		arg[ft_strlen(arg) - 1] = '\0';
-		arg++;
-	}
-	if (!single_quotes && arg[0] == '$')
-	{
-		env_value = getenv(arg + 1);
-		if (env_value)
-			ft_putstr_fd(env_value, 1);
-	}
-	else
-	{
-		if (single_quotes)
-		{
-			arg[ft_strlen(arg) - 1] = '\0';
-			ft_putstr_fd(arg + 1, 1);
-		}
-		else
-			ft_putstr_fd(arg, 1);
-	}
-}
 
 int	ft_echo(t_command *command)
 {
 	int	i;
 	int	n_option;
+	int	j;
 
 	i = 1;
 	n_option = 0;
-	if (counts_arguments(command) > 1)
+	while (command->args[i] && command->args[i][0] == '-')
 	{
-		while (command->args[i] && ft_strcmp(command->args[i], "-n") == 0)
+		j = 1;
+		while (command->args[i][j] && command->args[i][j] == 'n')
+			j++;
+		if (command->args[i][j] == '\0')
 		{
 			n_option = 1;
 			i++;
 		}
-		while (command->args[i])
-		{
-			print_argument(command->args[i]);
-			if (command->args[i + 1])
-				write(1, " ", 1);
-			i++;
-		}
+		else
+			break ;
 	}
-	if (n_option == 0)
+	while (command->args[i])
+	{
+		ft_putstr_fd(command->args[i], 1);
+		if (command->args[i + 1])
+			write(1, " ", 1);
+		i++;
+	}
+	if (!n_option)
 		write(1, "\n", 1);
 	return (0);
 }
