@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:32:43 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/03 12:11:36 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/11 15:35:40 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@ char	*get_current_directory(void)
 {
 	char	*cwd;
 
-	// If buf is NULL, space is allocated as necessary to store the pathname
-	// and size is ignored.This space may later be free(3)'d. if (getcwd(cwd,
 	cwd = getcwd(NULL, 0);
 	if (cwd == NULL)
 	{
@@ -29,29 +27,34 @@ char	*get_current_directory(void)
 
 char	*prompt(void)
 {
-	char *input;
-	char *cwd;
+	char	*input;
+	char	*cwd;
+	char	*prompt_str;
+	size_t	prompt_len;
 
-	while (1)
+	cwd = get_current_directory();
+	prompt_len = strlen("🐾 ") + strlen(cwd) + strlen(" 🐾 $> ") + 1;
+	prompt_str = malloc(prompt_len);
+	if (!prompt_str)
 	{
-		cwd = get_current_directory();
-		printf("🐾 %s 🐾 ", cwd);
 		free(cwd);
-		input = readline("$>");
-		if (input == NULL)
-			break ;
-		else if (strcmp(input, "exit") == 0)
-		{
-			return (NULL);
-		}
-		else
-		{
-			break ;
-		}
+		return (NULL);
 	}
+	snprintf(prompt_str, prompt_len, "🐾 %s 🐾 $> ", cwd);
+	free(cwd);
+	input = readline(prompt_str);
+	free(prompt_str);
+	if (!input)
+	{
+		printf("exit\n");
+		return (NULL);
+	}
+	if (*input)
+		add_history(input);
+	if (strcmp(input, "exit") == 0)
+		return (NULL);
 	return (input);
 }
-
 // char	*prompt(void)
 // {
 // 	char	*input;
@@ -62,19 +65,17 @@ char	*prompt(void)
 // 		cwd = get_current_directory();
 // 		printf("🐾 %s 🐾 ", cwd);
 // 		free(cwd);
-// 		input = readline("$>");
-// 		if (input == NULL)
+// 		input = readline("$> ");
+// 		if (!input)
+// 		{
+// 			printf("exit\n");
 // 			break ;
-// 		else if (*input)
+// 		}
+// 		if (*input)
 // 			add_history(input);
-// 		else if (strcmp(input, "exit") == 0)
-// 		{
-// 			return (NULL);
-// 		}
-// 		else
-// 		{
+// 		if (strcmp(input, "exit") == 0)
 // 			break ;
-// 		}
+// 		return (input);
 // 	}
-// 	return (input);
+// 	return (NULL);
 // }

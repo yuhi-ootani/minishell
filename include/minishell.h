@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/10 17:30:15 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/11 14:46:06 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@
 # include <sys/types.h> //pid_t
 # include <sys/wait.h>  //waitpid
 # include <unistd.h>    //getcwd
-// kiki
 # include <ctype.h>
 # include <errno.h>
 # include <signal.h>
