@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/11 12:14:43 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/11 16:02:16 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,10 @@
 
 extern volatile sig_atomic_t	g_signal;
 
-// ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖▗▄▄▄▖    ▗▄▄▄▖▗▖  ▗▖▗▖  ▗▖
-//   █  ▐▛▚▖▐▌  █    █      ▐▌   ▐▛▚▖▐▌▐▌  ▐▌
-//   █  ▐▌ ▝▜▌  █    █      ▐▛▀▀▘▐▌ ▝▜▌▐▌  ▐▌
-// ▗▄█▄▖▐▌  ▐▌▗▄█▄▖  █      ▐▙▄▄▖▐▌  ▐▌ ▝▚▞▘
+// ▗▖  ▗▖ ▗▄▖ ▗▄▄▄▖▗▖  ▗▖
+// ▐▛▚▞▜▌▐▌ ▐▌  █  ▐▛▚▖▐▌
+// ▐▌  ▐▌▐▛▀▜▌  █  ▐▌ ▝▜▌
+// ▐▌  ▐▌▐▌ ▐▌▗▄█▄▖▐▌  ▐▌
 
 typedef struct s_env
 {
@@ -45,6 +45,9 @@ typedef struct s_env
 	char						*value;
 	struct s_env				*next;
 }								t_env;
+
+/* prototype */
+t_env							*env_duplication(char **envp_srcs);
 
 // RubiFont
 // ▗▄▄▖ ▗▄▄▖  ▗▄▖ ▗▖  ▗▖▗▄▄▄▖
@@ -108,7 +111,7 @@ typedef struct s_command
 
 t_command						*parser(t_token *token_list);
 
-// ▗▄▄▄▖▗▖  ▗▖▗▄▄▖  ▗▄▖ ▗▖  ▗▖▗▄▄▄ 
+// ▗▄▄▄▖▗▖  ▗▖▗▄▄▖  ▗▄▖ ▗▖  ▗▖▗▄▄▄
 // ▐▌    ▝▚▞▘ ▐▌ ▐▌▐▌ ▐▌▐▛▚▖▐▌▐▌  █
 // ▐▛▀▀▘  ▐▌  ▐▛▀▘ ▐▛▀▜▌▐▌ ▝▜▌▐▌  █
 // ▐▙▄▄▖▗▞▘▝▚▖▐▌   ▐▌ ▐▌▐▌  ▐▌▐▙▄▄▀
@@ -141,7 +144,8 @@ typedef enum e_buildin_cmd
 
 // prototype
 void							command_executor(t_command *command,
-									char **envp);
+									t_env *envp);
+char							**build_envp_array(t_env *env);
 
 // ▗▄▄▖ ▗▄▄▄▖▗▄▄▄ ▗▄▄▄▖▗▄▄▖ ▗▄▄▄▖ ▗▄▄▖▗▄▄▄▖▗▄▄▄▖ ▗▄▖ ▗▖  ▗▖
 // ▐▌ ▐▌▐▌   ▐▌  █  █  ▐▌ ▐▌▐▌   ▐▌     █    █  ▐▌ ▐▌▐▛▚▖▐▌
@@ -159,9 +163,9 @@ int								ft_unset(t_command *cmd);
 int								ft_env(t_command *cmd);
 int								ft_exit(t_command *cmd);
 
-//  ▗▄▄▖▗▄▄▄▖ ▗▄▄▖▗▖  ▗▖ ▗▄▖ ▗▖   
-// ▐▌     █  ▐▌   ▐▛▚▖▐▌▐▌ ▐▌▐▌   
-//  ▝▀▚▖  █  ▐▌▝▜▌▐▌ ▝▜▌▐▛▀▜▌▐▌   
+//  ▗▄▄▖▗▄▄▄▖ ▗▄▄▖▗▖  ▗▖ ▗▄▖ ▗▖
+// ▐▌     █  ▐▌   ▐▛▚▖▐▌▐▌ ▐▌▐▌
+//  ▝▀▚▖  █  ▐▌▝▜▌▐▌ ▝▜▌▐▛▀▜▌▐▌
 // ▗▄▄▞▘▗▄█▄▖▝▚▄▞▘▐▌  ▐▌▐▌ ▐▌▐▙▄▄▖
 
 void							setup_signals(void);
@@ -177,10 +181,5 @@ void							disable_ctrlc_display(void);
 int								ft_isnumber(char *str);
 void							ft_putendl(char *s);
 void							expand_commands(t_command *command_list);
-
-//
-//
-char							**build_envp_array(t_env *env);
-t_env							*env_duplication(char **envp_srcs);
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/03 11:31:09 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/11 14:21:35 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,10 @@ char	*search_command_in_path(const char *command)
 	return (NULL);
 }
 
-void	execute_external_command(t_command *command, char **envp)
+void	execute_external_command(t_command *command, t_env *copied_envp)
 {
 	char	*command_path;
+	char	**envp;
 
 	if (strchr(command->args[0], '/') == NULL) // I think it needs modified
 	{
@@ -56,8 +57,13 @@ void	execute_external_command(t_command *command, char **envp)
 	}
 	else
 		command_path = strdup(command->args[0]);
+	envp = build_envp_array(copied_envp);
+	if (!envp)
+		exit(EXIT_FAILURE); // todo
+	// printf("%s\n", envp[2]);
 	if (execve(command_path, command->args, envp) == -1)
 	{
+		// free envp
 		fprintf(stderr, "%s: command not found\n", command->args[0]);
 		free(command_path);
 		exit(EXIT_FAILURE);
@@ -85,7 +91,7 @@ t_buildin_cmd	is_builtin(char *command_str)
 }
 
 static void	execute_child_process(t_command *command, int input_fd, int *pipefd,
-		char **envp)
+		t_env *envp)
 {
 	t_buildin_cmd	buildin_index;
 
@@ -110,7 +116,7 @@ static void	execute_child_process(t_command *command, int input_fd, int *pipefd,
 		execute_external_command(command, envp);
 }
 
-void	command_executor(t_command *command, char **envp)
+void	command_executor(t_command *command, t_env *envp)
 {
 	int		pipefd[2];
 	int		input_fd;

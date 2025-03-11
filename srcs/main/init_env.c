@@ -38,16 +38,31 @@ t_env	*env_duplication(char **envp_srcs)
 // {
 // 	t_env	*duped_env;
 // 	t_env	*tmp;
+// 	char	**envp_array;
 
-// 	duped_env = env_dup(envp);
-// 	while (duped_env)
+// 	duped_env = env_duplication(envp);
+// 	if (!duped_env)
 // 	{
-// 		printf("%s=%s\n", duped_env->name, duped_env->value);
-// 		tmp = duped_env;
-// 		duped_env = duped_env->next;
-// 		free(tmp->name);
-// 		free(tmp->value);
-// 		free(tmp);
+// 		printf("Error: env_dup() returned NULL.\n");
+// 		return (1);
 // 	}
+// 	// Debug: Print env list before processing
+// 	// printf("Debug: Printing linked list before conversion\n");
+// 	// tmp = duped_env;
+// 	// while (tmp)
+// 	// {
+// 	// 	printf("%s = %s\n", tmp->name, tmp->value);
+// 	// 	tmp = tmp->next;
+// 	// }
+// 	// printf("\nNow converting to array...\n");
+// 	envp_array = build_envp_array(duped_env);
+// 	if (!envp_array)
+// 	{
+// 		printf("Error: build_envp_array() returned NULL.\n");
+// 		return (1);
+// 	}
+// 	printf("\nFinal envp_array output:\n");
+// 	for (int i = 0; envp_array[i]; i++)
+// 		printf("%s\n", envp_array[i]);
 // 	return (0);
 // }

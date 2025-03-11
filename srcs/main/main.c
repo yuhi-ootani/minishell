@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/11 12:14:22 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/11 14:06:54 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,10 +135,11 @@ int	main(int argc, char **argv, char **envp)
 	char		*input;
 	t_token		*tokens_list;
 	t_command	*command_list;
+	t_env		*copied_env;
 
 	(void)argc;
 	(void)argv;
-	(void)envp;
+	copied_env = env_duplication(envp);
 	setup_signals();
 	while (1)
 	{
@@ -167,7 +168,7 @@ int	main(int argc, char **argv, char **envp)
 			{
 				expand_commands(command_list);
 				print_commands(command_list);
-				command_executor(command_list, envp);
+				command_executor(command_list, copied_env);
 			}
 			free(input);
 			free_tokens(tokens_list);

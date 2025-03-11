@@ -6,7 +6,7 @@
 #    By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 11:52:00 by otaniyuhi         #+#    #+#              #
-#    Updated: 2025/03/11 12:15:33 by oyuhi            ###   ########.fr        #
+#    Updated: 2025/03/11 16:00:48 by oyuhi            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,18 +30,17 @@ EXECUTOR_DIR = srcs/executor
 SIGNALS_DIR = srcs/signals
 BUILTINS_DIR = srcs/builtins
 UTILS_DIR = srcs/utils
-MANAGE_ENV_DIR = srcs/manage_env
+# MANAGE_ENV_DIR = srcs/manage_env
 EXECUTOR_DIR = srcs/executor
 	   
-SRCS = $(MAIN_DIR)/main.c \
+SRCS = $(MAIN_DIR)/main.c $(MAIN_DIR)/init_env.c  \
 	   $(PROMPT_DIR)/prompt.c \
 	   $(LEXER_DIR)/lexer.c $(LEXER_DIR)/token_word.c \
 	   $(PARSER_DIR)/parser.c \
 	   $(EXPAND_DIR)/expand.c \
        $(SIGNALS_DIR)/signals.c \
 	   $(UTILS_DIR)/utils.c \
-	   $(EXECUTOR_DIR)/executor.c $(EXECUTOR_DIR)/redirection.c \
-	   $(MANAGE_ENV_DIR)/build_envp_array.c $(MANAGE_ENV_DIR)/init_env.c \
+	   $(EXECUTOR_DIR)/executor.c $(EXECUTOR_DIR)/redirection.c $(EXECUTOR_DIR)/build_envp_array.c  \
 	   $(BUILTINS_DIR)/ft_cd.c $(BUILTINS_DIR)/ft_echo.c $(BUILTINS_DIR)/ft_env.c $(BUILTINS_DIR)/ft_exit.c $(BUILTINS_DIR)/ft_export.c $(BUILTINS_DIR)/ft_unset.c $(BUILTINS_DIR)/ft_pwd.c
 
 
