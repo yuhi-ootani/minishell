@@ -3,19 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 10:16:32 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/01 15:45:53 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/11 17:20:32 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int	ft_cd(t_command *command)
+int	ft_cd(t_command *command, t_env *copied_env)
 {
 	char	*path;
 
+	(void)copied_env;
 	if (!command->args[1])
 	{
 		path = getenv("HOME");

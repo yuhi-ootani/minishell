@@ -3,22 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:45:23 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/01 15:45:31 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/11 17:37:00 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int	ft_export(t_command *command)
+static void	set_new_env_variables(t_command *command, t_env *copied_env)
 {
 	char	*var;
 	char	*value;
-	int		i;
+	size_t	i;
 
-	if (!command->args[1] || ft_strchr(command->args[1], '=') == NULL)
+	if (ft_strchr(command->args[1], '=') == NULL)
 	{
 		fprintf(stderr, "export: invalid format. Use VAR=value\n");
 		return (1);
@@ -40,5 +40,13 @@ int	ft_export(t_command *command)
 		perror("export");
 	free(var);
 	free(value);
+}
+
+int	ft_export(t_command *command, t_env *copied_env)
+{
+	if (command->args[1])
+		set_new_env_variables(command, copied_env);
+	else
+		print_sorted_env(copied_env);
 	return (0);
 }

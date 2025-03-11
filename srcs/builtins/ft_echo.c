@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:14:15 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/11 14:46:14 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/11 17:20:49 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
 // static int	counts_arguments(t_command *command)
 // {
 // 	int	size;
@@ -79,12 +80,13 @@
 // 	return (0);
 // }
 
-int	ft_echo(t_command *command)
+int	ft_echo(t_command *command, t_env *copied_env)
 {
 	int	i;
 	int	n_option;
 	int	j;
 
+	(void)copied_env;
 	i = 1;
 	n_option = 0;
 	while (command->args[i] && command->args[i][0] == '-')
