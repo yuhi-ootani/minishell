@@ -3,14 +3,78 @@
 /*                                                        :::      ::::::::   */
 /*   token_word.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:34:11 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/01 15:14:32 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/10 15:20:10 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+/*yuyu no yacu*/
+
+// static bool	is_quote(const char *input, size_t *i, char *quote)
+// {
+// 	if (input[*i] == '\'' || input[*i] == '"')
+// 	{
+// 		if (!(*quote))
+// 		{
+// 			*quote = input[*i];
+// 			(*i)++;
+// 			return (true);
+// 		}
+// 		else if (input[*i] == *quote)
+// 		{
+// 			*quote = 0;
+// 			(*i)++;
+// 			return (true);
+// 		}
+// 	}
+// 	return (false);
+// }
+// static bool	is_unquoted_space(const char *input, size_t *i, char quote)
+// {
+// 	return (!quote && isspace(input[*i]));
+// }
+
+// static void	double_word_capacity(char *word, size_t *capacity)
+// {
+// 	(*capacity) *= 2;
+// 	word = (char *)realloc(word, *capacity); // realloc
+// 	if (!word)
+// 		exit(EXIT_FAILURE); // exit status!!!
+// }
+
+// static char	*extract_word(const char *input, size_t *i)
+// {
+// 	char	*word;
+// 	size_t	capacity;
+// 	size_t	len;
+// 	char	quote;
+
+// 	len = 0;
+// 	quote = 0;
+// 	capacity = 64;
+// 	word = (char *)malloc(capacity);
+// 	if (!word)
+// 		exit(EXIT_FAILURE); // must modified !!!
+// 	while (input[*i] && !is_unquoted_space(input, i, &quote))
+// 	{
+// 		if (is_quote(input, i, &quote) == true)
+// 			continue ;
+// 		if (!quote && strchr("|><$", input[*i])) // strchr
+// 			break ;
+// 		if (len + 1 >= capacity)
+// 			double_word_capacity(word, &capacity);
+// 		word[len++] = input[(*i)++];
+// 	}
+// 	word[len] = '\0';
+// 	return (word);
+// }
+
+// yuyu code new
+static bool	is_unquoted_space(const char *input, size_t *i, char quote);
 
 static bool	is_quote(const char *input, size_t *i, char *quote)
 {
@@ -32,17 +96,17 @@ static bool	is_quote(const char *input, size_t *i, char *quote)
 	return (false);
 }
 
-static void	double_word_capacity(char *word, size_t *capacity)
+static bool	is_unquoted_space(const char *input, size_t *i, char quote)
 {
-	(*capacity) *= 2;
-	word = (char *)realloc(word, *capacity);
-	if (!word)
-		exit(EXIT_FAILURE); // exit status!!!
+	return (!quote && isspace(input[*i]));
 }
 
-static bool	is_unquoted_space(const char *input, size_t *i, char *quote)
+static void	double_word_capacity(char **word, size_t *capacity)
 {
-	return (!(*quote) && isspace(input[*i]));
+	(*capacity) *= 2;
+	*word = (char *)realloc(*word, *capacity); // realloc
+	if (!*word)
+		exit(EXIT_FAILURE); // exit status!!!
 }
 
 static char	*extract_word(const char *input, size_t *i)
@@ -58,14 +122,19 @@ static char	*extract_word(const char *input, size_t *i)
 	word = (char *)malloc(capacity);
 	if (!word)
 		exit(EXIT_FAILURE); // must modified !!!
-	while (input[*i] && !is_unquoted_space(input, i, &quote))
+	while (input[*i] && !is_unquoted_space(input, i, quote))
 	{
-		if (is_quote(input, i, &quote) == true)
+		if (is_quote(input, i, &quote))
+		{
+			if (len + 1 >= capacity)
+				double_word_capacity(&word, &capacity);
+			word[len++] = input[(*i) - 1];
 			continue ;
-		if (!quote && strchr("|><$", input[*i])) // strchr
+		}
+		if (!quote && strchr("|><", input[*i])) // strchr
 			break ;
 		if (len + 1 >= capacity)
-			double_word_capacity(word, &capacity);
+			double_word_capacity(&word, &capacity);
 		word[len++] = input[(*i)++];
 	}
 	word[len] = '\0';
@@ -74,7 +143,7 @@ static char	*extract_word(const char *input, size_t *i)
 
 void	add_word_token(const char *input, size_t *i, t_token **tokens)
 {
-	char	*word;
+	char *word;
 
 	word = extract_word(input, i);
 	if (word && *word != '\0')

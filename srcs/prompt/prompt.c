@@ -6,13 +6,13 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:32:43 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/02/27 11:25:28 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/03 12:11:36 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
- char	*get_current_directory(void)
+char	*get_current_directory(void)
 {
 	char	*cwd;
 
@@ -51,3 +51,30 @@ char	*prompt(void)
 	}
 	return (input);
 }
+
+// char	*prompt(void)
+// {
+// 	char	*input;
+// 	char	*cwd;
+
+// 	while (1)
+// 	{
+// 		cwd = get_current_directory();
+// 		printf("🐾 %s 🐾 ", cwd);
+// 		free(cwd);
+// 		input = readline("$>");
+// 		if (input == NULL)
+// 			break ;
+// 		else if (*input)
+// 			add_history(input);
+// 		else if (strcmp(input, "exit") == 0)
+// 		{
+// 			return (NULL);
+// 		}
+// 		else
+// 		{
+// 			break ;
+// 		}
+// 	}
+// 	return (input);
+// }

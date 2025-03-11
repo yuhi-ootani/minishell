@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/04 20:05:59 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/11 12:14:43 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # include <sys/wait.h>  //waitpid
 # include <unistd.h>    //getcwd
 // kiki
+# include <ctype.h>
 # include <errno.h>
 # include <signal.h>
 # include <sys/types.h>
@@ -68,7 +69,6 @@ typedef enum e_token_type
 	TOKEN_REDIR_OUT,
 	TOKEN_APPEND,
 	TOKEN_HEREDOC,
-	TOKEN_ENV,
 	TOKEN_EOF
 }								t_token_type;
 
@@ -107,6 +107,21 @@ typedef struct s_command
 }								t_command;
 
 t_command						*parser(t_token *token_list);
+
+// ▗▄▄▄▖▗▖  ▗▖▗▄▄▖  ▗▄▖ ▗▖  ▗▖▗▄▄▄ 
+// ▐▌    ▝▚▞▘ ▐▌ ▐▌▐▌ ▐▌▐▛▚▖▐▌▐▌  █
+// ▐▛▀▀▘  ▐▌  ▐▛▀▘ ▐▛▀▜▌▐▌ ▝▜▌▐▌  █
+// ▐▙▄▄▖▗▞▘▝▚▖▐▌   ▐▌ ▐▌▐▌  ▐▌▐▙▄▄▀
+
+typedef struct s_expstate
+{
+	char						*result;
+	size_t						result_size;
+	size_t						j;
+	bool						in_single;
+	bool						in_double;
+}								t_expstate;
+
 // ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▄▖ ▗▄▄▖
 // ▐▌    ▝▚▞▘ ▐▌   ▐▌   ▐▌ ▐▌  █ ▐▌ ▐▌▐▌ ▐▌
 // ▐▛▀▀▘  ▐▌  ▐▛▀▀▘▐▌   ▐▌ ▐▌  █ ▐▌ ▐▌▐▛▀▚▖
@@ -144,9 +159,11 @@ int								ft_unset(t_command *cmd);
 int								ft_env(t_command *cmd);
 int								ft_exit(t_command *cmd);
 
-//                  kiki                 //
+//  ▗▄▄▖▗▄▄▄▖ ▗▄▄▖▗▖  ▗▖ ▗▄▖ ▗▖   
+// ▐▌     █  ▐▌   ▐▛▚▖▐▌▐▌ ▐▌▐▌   
+//  ▝▀▚▖  █  ▐▌▝▜▌▐▌ ▝▜▌▐▛▀▜▌▐▌   
+// ▗▄▄▞▘▗▄█▄▖▝▚▄▞▘▐▌  ▐▌▐▌ ▐▌▐▙▄▄▖
 
-/*signals*/
 void							setup_signals(void);
 void							handle_sigint(int signum);
 void							setup_signals(void);
@@ -159,6 +176,7 @@ void							disable_ctrlc_display(void);
 
 int								ft_isnumber(char *str);
 void							ft_putendl(char *s);
+void							expand_commands(t_command *command_list);
 
 //
 //

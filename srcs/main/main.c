@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/04 20:10:09 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/11 12:14:22 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,38 +104,30 @@ void	free_commands(t_command *head)
 	}
 }
 
-// int	main(void)
+// input = prompt();
+// if (!input)
 // {
-// 	char		*input;
-// 	t_token		*tokens_list;
-// 	t_command	*command_list;
-
-// 	printf("Enter commands:\n");
-// 	printf("  'clear'   : Clear command history.\n");
-// 	printf("  'replace' : Replace current line with a preset message.\n");
-// 	printf("  'exit'    : Exit the program.\n\n");
-// 	while (1)
+// 	printf("exit\n");
+// 	break ;
+// }
+// if (*input)
+// 	add_history(input);
+// tokens_list = lexer(input);
+// command_list = parser(tokens_list);
+// if (command_list)
+// {
+// 	if (is_builtin(command_list->args[0]) == FT_EXIT)
 // 	{
-// 		input = prompt();
-// 		if (input)
-// 		{
-// 			printf("Input: %s\n", input);
-// 			tokens_list = lexer(input);
-// 			free(input);
-// 			if (tokens_list)
-// 				print_tokens(tokens_list);
-// 			command_list = parser(tokens_list);
-// 			free_tokens(tokens_list);
-// 			if (command_list)
-// 			{
-// 				print_commands(command_list);
-// 				free_commands(command_list);
-// 			}
-// 		}
-// 		else
-// 			break ;
+// 		exit_code = ft_exit(command_list);
+// 		break ;
 // 	}
-// 	return (0);
+// 	single_command_executor(command_list, envp);
+// }
+// free(input);
+// free_tokens(tokens_list);
+// free_commands(command_list);
+// }
+// return (exit_code);
 // }
 
 int	main(int argc, char **argv, char **envp)
@@ -143,14 +135,11 @@ int	main(int argc, char **argv, char **envp)
 	char		*input;
 	t_token		*tokens_list;
 	t_command	*command_list;
-	t_env		*copied_env;
 
 	(void)argc;
 	(void)argv;
 	(void)envp;
 	setup_signals();
-	copied_env = env_duplication(envp);
-	// printf("Enter commands:\n");
 	while (1)
 	{
 		if (g_signal)
@@ -171,13 +160,14 @@ int	main(int argc, char **argv, char **envp)
 				continue ;
 			printf("Input: %s\n", input);
 			tokens_list = lexer(input);
-			// if (tokens_list)
-			// 	print_tokens(tokens_list);
+			if (tokens_list)
+				print_tokens(tokens_list);
 			command_list = parser(tokens_list);
 			if (command_list)
 			{
+				expand_commands(command_list);
 				print_commands(command_list);
-				command_executor(command_list, build_envp_array(copied_env));
+				command_executor(command_list, envp);
 			}
 			free(input);
 			free_tokens(tokens_list);
