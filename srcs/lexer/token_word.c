@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:34:11 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/04 20:04:52 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/10 15:20:10 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,7 @@ static char	*extract_word(const char *input, size_t *i)
 			word[len++] = input[(*i) - 1];
 			continue ;
 		}
-		if (!quote && strchr("|><$", input[*i])) // strchr
+		if (!quote && strchr("|><", input[*i])) // strchr
 			break ;
 		if (len + 1 >= capacity)
 			double_word_capacity(&word, &capacity);

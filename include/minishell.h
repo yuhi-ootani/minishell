@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/04 20:05:20 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/10 17:30:15 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,11 @@
 # include <sys/wait.h>  //waitpid
 # include <unistd.h>    //getcwd
 // kiki
+# include <ctype.h>
 # include <errno.h>
 # include <signal.h>
 # include <sys/types.h>
 # include <termios.h>
-# include <ctype.h>
 
 extern volatile sig_atomic_t	g_signal;
 
@@ -95,6 +95,21 @@ typedef struct s_command
 }								t_command;
 
 t_command						*parser(t_token *token_list);
+
+// ▗▄▄▄▖▗▖  ▗▖▗▄▄▖  ▗▄▖ ▗▖  ▗▖▗▄▄▄ 
+// ▐▌    ▝▚▞▘ ▐▌ ▐▌▐▌ ▐▌▐▛▚▖▐▌▐▌  █
+// ▐▛▀▀▘  ▐▌  ▐▛▀▘ ▐▛▀▜▌▐▌ ▝▜▌▐▌  █
+// ▐▙▄▄▖▗▞▘▝▚▖▐▌   ▐▌ ▐▌▐▌  ▐▌▐▙▄▄▀
+
+typedef struct s_expstate
+{
+	char						*result;
+	size_t						result_size;
+	size_t						j;
+	bool						in_single;
+	bool						in_double;
+}								t_expstate;
+
 // ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▄▖ ▗▄▄▖
 // ▐▌    ▝▚▞▘ ▐▌   ▐▌   ▐▌ ▐▌  █ ▐▌ ▐▌▐▌ ▐▌
 // ▐▛▀▀▘  ▐▌  ▐▛▀▀▘▐▌   ▐▌ ▐▌  █ ▐▌ ▐▌▐▛▀▚▖
@@ -132,9 +147,11 @@ int								ft_unset(t_command *cmd);
 int								ft_env(t_command *cmd);
 int								ft_exit(t_command *cmd);
 
-//                  kiki                 //
+//  ▗▄▄▖▗▄▄▄▖ ▗▄▄▖▗▖  ▗▖ ▗▄▖ ▗▖   
+// ▐▌     █  ▐▌   ▐▛▚▖▐▌▐▌ ▐▌▐▌   
+//  ▝▀▚▖  █  ▐▌▝▜▌▐▌ ▝▜▌▐▛▀▜▌▐▌   
+// ▗▄▄▞▘▗▄█▄▖▝▚▄▞▘▐▌  ▐▌▐▌ ▐▌▐▙▄▄▖
 
-/*signals*/
 void							setup_signals(void);
 void							handle_sigint(int signum);
 void							setup_signals(void);
@@ -147,6 +164,6 @@ void							disable_ctrlc_display(void);
 
 int								ft_isnumber(char *str);
 void							ft_putendl(char *s);
-void expand_commands(t_command *command_list);
+void							expand_commands(t_command *command_list);
 
 #endif
