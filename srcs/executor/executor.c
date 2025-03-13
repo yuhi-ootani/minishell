@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/11 17:19:22 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/12 19:08:23 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,8 +95,8 @@ static void	execute_child_process(t_command *command, int input_fd, int *pipefd,
 {
 	t_buildin_cmd	buildin_index;
 
-	static int (*builtin_funcs[])(t_command *, t_env *env) = {ft_echo, ft_cd, ft_pwd,
-		ft_export, ft_unset, ft_env, ft_exit};
+	static int (*builtin_funcs[])(t_command *, t_env *) = {ft_echo, ft_cd,
+		ft_pwd, ft_export, ft_unset, ft_env, ft_exit};
 	if (command->is_heredoc == false && input_fd != STDIN_FILENO)
 	{
 		dup2(input_fd, STDIN_FILENO);
@@ -111,7 +111,8 @@ static void	execute_child_process(t_command *command, int input_fd, int *pipefd,
 	}
 	buildin_index = is_builtin(command->args[0]);
 	if (buildin_index != FT_NOT_BUILDIN)
-		builtin_funcs[buildin_index](command, copied_env); // Execute the function
+		builtin_funcs[buildin_index](command, copied_env);
+			// Execute the function
 	else
 		execute_external_command(command, copied_env);
 }

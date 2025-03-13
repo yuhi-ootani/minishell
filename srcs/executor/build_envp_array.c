@@ -2,21 +2,6 @@
 
 #include "../../include/minishell.h"
 
-static size_t	count_env(t_env *env)
-{
-	size_t	count;
-
-	count = 0;
-	if (!env)
-		return (count);
-	while (env)
-	{
-		count++;
-		env = env->next;
-	}
-	return (count);
-}
-
 char	*ft_strjoin_three(char *str1, char *str2, char *str3)
 {
 	char	*tmp;
@@ -43,7 +28,7 @@ char	**build_envp_array(t_env *env)
 	t_env	*tmp;
 
 	count = 0;
-	count = count_env(env);
+	count = count_env_util(env);
 	envp_array = (char **)malloc(sizeof(char *) * (count + 1));
 	if (!envp_array)
 		return (NULL); // todo
