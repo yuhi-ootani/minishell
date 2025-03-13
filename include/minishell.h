@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/11 16:21:02 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/13 11:46:26 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@
 # include <ctype.h>
 # include <errno.h>
 # include <signal.h>
-# include <sys/types.h>
 # include <termios.h>
 
 extern volatile sig_atomic_t	g_signal;
@@ -110,6 +109,9 @@ typedef struct s_command
 
 t_command						*parser(t_token *token_list);
 
+char	**word_split(const char *input);
+char	*join_tokens(char **tokens);
+
 // ▗▄▄▄▖▗▖  ▗▖▗▄▄▖  ▗▄▖ ▗▖  ▗▖▗▄▄▄
 // ▐▌    ▝▚▞▘ ▐▌ ▐▌▐▌ ▐▌▐▛▚▖▐▌▐▌  █
 // ▐▛▀▀▘  ▐▌  ▐▛▀▘ ▐▛▀▜▌▐▌ ▝▜▌▐▌  █
@@ -119,7 +121,7 @@ typedef struct s_expstate
 {
 	char						*result;
 	size_t						result_size;
-	size_t						j;
+	size_t						result_index;
 	bool						in_single;
 	bool						in_double;
 }								t_expstate;

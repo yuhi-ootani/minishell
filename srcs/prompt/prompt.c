@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:32:43 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/11 15:35:40 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/11 19:02:30 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ char	*prompt(void)
 		return (NULL);
 	return (input);
 }
+
 // char	*prompt(void)
 // {
 // 	char	*input;
