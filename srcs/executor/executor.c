@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/14 13:25:09 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/14 18:41:57 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,13 +102,13 @@ static void	execute_child_process(t_command *command, int input_fd, int *pipefd,
 		dup2(input_fd, STDIN_FILENO);
 		close(input_fd);
 	}
-	handle_redirection(command);
 	if (command->next)
 	{
 		dup2(pipefd[1], STDOUT_FILENO);
 		close(pipefd[0]);
 		close(pipefd[1]);
 	}
+	handle_redirection(command);
 	buildin_index = is_builtin(command->args[0]);
 	if (buildin_index != FT_NOT_BUILDIN)
 	{
