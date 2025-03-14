@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/12 10:16:15 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/14 12:02:42 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,6 +169,7 @@ int	main(int argc, char **argv, char **envp)
 				expand_commands(command_list);
 				print_commands(command_list);
 				command_executor(command_list, copied_env);
+				print_commands(command_list);
 			}
 			free(input);
 			free_tokens(tokens_list);

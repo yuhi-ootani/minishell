@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/13 11:46:26 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/14 14:48:52 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,13 @@
 # define MINISHELL_H
 
 # include "../libft/libft.h"
+# include <ctype.h>
+# include <errno.h>
 # include <fcntl.h> //O_WRONLY O_APPEND O_CREAT
 # include <limits.h>
 # include <readline/history.h>
 # include <readline/readline.h>
+# include <signal.h>
 # include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>    //PATH_MAX
@@ -29,6 +32,7 @@
 # include <errno.h>
 # include <signal.h>
 # include <termios.h>
+# include <unistd.h> //getcwd
 
 extern volatile sig_atomic_t	g_signal;
 
@@ -109,8 +113,6 @@ typedef struct s_command
 
 t_command						*parser(t_token *token_list);
 
-char	**word_split(const char *input);
-char	*join_tokens(char **tokens);
 
 // ▗▄▄▄▖▗▖  ▗▖▗▄▄▖  ▗▄▖ ▗▖  ▗▖▗▄▄▄
 // ▐▌    ▝▚▞▘ ▐▌ ▐▌▐▌ ▐▌▐▛▚▖▐▌▐▌  █
@@ -125,7 +127,7 @@ typedef struct s_expstate
 	bool						in_single;
 	bool						in_double;
 }								t_expstate;
-
+void	expand_commands(t_command *command_list, t_env *copied_env);
 // ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▄▖ ▗▄▄▖
 // ▐▌    ▝▚▞▘ ▐▌   ▐▌   ▐▌ ▐▌  █ ▐▌ ▐▌▐▌ ▐▌
 // ▐▛▀▀▘  ▐▌  ▐▛▀▀▘▐▌   ▐▌ ▐▌  █ ▐▌ ▐▌▐▛▀▚▖
@@ -156,13 +158,13 @@ char							**build_envp_array(t_env *env);
 void							handle_redirection(t_command *command);
 
 // Builtin functions (implement separately)
-int								ft_echo(t_command *cmd);
-int								ft_cd(t_command *cmd);
-int								ft_pwd(t_command *cmd);
-int								ft_export(t_command *cmd);
-int								ft_unset(t_command *cmd);
-int								ft_env(t_command *cmd);
-int								ft_exit(t_command *cmd);
+int								ft_echo(t_command *command, t_env *copied_env);
+int								ft_cd(t_command *command, t_env *copied_env);
+int								ft_pwd(t_command *command, t_env *copied_env);
+int								ft_export(t_command *command, t_env *copied_env);
+int								ft_unset(t_command *command, t_env *copied_env);
+int								ft_env(t_command *command, t_env *copied_env);
+int								ft_exit(t_command *command, t_env *copied_env);
 
 //  ▗▄▄▖▗▄▄▄▖ ▗▄▄▖▗▖  ▗▖ ▗▄▖ ▗▖
 // ▐▌     █  ▐▌   ▐▛▚▖▐▌▐▌ ▐▌▐▌
@@ -174,6 +176,12 @@ void							handle_sigint(int signum);
 void							setup_signals(void);
 void							disable_ctrlc_display(void);
 
+// ▗▄▄▖ ▗▖ ▗▖▗▄▄▄▖▗▖ ▗▄▄▄▖▗▄▄▄▖▗▖  ▗▖ ▗▄▄▖
+// ▐▌ ▐▌▐▌ ▐▌  █  ▐▌   █    █  ▐▛▚▖▐▌▐▌
+// ▐▛▀▚▖▐▌ ▐▌  █  ▐▌   █    █  ▐▌ ▝▜▌ ▝▀▚▖
+// ▐▙▄▞▘▝▚▄▞▘▗▄█▄▖▐▙▄▄▖█  ▗▄█▄▖▐▌  ▐▌▗▄▄▞▘
+void							sort_and_print_env(t_env *copied_env);
+
 // ▗▖ ▗▖▗▄▄▄▖▗▄▄▄▖▗▖    ▗▄▄▖
 // ▐▌ ▐▌  █    █  ▐▌   ▐▌
 // ▐▌ ▐▌  █    █  ▐▌    ▝▀▚▖
@@ -181,6 +189,6 @@ void							disable_ctrlc_display(void);
 
 int								ft_isnumber(char *str);
 void							ft_putendl(char *s);
-void							expand_commands(t_command *command_list);
+size_t							count_env_util(t_env *env);
 
 #endif

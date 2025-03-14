@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 10:17:05 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/02 11:48:23 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/12 17:17:23 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,3 +42,17 @@ void	ft_putendl(char *s)
 	write(1, "\n", 1);
 }
 
+size_t	count_env_util(t_env *env)
+{
+	size_t count;
+
+	count = 0;
+	if (!env)
+		return (count);
+	while (env)
+	{
+		count++;
+		env = env->next;
+	}
+	return (count);
+}
