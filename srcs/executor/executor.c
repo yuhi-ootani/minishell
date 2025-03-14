@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/12 19:08:23 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/14 13:25:09 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ static void	execute_child_process(t_command *command, int input_fd, int *pipefd,
 {
 	t_buildin_cmd	buildin_index;
 
-	static int (*builtin_funcs[])(t_command *, t_env *) = {ft_echo, ft_cd,
+	static void (*builtin_funcs[])(t_command *, t_env **) = {ft_echo, ft_cd,
 		ft_pwd, ft_export, ft_unset, ft_env, ft_exit};
 	if (command->is_heredoc == false && input_fd != STDIN_FILENO)
 	{
@@ -111,8 +111,11 @@ static void	execute_child_process(t_command *command, int input_fd, int *pipefd,
 	}
 	buildin_index = is_builtin(command->args[0]);
 	if (buildin_index != FT_NOT_BUILDIN)
-		builtin_funcs[buildin_index](command, copied_env);
-			// Execute the function
+	{
+		builtin_funcs[buildin_index](command, &copied_env);
+		exit(EXIT_SUCCESS); // <-- Ensure the child process terminates here
+							// Execute the function
+	}
 	else
 		execute_external_command(command, copied_env);
 }
@@ -125,6 +128,21 @@ void	command_executor(t_command *command, t_env *copied_env)
 	int		status;
 
 	input_fd = STDIN_FILENO;
+	t_buildin_cmd builtin_index; //
+	// If there's only one command and it's a built-in,
+	// execute it in the parent process.
+	if (!command->next
+		&& (builtin_index = is_builtin(command->args[0])) != FT_NOT_BUILDIN)
+	{
+		handle_redirection(command);
+		// Call the built-in function directly in the parent.
+		// (Note: Make sure your built-in functions modify the shell state correctly.)
+		static void (*builtin_funcs[])(t_command *, t_env **) = {ft_echo, ft_cd,
+			ft_pwd, ft_export, ft_unset, ft_env, ft_exit};
+		builtin_funcs[builtin_index](command, &copied_env);
+		return ;
+	}
+	// Otherwise, execute commands via fork (for pipelines or external commands)
 	while (command)
 	{
 		if (command->next)

@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:44:32 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/13 15:04:06 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/14 13:20:46 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static void	remove_target_env(t_env **copied_env, t_env *prev, t_env *tmp)
 	free(tmp);
 }
 
-int	ft_unset(t_command *command, t_env *copied_env)
+void	ft_unset(t_command *command, t_env **copied_env)
 {
 	size_t	i;
 	char	*var_name;
@@ -51,15 +51,14 @@ int	ft_unset(t_command *command, t_env *copied_env)
 	{
 		var_name = command->args[i];
 		prev = NULL;
-		tmp = copied_env;
+		tmp = *copied_env;
 		while (tmp)
 		{
 			if (ft_strcmp(tmp->name, var_name) == 0)
-				remove_target_env(&copied_env, prev, tmp);
+				remove_target_env(copied_env, prev, tmp);
 			prev = tmp;
 			tmp = tmp->next;
 		}
 		i++;
 	}
-	return (0); // to do
 }

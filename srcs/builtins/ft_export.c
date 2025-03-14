@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:45:23 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/13 11:58:13 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/14 14:47:04 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,20 +17,7 @@
 //  ▝▀▚▖▐▛▀▀▘  █      ▐▌ ▝▜▌▐▛▀▀▘▐▌ ▐▌    ▐▛▀▀▘▐▌ ▝▜▌▐▌  ▐▌
 // ▗▄▄▞▘▐▙▄▄▖  █      ▐▌  ▐▌▐▙▄▄▖▐▙█▟▌    ▐▙▄▄▖▐▌  ▐▌ ▝▚▞▘
 
-static void	env_add_back(t_env **copied_env, t_env *new_env)
-{
-	t_env	*tmp;
 
-	tmp = *copied_env;
-	if (!tmp)
-	{
-		*copied_env = new_env;
-		return ;
-	}
-	while (tmp->next)
-		tmp = tmp->next;
-	tmp->next = new_env;
-}
 
 static bool	update_env_value_if_exists(t_env *copied_env, const char *new_name,
 		const char *new_value, bool append)
@@ -65,15 +52,11 @@ static void	set_env_value(t_env **copied_env, const char *new_name,
 
 	if (update_env_value_if_exists(*copied_env, new_name, new_value, append))
 		return ;
-	new_env = (t_env *)malloc(sizeof(t_env));
+	new_env = create_new_env_util(new_name, new_value, NULL);
 	if (!new_env)
-		exit(EXIT_FAILURE); // todo
-	new_env->name = ft_strdup(new_name);
-	if (new_value)
-		new_env->value = ft_strdup(new_value);
-	else
-		new_env->value = NULL;
-	env_add_back(copied_env, new_env);
+		return ; // todo
+	printf("new env added %s %s\n ", new_env->name, new_env->value);
+	env_add_back_util(copied_env, new_env);
 }
 
 //  ▗▄▄▖▗▄▄▄▖▗▄▄▄▖    ▗▖  ▗▖ ▗▄▖ ▗▖  ▗▖▗▄▄▄▖    ▗▖  ▗▖ ▗▄▖ ▗▖   ▗▖ ▗▖▗▄▄▄▖
@@ -143,7 +126,7 @@ static bool	is_invalid_arg(char *arg)
 	return (false);
 }
 
-static void	set_new_env_variables(char *arg, t_env *copied_env)
+static void	set_new_env_variables(char *arg, t_env **copied_env)
 {
 	char	*name;
 	char	*value;
@@ -155,7 +138,7 @@ static void	set_new_env_variables(char *arg, t_env *copied_env)
 		return ;
 	} // todo
 	get_name_and_value(&name, &value, arg, &append);
-	set_env_value(&copied_env, name, value, append);
+	set_env_value(copied_env, name, value, append);
 	free(name);
 	free(value);
 }
@@ -165,7 +148,7 @@ static void	set_new_env_variables(char *arg, t_env *copied_env)
 //  ▝▀▚▖  █ ▐▛▀▜▌▐▛▀▚▖ █
 // ▗▄▄▞▘  █ ▐▌ ▐▌▐▌ ▐▌ █
 
-int	ft_export(t_command *command, t_env *copied_env)
+void	ft_export(t_command *command, t_env **copied_env)
 {
 	size_t	i;
 
@@ -180,7 +163,7 @@ int	ft_export(t_command *command, t_env *copied_env)
 	}
 	else
 		sort_and_print_env(copied_env);
-	return (0);
+	return ;
 }
 
 // int	main(void)

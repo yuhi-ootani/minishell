@@ -2,18 +2,18 @@
 
 #include "../../include/minishell.h"
 
-static char	*get_env_value(char *value, char *env_src)
-{
-	if (strchr(env_src, '='))
-	{
-		if (value)
-			return (strdup(value));
-		else
-			return (strdup(""));
-	}
-	else
-		return (NULL);
-}
+// static char	*get_env_value(char *value, char *env_src)
+// {
+// 	if (strchr(env_src, '='))
+// 	{
+// 		if (value)
+// 			return (strdup(value));
+// 		else
+// 			return (strdup(""));
+// 	}
+// 	else
+// 		return (NULL);
+// }
 
 t_env	*env_duplication(char **envp_srcs)
 {
@@ -30,13 +30,10 @@ t_env	*env_duplication(char **envp_srcs)
 			envp_srcs++; // todo
 			continue ;
 		}
-		new_env = (t_env *)malloc(sizeof(t_env));
+		new_env = create_new_env_util(splited_env[0], splited_env[1], NULL);
 		if (!new_env)
 			break ; // todo
-		new_env->name = strdup(splited_env[0]);
-		new_env->value = get_env_value(splited_env[1], *envp_srcs);
-		new_env->next = head_of_copied_env;
-		head_of_copied_env = new_env;
+		env_add_back_util(&head_of_copied_env, new_env);
 		ft_array_free(splited_env);
 		envp_srcs++;
 	}
