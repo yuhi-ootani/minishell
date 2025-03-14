@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/14 14:48:52 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/14 15:17:15 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,13 @@
 // ▐▌  ▐▌▐▛▀▜▌  █  ▐▌ ▝▜▌
 // ▐▌  ▐▌▐▌ ▐▌▗▄█▄▖▐▌  ▐▌
 
-// typedef struct s_minishell
-// {
-// 	t_env						*env;
-// 	t_token						*tokens;
-// 	t_command					*commands;
-// 	int							exit_status;
-// }								t_minishell;
+typedef struct s_minishell
+{
+	t_env						*env;
+	t_token						*tokens;
+	t_command					*commands;
+	int							exit_status;
+}								t_minishell;
 
 typedef struct s_env
 {
@@ -199,7 +199,7 @@ void							expand_commands(t_command *command_list);
 size_t							count_env_util(t_env *env);
 t_env							*create_new_env_util(const char *new_name,
 									const char *new_value, t_env *new_next);
- void						env_add_back_util(t_env **copied_env,
+void							env_add_back_util(t_env **copied_env,
 									t_env *new_env);
 
 #endif

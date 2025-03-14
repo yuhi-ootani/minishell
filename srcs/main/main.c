@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/11 16:21:51 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/14 17:56:24 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,16 +130,29 @@ void	free_commands(t_command *head)
 // return (exit_code);
 // }
 
+static t_minishell	*create_shell_structe(void)
+{
+	t_minishell	*new_shell;
+
+	new_shell = (t_minishell *)malloc(sizeof(t_minishell));
+	if (!new_shell)
+		return (NULL);
+	new_shell->env = NULL;
+	new_shell->tokens = NULL;
+	new_shell->commands = NULL;
+	new_shell->exit_status = 0;
+	return (new_shell);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	char		*input;
-	t_token		*tokens_list;
-	t_command	*command_list;
-	t_env		*copied_env;
+	t_minishell	*shell;
 
-	(void)argc;
-	(void)argv;
-	copied_env = env_duplication(envp);
+	if (argc > 2)
+		printf("minishell: %s: No such file or directory", argv[1]);
+	shell = create_shell_structe();
+	shell->env = env_duplication(envp);
 	setup_signals();
 	while (1)
 	{
