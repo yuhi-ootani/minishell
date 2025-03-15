@@ -6,13 +6,13 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:14:15 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/15 18:02:00 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/15 18:07:58 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void	ft_echo(t_command *command, t_env **copied_env)
+void	ft_echo(t_minishell *shell)
 {
 	int			i;
 	int			n_option;

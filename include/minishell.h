@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/15 18:00:46 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/15 18:06:34 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,6 @@
 # include <string.h>    //strcmp🚨
 # include <sys/types.h> //pid_t
 # include <sys/wait.h>  //waitpid
-# include <unistd.h>    //getcwd
-# include <ctype.h>
-# include <errno.h>
-# include <signal.h>
 # include <termios.h>
 # include <unistd.h> //getcwd
 
@@ -111,7 +107,6 @@ typedef struct s_command
 
 t_command						*parser(t_token *token_list);
 
-
 // ▗▄▄▄▖▗▖  ▗▖▗▄▄▖  ▗▄▖ ▗▖  ▗▖▗▄▄▄
 // ▐▌    ▝▚▞▘ ▐▌ ▐▌▐▌ ▐▌▐▛▚▖▐▌▐▌  █
 // ▐▛▀▀▘  ▐▌  ▐▛▀▘ ▐▛▀▜▌▐▌ ▝▜▌▐▌  █
@@ -125,6 +120,9 @@ typedef struct s_expstate
 	bool						in_single;
 	bool						in_double;
 }								t_expstate;
+
+void							expand_commands(t_command *command_list,
+									t_env *copied_env);
 
 // ▗▄▄▖ ▗▄▄▄▖▗▄▄▄ ▗▄▄▄▖▗▄▄▖ ▗▄▄▄▖ ▗▄▄▖▗▄▄▄▖▗▄▄▄▖ ▗▄▖ ▗▖  ▗▖
 // ▐▌ ▐▌▐▌   ▐▌  █  █  ▐▌ ▐▌▐▌   ▐▌     █    █  ▐▌ ▐▌▐▛▚▖▐▌

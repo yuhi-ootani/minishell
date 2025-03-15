@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/15 18:03:59 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/15 18:05:49 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,6 @@ void	free_commands(t_command *head)
 // return (exit_code);
 // }
 
-
 static t_minishell	*create_shell_struct(void)
 {
 	t_minishell	*new_shell;
@@ -180,7 +179,7 @@ int	main(int argc, char **argv, char **envp)
 			shell->commands = parser(shell->tokens);
 			if (shell->commands)
 			{
-				expand_commands(shell->commands);
+				expand_commands(shell->commands, shell->env);
 				print_commands(shell->commands);
 				command_executor(shell);
 			}
