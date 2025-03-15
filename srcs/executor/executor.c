@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/15 17:01:26 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/15 17:50:38 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,8 +130,10 @@ bool	is_single_builtin_command(t_minishell *shell, t_exec *exec_info)
 
 void	run_forked_commands(t_minishell *shell, t_exec *exec_info)
 {
-	pid_t	pid;
+	int	i;
 
+	pid_t pids[1000]; // Array to store PIDs for all commands
+	i = 0;
 	while (shell->commands)
 	{
 		if (shell->commands->next)
@@ -142,15 +144,16 @@ void	run_forked_commands(t_minishell *shell, t_exec *exec_info)
 				return ;
 			}
 		}
-		pid = fork();
-		if (pid == 0)
+		pids[i] = fork();
+		if (pids[i] == 0)
 			execute_child_process(shell, exec_info);
-		else if (pid < 0)
+		else if (pids[i] < 0)
 		{
 			perror("fork");     // modified
 			exit(EXIT_FAILURE); // modified
 		}
-		waitpid(pid, shell->exit_status, 0);
+		if (!shell->commands->next)
+			waitpid(pids[i], shell->exit_status, 0);
 		if (exec_info->input_fd != STDIN_FILENO)
 			close(exec_info->input_fd);
 		if (shell->commands->next)
@@ -159,7 +162,11 @@ void	run_forked_commands(t_minishell *shell, t_exec *exec_info)
 			exec_info->input_fd = exec_info->pipe_fds[0];
 		}
 		shell->commands = shell->commands->next;
+		i++;
 	}
+	// Now wait for all children
+	for (int j = 0; j < i; j++)
+		waitpid(pids[j], shell->exit_status, 0);
 }
 
 static void	init_exec_info(t_exec *exec_info)
