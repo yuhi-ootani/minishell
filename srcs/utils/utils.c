@@ -6,13 +6,13 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 10:17:05 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/14 14:48:55 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/15 16:59:26 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int	ft_isnumber(char *str)
+ int	ft_isnumber(char *str)
 {
 	int	i;
 
@@ -27,6 +27,7 @@ int	ft_isnumber(char *str)
 	}
 	return (1);
 }
+
 void	ft_putendl(char *s)
 {
 	int	i;

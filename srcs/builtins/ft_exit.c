@@ -6,19 +6,20 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:44:02 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/14 13:19:54 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/15 16:31:04 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void	ft_exit(t_command *command, t_env **copied_env)
+void	ft_exit(t_minishell *shell)
 {
-	int	exit_code;
+	int			exit_code;
+	t_command	*command;
 
 	exit_code = 0;
 	printf("exit\n");
-	(void)copied_env;
+	command = shell->commands;
 	if (command->args[1] && command->args[2])
 	{
 		fprintf(stderr, "exit: too many arguments\n");

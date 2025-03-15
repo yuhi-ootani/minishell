@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:44:32 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/14 13:20:46 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/15 16:41:52 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,36 +28,39 @@
 // 	return (0);
 // }
 
-static void	remove_target_env(t_env **copied_env, t_env *prev, t_env *tmp)
+static void	remove_target_env(t_env **copied_env, t_env *prev_env,
+		t_env *target_env)
 {
-	if (prev)
-		prev->next = tmp->next;
+	if (prev_env)
+		prev_env->next = target_env->next;
 	else
-		*copied_env = tmp->next;
-	free(tmp->name);
-	free(tmp->value);
-	free(tmp);
+		*copied_env = target_env->next;
+	free(target_env->name);
+	free(target_env->value);
+	free(target_env);
 }
 
-void	ft_unset(t_command *command, t_env **copied_env)
+void	ft_unset(t_minishell *shell)
 {
-	size_t	i;
-	char	*var_name;
-	t_env	*prev;
-	t_env	*tmp;
+	size_t		i;
+	char		*var_name;
+	t_env		*prev_env;
+	t_env		*tmp_env;
+	t_command	*command;
 
 	i = 1;
+	command = shell->commands;
 	while (command->args[i])
 	{
 		var_name = command->args[i];
-		prev = NULL;
-		tmp = *copied_env;
-		while (tmp)
+		prev_env = NULL;
+		tmp_env = shell->env;
+		while (tmp_env)
 		{
-			if (ft_strcmp(tmp->name, var_name) == 0)
-				remove_target_env(copied_env, prev, tmp);
-			prev = tmp;
-			tmp = tmp->next;
+			if (ft_strcmp(tmp_env->name, var_name) == 0)
+				remove_target_env(&shell->env, prev_env, tmp_env);
+			prev_env = tmp_env;
+			tmp_env = tmp_env->next;
 		}
 		i++;
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:45:23 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/14 19:26:35 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/15 18:02:17 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,13 @@
 //  ▝▀▚▖▐▛▀▀▘  █      ▐▌ ▝▜▌▐▛▀▀▘▐▌ ▐▌    ▐▛▀▀▘▐▌ ▝▜▌▐▌  ▐▌
 // ▗▄▄▞▘▐▙▄▄▖  █      ▐▌  ▐▌▐▙▄▄▖▐▙█▟▌    ▐▙▄▄▖▐▌  ▐▌ ▝▚▞▘
 
-
-
-static bool	update_env_value_if_exists(t_env *copied_env, const char *new_name,
+static bool	update_env_value_if_exists(t_env **copied_env, const char *new_name,
 		const char *new_value, bool append)
 {
 	t_env	*tmp;
 	char	*new_allocated_value;
 
-	tmp = copied_env;
+	tmp = *copied_env;
 	while (tmp)
 	{
 		if (ft_strcmp(tmp->name, new_name) == 0)
@@ -50,7 +48,7 @@ static void	set_env_value(t_env **copied_env, const char *new_name,
 {
 	t_env	*new_env;
 
-	if (update_env_value_if_exists(*copied_env, new_name, new_value, append))
+	if (update_env_value_if_exists(copied_env, new_name, new_value, append))
 		return ;
 	new_env = create_new_env_util(new_name, new_value, NULL);
 	if (!new_env)
@@ -148,21 +146,23 @@ static void	set_new_env_variables(char *arg, t_env **copied_env)
 //  ▝▀▚▖  █ ▐▛▀▜▌▐▛▀▚▖ █
 // ▗▄▄▞▘  █ ▐▌ ▐▌▐▌ ▐▌ █
 
-void	ft_export(t_command *command, t_env **copied_env)
+void	ft_export(t_minishell *shell)
 {
-	size_t	i;
+	size_t		i;
+	t_command	*command;
 
+	command = shell->commands;
 	if (command->args[1])
 	{
 		i = 1;
 		while (command->args[i])
 		{
-			set_new_env_variables(command->args[i], copied_env);
+			set_new_env_variables(command->args[i], &shell->env);
 			i++;
 		}
 	}
 	else
-		sort_and_print_env(copied_env);
+		sort_and_print_env(&shell->env);
 	return ;
 }
 

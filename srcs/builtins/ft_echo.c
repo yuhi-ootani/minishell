@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:14:15 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/15 09:15:12 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/15 18:02:00 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,14 @@
 
 void	ft_echo(t_command *command, t_env **copied_env)
 {
-	int	i;
-	int	n_option;
-	int	j;
+	int			i;
+	int			n_option;
+	int			j;
+	t_command	*command;
 
-	(void)copied_env;
 	i = 1;
 	n_option = 0;
+	command = shell->commands;
 	while (command->args[i] && command->args[i][0] == '-')
 	{
 		j = 1;
