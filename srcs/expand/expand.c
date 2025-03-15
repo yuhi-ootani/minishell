@@ -6,11 +6,12 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 11:09:19 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/15 17:14:01 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/15 18:13:54 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
 char	*get_env_value(t_env *env, const char *name)
 {
 	if (!env || !name)
