@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/14 17:56:24 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/15 14:43:44 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,8 @@ void	free_commands(t_command *head)
 // return (exit_code);
 // }
 
-static t_minishell	*create_shell_structe(void)
+
+static t_minishell	*create_shell_struct(void)
 {
 	t_minishell	*new_shell;
 
@@ -149,9 +150,9 @@ int	main(int argc, char **argv, char **envp)
 	char		*input;
 	t_minishell	*shell;
 
-	if (argc > 2)
-		printf("minishell: %s: No such file or directory", argv[1]);
-	shell = create_shell_structe();
+	if (argc > 1)
+		printf("minishell: %s: No such file or directory\n", argv[1]);
+	shell = create_shell_struct();
 	shell->env = env_duplication(envp);
 	setup_signals();
 	while (1)
@@ -173,19 +174,19 @@ int	main(int argc, char **argv, char **envp)
 			if (!input[0])
 				continue ;
 			printf("Input: %s\n", input);
-			tokens_list = lexer(input);
-			if (tokens_list)
-				print_tokens(tokens_list);
-			command_list = parser(tokens_list);
-			if (command_list)
+			shell->tokens = lexer(input);
+			if (shell->tokens)
+				print_tokens(shell->tokens);
+			shell->commands = parser(shell->tokens);
+			if (shell->commands)
 			{
-				expand_commands(command_list);
-				print_commands(command_list);
-				command_executor(command_list, copied_env);
+				expand_commands(shell->commands);
+				print_commands(shell->commands);
+				command_executor(shell);
 			}
 			free(input);
-			free_tokens(tokens_list);
-			free_commands(command_list);
+			free_tokens(shell->tokens);
+			free_commands(shell->commands);
 		}
 		else
 			break ;

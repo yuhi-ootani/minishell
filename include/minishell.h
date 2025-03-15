@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/14 15:17:15 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/15 17:04:29 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,14 +35,6 @@
 // ▐▛▚▞▜▌▐▌ ▐▌  █  ▐▛▚▖▐▌
 // ▐▌  ▐▌▐▛▀▜▌  █  ▐▌ ▝▜▌
 // ▐▌  ▐▌▐▌ ▐▌▗▄█▄▖▐▌  ▐▌
-
-typedef struct s_minishell
-{
-	t_env						*env;
-	t_token						*tokens;
-	t_command					*commands;
-	int							exit_status;
-}								t_minishell;
 
 typedef struct s_env
 {
@@ -130,28 +122,6 @@ typedef struct s_expstate
 	bool						in_double;
 }								t_expstate;
 
-// ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▄▖ ▗▄▄▖
-// ▐▌    ▝▚▞▘ ▐▌   ▐▌   ▐▌ ▐▌  █ ▐▌ ▐▌▐▌ ▐▌
-// ▐▛▀▀▘  ▐▌  ▐▛▀▀▘▐▌   ▐▌ ▐▌  █ ▐▌ ▐▌▐▛▀▚▖
-// ▐▙▄▄▖▗▞▘▝▚▖▐▙▄▄▖▝▚▄▄▖▝▚▄▞▘  █ ▝▚▄▞▘▐▌ ▐▌
-
-typedef enum e_buildin_cmd
-{
-	FT_ECHO,
-	FT_CD,
-	FT_PWD,
-	FT_EXPORT,
-	FT_UNSET,
-	FT_ENV,
-	FT_EXIT,
-	FT_NOT_BUILDIN,
-}								t_buildin_cmd;
-
-// prototype
-void							command_executor(t_command *command,
-									t_env *envp);
-char							**build_envp_array(t_env *env);
-
 // ▗▄▄▖ ▗▄▄▄▖▗▄▄▄ ▗▄▄▄▖▗▄▄▖ ▗▄▄▄▖ ▗▄▄▖▗▄▄▄▖▗▄▄▄▖ ▗▄▖ ▗▖  ▗▖
 // ▐▌ ▐▌▐▌   ▐▌  █  █  ▐▌ ▐▌▐▌   ▐▌     █    █  ▐▌ ▐▌▐▛▚▖▐▌
 // ▐▛▀▚▖▐▛▀▀▘▐▌  █  █  ▐▛▀▚▖▐▛▀▀▘▐▌     █    █  ▐▌ ▐▌▐▌ ▝▜▌
@@ -171,23 +141,6 @@ void							handle_sigint(int signum);
 void							setup_signals(void);
 void							disable_ctrlc_display(void);
 
-// ▗▄▄▖ ▗▖ ▗▖▗▄▄▄▖▗▖ ▗▄▄▄▖▗▄▄▄▖▗▖  ▗▖ ▗▄▄▖
-// ▐▌ ▐▌▐▌ ▐▌  █  ▐▌   █    █  ▐▛▚▖▐▌▐▌
-// ▐▛▀▚▖▐▌ ▐▌  █  ▐▌   █    █  ▐▌ ▝▜▌ ▝▀▚▖
-// ▐▙▄▞▘▝▚▄▞▘▗▄█▄▖▐▙▄▄▖█  ▗▄█▄▖▐▌  ▐▌▗▄▄▞▘
-
-// Builtin functions (implement separately)
-void							ft_echo(t_command *command, t_env **copied_env);
-void							ft_cd(t_command *command, t_env **copied_env);
-void							ft_pwd(t_command *command, t_env **copied_env);
-void							ft_export(t_command *command,
-									t_env **copied_env);
-void							sort_and_print_env(t_env **copied_env);
-void							ft_unset(t_command *command,
-									t_env **copied_env);
-void							ft_env(t_command *command, t_env **copied_env);
-void							ft_exit(t_command *command, t_env **copied_env);
-
 // ▗▖ ▗▖▗▄▄▄▖▗▄▄▄▖▗▖    ▗▄▄▖
 // ▐▌ ▐▌  █    █  ▐▌   ▐▌
 // ▐▌ ▐▌  █    █  ▐▌    ▝▀▚▖
@@ -201,5 +154,63 @@ t_env							*create_new_env_util(const char *new_name,
 									const char *new_value, t_env *new_next);
 void							env_add_back_util(t_env **copied_env,
 									t_env *new_env);
+
+// ▗▄▄▄▖      ▗▖  ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖   ▗▖
+//   █        ▐▛▚▞▜▌  █  ▐▛▚▖▐▌  █  ▐▌   ▐▌ ▐▌▐▌   ▐▌   ▐▌
+//   █        ▐▌  ▐▌  █  ▐▌ ▝▜▌  █   ▝▀▚▖▐▛▀▜▌▐▛▀▀▘▐▌   ▐▌
+//   █  ▗▄▄▄▄ ▐▌  ▐▌▗▄█▄▖▐▌  ▐▌▗▄█▄▖▗▄▄▞▘▐▌ ▐▌▐▙▄▄▖▐▙▄▄▖▐▙▄▄▖
+
+typedef struct s_minishell
+{
+	t_env						*env;
+	t_token						*tokens;
+	t_command					*commands;
+	int							*exit_status;
+}								t_minishell;
+
+// ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▄▖ ▗▄▄▖
+// ▐▌    ▝▚▞▘ ▐▌   ▐▌   ▐▌ ▐▌  █ ▐▌ ▐▌▐▌ ▐▌
+// ▐▛▀▀▘  ▐▌  ▐▛▀▀▘▐▌   ▐▌ ▐▌  █ ▐▌ ▐▌▐▛▀▚▖
+// ▐▙▄▄▖▗▞▘▝▚▖▐▙▄▄▖▝▚▄▄▖▝▚▄▞▘  █ ▝▚▄▞▘▐▌ ▐▌
+
+typedef enum e_buildin_index
+{
+	FT_ECHO,
+	FT_CD,
+	FT_PWD,
+	FT_EXPORT,
+	FT_UNSET,
+	FT_ENV,
+	FT_EXIT,
+	NOT_BUILDIN,
+}								t_builtin_id;
+
+# define NUM_BUILTINS 7
+typedef struct s_exec
+{
+	int							input_fd;
+	int							pipe_fds[2];
+	t_builtin_id				builtin_id;
+	void						(*builtins[NUM_BUILTINS])(t_minishell *);
+}								t_exec;
+
+// prototype
+void							command_executor(t_minishell *shell);
+char							**build_envp_array(t_env *env);
+
+// ▗▄▄▖ ▗▖ ▗▖▗▄▄▄▖▗▖ ▗▄▄▄▖▗▄▄▄▖▗▖  ▗▖ ▗▄▄▖
+// ▐▌ ▐▌▐▌ ▐▌  █  ▐▌   █    █  ▐▛▚▖▐▌▐▌
+// ▐▛▀▚▖▐▌ ▐▌  █  ▐▌   █    █  ▐▌ ▝▜▌ ▝▀▚▖
+// ▐▙▄▞▘▝▚▄▞▘▗▄█▄▖▐▙▄▄▖█  ▗▄█▄▖▐▌  ▐▌▗▄▄▞▘
+
+// Builtin functions (implement separately)
+void							ft_echo(t_minishell *shell);
+void							ft_cd(t_minishell *shell);
+void							ft_pwd(t_minishell *shell);
+void							ft_export(t_minishell *shell);
+void							sort_and_print_env(t_env **copied_env);
+void							ft_unset(t_minishell *shell);
+void							ft_env(t_minishell *shell);
+void							ft_exit(t_minishell *shell);
 
 #endif

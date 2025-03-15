@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:42:21 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/14 13:19:22 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/15 16:30:21 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,16 +24,15 @@
 // 	}
 // }
 
-void	ft_env(t_command *command, t_env **coppied_env)
+void	ft_env(t_minishell *shell)
 {
-	t_env	*tmp;
+	t_env	*tmp_env;
 
-	(void)command;
-	tmp = *coppied_env;
-	while (tmp)
+	tmp_env = shell->env;
+	while (tmp_env)
 	{
-		if (tmp->value)
-			printf("%s=%s\n", tmp->name, tmp->value);
-		tmp = tmp->next;
+		if (tmp_env->value)
+			printf("%s=%s\n", tmp_env->name, tmp_env->value);
+		tmp_env = tmp_env->next;
 	}
 }

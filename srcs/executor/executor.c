@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/14 13:25:09 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/15 17:01:26 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,38 +39,40 @@ char	*search_command_in_path(const char *command)
 	return (NULL);
 }
 
-void	execute_external_command(t_command *command, t_env *copied_env)
+void	execute_external_command(t_minishell *shell)
 {
 	char	*command_path;
 	char	**envp_array;
 
-	if (strchr(command->args[0], '/') == NULL) // I think it needs modified
+	if (strchr(shell->commands->args[0], '/') == NULL)
+	// I think it needs modified
 	{
-		command_path = search_command_in_path(command->args[0]);
+		command_path = search_command_in_path(shell->commands->args[0]);
 		if (!command_path)
 		{
-			fprintf(stderr, "%s: command not found\n", command->args[0]);
+			fprintf(stderr, "%s: command not found\n",
+				shell->commands->args[0]);
 			// modified
 			exit(EXIT_FAILURE);
 			// modified
 		}
 	}
 	else
-		command_path = strdup(command->args[0]);
-	envp_array = build_envp_array(copied_env);
+		command_path = strdup(shell->commands->args[0]);
+	envp_array = build_envp_array(shell->env);
 	if (!envp_array)
 		exit(EXIT_FAILURE); // todo
 	// printf("%s\n", envp[2]);
-	if (execve(command_path, command->args, envp_array) == -1)
+	if (execve(command_path, shell->commands->args, envp_array) == -1)
 	{
 		// free envp
-		fprintf(stderr, "%s: command not found\n", command->args[0]);
+		fprintf(stderr, "%s: command not found\n", shell->commands->args[0]);
 		free(command_path);
 		exit(EXIT_FAILURE);
 	}
 }
 
-t_buildin_cmd	is_builtin(char *command_str)
+t_builtin_id	is_builtin(char *command_str)
 {
 	if (strcmp(command_str, "echo") == 0)
 		return (FT_ECHO);
@@ -87,67 +89,54 @@ t_buildin_cmd	is_builtin(char *command_str)
 	else if (strcmp(command_str, "exit") == 0)
 		return (FT_EXIT);
 	else
-		return (FT_NOT_BUILDIN);
+		return (NOT_BUILDIN);
 }
 
-static void	execute_child_process(t_command *command, int input_fd, int *pipefd,
-		t_env *copied_env)
+static void	execute_child_process(t_minishell *shell, t_exec *exec_info)
 {
-	t_buildin_cmd	buildin_index;
-
-	static void (*builtin_funcs[])(t_command *, t_env **) = {ft_echo, ft_cd,
-		ft_pwd, ft_export, ft_unset, ft_env, ft_exit};
-	if (command->is_heredoc == false && input_fd != STDIN_FILENO)
+	if (shell->commands->is_heredoc == false
+		&& exec_info->input_fd != STDIN_FILENO)
 	{
-		dup2(input_fd, STDIN_FILENO);
-		close(input_fd);
+		dup2(exec_info->input_fd, STDIN_FILENO);
+		close(exec_info->input_fd);
 	}
-	handle_redirection(command);
-	if (command->next)
+	if (shell->commands->next)
 	{
-		dup2(pipefd[1], STDOUT_FILENO);
-		close(pipefd[0]);
-		close(pipefd[1]);
+		dup2(exec_info->pipe_fds[1], STDOUT_FILENO);
+		close(exec_info->pipe_fds[0]);
+		close(exec_info->pipe_fds[1]);
 	}
-	buildin_index = is_builtin(command->args[0]);
-	if (buildin_index != FT_NOT_BUILDIN)
+	handle_redirection(shell->commands);
+	if (exec_info->builtin_id != NOT_BUILDIN)
 	{
-		builtin_funcs[buildin_index](command, &copied_env);
-		exit(EXIT_SUCCESS); // <-- Ensure the child process terminates here
-							// Execute the function
+		exec_info->builtins[exec_info->builtin_id](shell);
+		exit(EXIT_SUCCESS);
 	}
 	else
-		execute_external_command(command, copied_env);
+		execute_external_command(shell);
 }
 
-void	command_executor(t_command *command, t_env *copied_env)
+static void	run_single_builtin_in_parent(t_minishell *shell, t_exec *exec_info)
 {
-	int		pipefd[2];
-	int		input_fd;
-	pid_t	pid;
-	int		status;
+	handle_redirection(shell->commands);
+	exec_info->builtins[exec_info->builtin_id](shell);
+}
 
-	input_fd = STDIN_FILENO;
-	t_buildin_cmd builtin_index; //
-	// If there's only one command and it's a built-in,
-	// execute it in the parent process.
-	if (!command->next
-		&& (builtin_index = is_builtin(command->args[0])) != FT_NOT_BUILDIN)
+bool	is_single_builtin_command(t_minishell *shell, t_exec *exec_info)
+{
+	return (shell->commands->next == NULL
+		&& exec_info->builtin_id != NOT_BUILDIN);
+}
+
+void	run_forked_commands(t_minishell *shell, t_exec *exec_info)
+{
+	pid_t	pid;
+
+	while (shell->commands)
 	{
-		handle_redirection(command);
-		// Call the built-in function directly in the parent.
-		// (Note: Make sure your built-in functions modify the shell state correctly.)
-		static void (*builtin_funcs[])(t_command *, t_env **) = {ft_echo, ft_cd,
-			ft_pwd, ft_export, ft_unset, ft_env, ft_exit};
-		builtin_funcs[builtin_index](command, &copied_env);
-		return ;
-	}
-	// Otherwise, execute commands via fork (for pipelines or external commands)
-	while (command)
-	{
-		if (command->next)
+		if (shell->commands->next)
 		{
-			if (pipe(pipefd) < 0)
+			if (pipe(exec_info->pipe_fds) < 0)
 			{
 				perror("pipe");
 				return ;
@@ -155,22 +144,49 @@ void	command_executor(t_command *command, t_env *copied_env)
 		}
 		pid = fork();
 		if (pid == 0)
-			execute_child_process(command, input_fd, pipefd, copied_env);
+			execute_child_process(shell, exec_info);
 		else if (pid < 0)
 		{
 			perror("fork");     // modified
 			exit(EXIT_FAILURE); // modified
 		}
-		waitpid(pid, &status, 0);
-		if (input_fd != STDIN_FILENO)
-			close(input_fd);
-		if (command->next)
+		waitpid(pid, shell->exit_status, 0);
+		if (exec_info->input_fd != STDIN_FILENO)
+			close(exec_info->input_fd);
+		if (shell->commands->next)
 		{
-			close(pipefd[1]);
-			input_fd = pipefd[0];
+			close(exec_info->pipe_fds[1]);
+			exec_info->input_fd = exec_info->pipe_fds[0];
 		}
-		command = command->next;
+		shell->commands = shell->commands->next;
 	}
+}
+
+static void	init_exec_info(t_exec *exec_info)
+{
+	exec_info->input_fd = STDIN_FILENO;
+	exec_info->builtin_id = NOT_BUILDIN;
+	exec_info->builtins[FT_ECHO] = ft_echo;
+	exec_info->builtins[FT_CD] = ft_cd;
+	exec_info->builtins[FT_PWD] = ft_pwd;
+	exec_info->builtins[FT_EXPORT] = ft_export;
+	exec_info->builtins[FT_UNSET] = ft_unset;
+	exec_info->builtins[FT_ENV] = ft_env;
+	exec_info->builtins[FT_EXIT] = ft_exit;
+}
+
+void	command_executor(t_minishell *shell)
+{
+	t_exec	exec_info;
+
+	init_exec_info(&exec_info);
+	exec_info.builtin_id = is_builtin(shell->commands->args[0]);
+	if (is_single_builtin_command(shell, &exec_info))
+	{
+		run_single_builtin_in_parent(shell, &exec_info);
+	}
+	else
+		run_forked_commands(shell, &exec_info);
 }
 
 // #define MAX_COMMANDS 1024
@@ -211,9 +227,9 @@ void	command_executor(t_command *command, t_env *copied_env)
 // 				close(pipefd[1]);
 // 			}
 // 			handle_redirection(command);
-// 			t_buildin_cmd buildin_index = is_builtin(command->args[0]);
+// 			t_builtin_id buildin_index = is_builtin(command->args[0]);
 
-// 			if (buildin_index != FT_NOT_BUILDIN)
+// 			if (buildin_index != NOT_BUILDIN)
 // 				builtin_funcs[buildin_index](command); // Execute the function
 // 			else
 // 				execute_external_command(command, envp);

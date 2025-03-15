@@ -6,17 +6,18 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 10:16:32 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/14 13:19:27 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/15 16:27:48 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void	ft_cd(t_command *command, t_env **copied_env)
+void	ft_cd(t_minishell *shell)
 {
-	char	*path;
+	char		*path;
+	t_command	*command;
 
-	(void)copied_env;
+	command = shell->commands;
 	if (!command->args[1])
 	{
 		path = getenv("HOME");
