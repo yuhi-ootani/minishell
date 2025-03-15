@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/14 14:48:52 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/15 09:15:07 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,18 @@
 # include <termios.h>
 # include <unistd.h> //getcwd
 
-extern volatile sig_atomic_t	g_signal;
-
 // ▗▖  ▗▖ ▗▄▖ ▗▄▄▄▖▗▖  ▗▖
 // ▐▛▚▞▜▌▐▌ ▐▌  █  ▐▛▚▖▐▌
 // ▐▌  ▐▌▐▛▀▜▌  █  ▐▌ ▝▜▌
 // ▐▌  ▐▌▐▌ ▐▌▗▄█▄▖▐▌  ▐▌
+
+// typedef struct s_minishell
+// {
+// 	t_env						*env;
+// 	t_token						*tokens;
+// 	t_command					*commands;
+// 	int							exit_status;
+// }								t_minishell;
 
 typedef struct s_env
 {
@@ -157,19 +163,12 @@ char							**build_envp_array(t_env *env);
 
 void							handle_redirection(t_command *command);
 
-// Builtin functions (implement separately)
-int								ft_echo(t_command *command, t_env *copied_env);
-int								ft_cd(t_command *command, t_env *copied_env);
-int								ft_pwd(t_command *command, t_env *copied_env);
-int								ft_export(t_command *command, t_env *copied_env);
-int								ft_unset(t_command *command, t_env *copied_env);
-int								ft_env(t_command *command, t_env *copied_env);
-int								ft_exit(t_command *command, t_env *copied_env);
-
 //  ▗▄▄▖▗▄▄▄▖ ▗▄▄▖▗▖  ▗▖ ▗▄▖ ▗▖
 // ▐▌     █  ▐▌   ▐▛▚▖▐▌▐▌ ▐▌▐▌
 //  ▝▀▚▖  █  ▐▌▝▜▌▐▌ ▝▜▌▐▛▀▜▌▐▌
 // ▗▄▄▞▘▗▄█▄▖▝▚▄▞▘▐▌  ▐▌▐▌ ▐▌▐▙▄▄▖
+
+extern volatile sig_atomic_t	g_signal;
 
 void							setup_signals(void);
 void							handle_sigint(int signum);
@@ -180,7 +179,18 @@ void							disable_ctrlc_display(void);
 // ▐▌ ▐▌▐▌ ▐▌  █  ▐▌   █    █  ▐▛▚▖▐▌▐▌
 // ▐▛▀▚▖▐▌ ▐▌  █  ▐▌   █    █  ▐▌ ▝▜▌ ▝▀▚▖
 // ▐▙▄▞▘▝▚▄▞▘▗▄█▄▖▐▙▄▄▖█  ▗▄█▄▖▐▌  ▐▌▗▄▄▞▘
-void							sort_and_print_env(t_env *copied_env);
+
+// Builtin functions (implement separately)
+void							ft_echo(t_command *command, t_env **copied_env);
+void							ft_cd(t_command *command, t_env **copied_env);
+void							ft_pwd(t_command *command, t_env **copied_env);
+void							ft_export(t_command *command,
+									t_env **copied_env);
+void							sort_and_print_env(t_env **copied_env);
+void							ft_unset(t_command *command,
+									t_env **copied_env);
+void							ft_env(t_command *command, t_env **copied_env);
+void							ft_exit(t_command *command, t_env **copied_env);
 
 // ▗▖ ▗▖▗▄▄▄▖▗▄▄▄▖▗▖    ▗▄▄▖
 // ▐▌ ▐▌  █    █  ▐▌   ▐▌
@@ -190,5 +200,9 @@ void							sort_and_print_env(t_env *copied_env);
 int								ft_isnumber(char *str);
 void							ft_putendl(char *s);
 size_t							count_env_util(t_env *env);
+t_env							*create_new_env_util(const char *new_name,
+									const char *new_value, t_env *new_next);
+ void						env_add_back_util(t_env **copied_env,
+									t_env *new_env);
 
 #endif

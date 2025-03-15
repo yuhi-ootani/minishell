@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 11:09:19 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/14 14:48:00 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/15 11:12:17 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,8 @@ static int	handle_exit_status(t_expstate *st)
 	return (append_to_result(st, buf, ft_strlen(buf)));
 }
 
-static int	expand_variable(const char *input, size_t *i, t_expstate *st, t_env *copied_env)
+static int	expand_variable(const char *input, size_t *i, t_expstate *st,
+		t_env *copied_env)
 {
 	size_t	var_len;
 	char	*name;
@@ -84,7 +85,8 @@ static int	expand_variable(const char *input, size_t *i, t_expstate *st, t_env *
 	return (0);
 }
 
-static int	decide_if_expand_or_not(const char *input, t_expstate *st, t_env *copied_env)
+static int	decide_if_expand_or_not(const char *input, t_expstate *st,
+		t_env *copied_env)
 {
 	size_t	i;
 
@@ -186,9 +188,11 @@ char	*process_argument(const char *input, t_env *copied_env)
 	if (!expanded)
 		return (NULL);
 	no_quotes = remove_quotes(expanded);
+
 	free(expanded);
 	return (no_quotes);
 }
+
 
 void	expand_commands(t_command *command_list, t_env *copied_env)
 {
@@ -218,6 +222,9 @@ void	expand_commands(t_command *command_list, t_env *copied_env)
 		current = current->next;
 	}
 }
+
+/* code version without copied enviroment */
+
 
 // static int	append_to_result(t_expstate *st, const char *src,
 // size_t src_len)

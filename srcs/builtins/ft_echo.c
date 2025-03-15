@@ -6,13 +6,13 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:14:15 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/13 15:37:45 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/15 09:15:12 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int	ft_echo(t_command *command, t_env *copied_env)
+void	ft_echo(t_command *command, t_env **copied_env)
 {
 	int	i;
 	int	n_option;
@@ -43,5 +43,5 @@ int	ft_echo(t_command *command, t_env *copied_env)
 	}
 	if (!n_option)
 		write(1, "\n", 1);
-	return (0);
 }
+
