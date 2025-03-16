@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/15 17:04:29 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/15 18:06:34 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,7 @@
 # include <stdlib.h>    //PATH_MAX
 # include <string.h>    //strcmp🚨
 # include <sys/types.h> //pid_t
-# include <sys/types.h>
-# include <sys/wait.h> //waitpid
+# include <sys/wait.h>  //waitpid
 # include <termios.h>
 # include <unistd.h> //getcwd
 
@@ -117,10 +116,13 @@ typedef struct s_expstate
 {
 	char						*result;
 	size_t						result_size;
-	size_t						j;
+	size_t						result_index;
 	bool						in_single;
 	bool						in_double;
 }								t_expstate;
+
+void							expand_commands(t_command *command_list,
+									t_env *copied_env);
 
 // ▗▄▄▖ ▗▄▄▄▖▗▄▄▄ ▗▄▄▄▖▗▄▄▖ ▗▄▄▄▖ ▗▄▄▖▗▄▄▄▖▗▄▄▄▖ ▗▄▖ ▗▖  ▗▖
 // ▐▌ ▐▌▐▌   ▐▌  █  █  ▐▌ ▐▌▐▌   ▐▌     █    █  ▐▌ ▐▌▐▛▚▖▐▌
@@ -148,7 +150,6 @@ void							disable_ctrlc_display(void);
 
 int								ft_isnumber(char *str);
 void							ft_putendl(char *s);
-void							expand_commands(t_command *command_list);
 size_t							count_env_util(t_env *env);
 t_env							*create_new_env_util(const char *new_name,
 									const char *new_value, t_env *new_next);

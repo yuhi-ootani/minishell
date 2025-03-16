@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/16 12:11:27 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/16 12:33:10 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,7 +194,7 @@ int	main(int argc, char **argv, char **envp)
 			shell->commands = parser(shell->tokens);
 			if (shell->commands)
 			{
-				expand_commands(shell->commands);
+				expand_commands(shell->commands, shell->env);
 				print_commands(shell->commands);
 				command_executor(shell);
 			}
