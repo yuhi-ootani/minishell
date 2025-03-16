@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/16 12:33:10 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/16 12:48:07 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,7 +183,7 @@ int	main(int argc, char **argv, char **envp)
 		}
 		else
 			input = get_input();
-		if (input)
+		if (input && input[0] != '\n') // to do
 		{
 			if (!input[0])
 				continue ;

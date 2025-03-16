@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 11:09:19 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/16 12:32:49 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/16 14:45:34 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,6 +187,7 @@ char	*process_argument(const char *input, t_env *copied_env)
 	expanded = set_argument_for_expansion(input, copied_env);
 	if (!expanded)
 		return (NULL);
+	 
 	no_quotes = remove_quotes(expanded);
 	free(expanded);
 	return (no_quotes);
@@ -210,11 +211,11 @@ void	expand_commands(t_command *command_list, t_env *copied_env)
 				free(current->args[i]);
 				current->args[i] = arg;
 			}
-			else
-			{
-				fprintf(stderr, "Error expanding argument: %s\n",
-					current->args[i]);
-			}
+			// else
+			// {
+			// 	fprintf(stderr, "Error expanding argument: %s\n",
+			// 		current->args[i]); //todo
+			// }
 			i++;
 		}
 		current = current->next;
