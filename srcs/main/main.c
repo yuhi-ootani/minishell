@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/15 14:43:44 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/16 12:11:27 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,20 @@ void	free_commands(t_command *head)
 // return (exit_code);
 // }
 
+char	*get_input(void)
+{
+	char	*input_line;
+
+	if (!isatty(STDIN_FILENO))
+	{
+		input_line = ft_get_next_line(STDIN_FILENO);
+		if (input_line)
+			return (input_line);
+		else
+			return (NULL);
+	}
+	return (prompt());
+}
 
 static t_minishell	*create_shell_struct(void)
 {
@@ -160,7 +174,7 @@ int	main(int argc, char **argv, char **envp)
 		if (g_signal)
 		{
 			g_signal = 0;
-			input = prompt();
+			input = get_input();
 			if (!input)
 			{
 				printf("exit\n");
@@ -168,7 +182,7 @@ int	main(int argc, char **argv, char **envp)
 			}
 		}
 		else
-			input = prompt();
+			input = get_input();
 		if (input)
 		{
 			if (!input[0])
