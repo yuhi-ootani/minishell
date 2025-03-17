@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/15 18:06:59 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/17 10:29:34 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	*search_command_in_path(const char *command)
 	path_env = getenv("PATH");
 	if (!path_env)
 		return (NULL);
-	splited_paths = ft_split(path_env, ':');
+	splited_paths = ft_split(path_env, ":");
 	i = 0;
 	while (splited_paths && splited_paths[i])
 	{

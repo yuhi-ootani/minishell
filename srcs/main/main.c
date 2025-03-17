@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/16 12:48:07 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/17 12:53:24 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,17 +172,13 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		if (g_signal)
-		{
 			g_signal = 0;
-			input = get_input();
-			if (!input)
-			{
-				printf("exit\n");
-				break ;
-			}
+		input = get_input();
+		if (!input)
+		{
+			printf("exit\n");
+			break ;
 		}
-		else
-			input = get_input();
 		if (input && input[0] != '\n') // to do
 		{
 			if (!input[0])
@@ -194,13 +190,10 @@ int	main(int argc, char **argv, char **envp)
 			shell->commands = parser(shell->tokens);
 			if (shell->commands)
 			{
-				expand_commands(shell->commands, shell->env);
+				expand_commands(shell);
 				print_commands(shell->commands);
 				command_executor(shell);
 			}
-			free(input);
-			free_tokens(shell->tokens);
-			free_commands(shell->commands);
 		}
 		else
 			break ;
