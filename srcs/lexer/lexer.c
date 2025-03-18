@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 14:32:39 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/04 18:33:17 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/18 14:28:42 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,7 +216,7 @@ t_token	*create_new_token(t_token_type type, const char *value)
 		exit(EXIT_FAILURE);
 	token->type = type;
 	if (value)
-		token->value = strdup(value); // strdup
+		token->value = ft_strdup(value);
 	else
 		token->value = NULL;
 	token->next = NULL;

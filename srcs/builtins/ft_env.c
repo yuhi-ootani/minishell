@@ -3,26 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_env.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:42:21 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/15 16:30:21 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/18 19:21:10 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-// void	ft_env(char **envp)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while (envp[i])
-// 	{
-// 		printf("%s\n", envp[i]);
-// 		i++;
-// 	}
-// }
 
 void	ft_env(t_minishell *shell)
 {

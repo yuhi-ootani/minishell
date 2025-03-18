@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/17 18:38:06 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/18 14:46:30 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	*search_command_in_path(const char *command)
 	path_env = getenv("PATH");
 	if (!path_env)
 		return (NULL);
-	splited_paths = ft_split(path_env, ':');
+	splited_paths = ft_split(path_env, ":");
 	i = 0;
 	while (splited_paths && splited_paths[i])
 	{
@@ -44,13 +44,13 @@ void	execute_external_command(t_minishell *shell)
 	char	*command_path;
 	char	**envp_array;
 
-	if (strchr(shell->commands->args[0], '/') == NULL)
+	if (ft_strchr(shell->commands->args[0], '/') == NULL)
 	// I think it needs modified
 	{
 		command_path = search_command_in_path(shell->commands->args[0]);
 		if (!command_path)
 		{
-			fprintf(stderr, "%s: command not found\n",
+			ft_fprintf(2, "%s: command not found\n",
 				shell->commands->args[0]);
 				*(shell->exit_status) = 127; //changed
 			exit(127);
@@ -65,7 +65,7 @@ void	execute_external_command(t_minishell *shell)
 	if (execve(command_path, shell->commands->args, envp_array) == -1)
 	{
 		// free envp
-		fprintf(stderr, "%s: command not found\n", shell->commands->args[0]);
+		ft_fprintf(2, "%s: command not found\n", shell->commands->args[0]);
 		free(command_path);
 		exit(EXIT_FAILURE);
 	}

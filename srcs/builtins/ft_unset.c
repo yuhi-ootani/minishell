@@ -3,30 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_unset.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:44:32 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/15 16:41:52 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/18 19:22:28 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-// int	ft_unset(t_command *command, t_env *copied_env)
-// {
-// 	(void)copied_env;
-// 	if (!command->args[1])
-// 	{
-// 		fprintf(stderr, "unset: argument not found\n");
-// 		return (1);
-// 	}
-// 	if (unsetenv(command->args[1]) != 0)
-// 	{
-// 		perror("unset");
-// 		return (1);
-// 	}
-// 	return (0);
-// }
 
 static void	remove_target_env(t_env **copied_env, t_env *prev_env,
 		t_env *target_env)

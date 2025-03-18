@@ -24,7 +24,7 @@ t_env	*env_duplication(char **envp_srcs)
 	head_of_copied_env = NULL;
 	while (*envp_srcs)
 	{
-		splited_env = ft_split(*envp_srcs, '=');
+		splited_env = ft_split(*envp_srcs, "=");
 		if (!splited_env || !splited_env[0])
 		{
 			envp_srcs++; // todo

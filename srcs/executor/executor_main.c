@@ -64,12 +64,12 @@ int	heredoc(char *delimiter)
 			line = readline("> ");
 			if (!line)
 				break ; // End-of-file (Ctrl-D) or error.
-			if (strcmp(line, delimiter) == 0)
+			if (ft_strcmp(line, delimiter) == 0)
 			{
 				free(line);
 				break ; // Delimiter reached.
 			}
-			write(pipefd[1], line, strlen(line));
+			write(pipefd[1], line, ft_strlen(line));
 			write(pipefd[1], "\n", 1);
 			free(line);
 		}

@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 11:09:19 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/17 11:02:16 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/18 15:01:38 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ static int	expand_variable(const char *input, size_t *i, t_expstate *status,
 		free(name);
 		if (val)
 		{
-			if (append_to_result(status, val, strlen(val)) == -1)
+			if (append_to_result(status, val, ft_strlen(val)) == -1)
 				return (-1);
 		}
 		*i += var_len;
@@ -135,7 +135,7 @@ char	*set_argument_for_expansion(const char *input, t_env *copied_env)
 {
 	t_expstate	exp_state;
 
-	exp_state.result_size = strlen(input) + 1;
+	exp_state.result_size = ft_strlen(input) + 1;
 	exp_state.result_index = 0;
 	exp_state.in_single = false;
 	exp_state.in_double = false;
@@ -160,7 +160,7 @@ char	*remove_quotes(const char *input)
 
 	in_single = false;
 	in_double = false;
-	result = malloc(strlen(input) + 1);
+	result = malloc(ft_strlen(input) + 1);
 	if (!result)
 		return (NULL);
 	j = 0;
@@ -212,7 +212,7 @@ void	expand_commands(t_command *command_list, t_env *copied_env)
 			}
 			else
 			{
-				fprintf(stderr, "Error expanding argument: %s\n",
+				ft_fprintf(2, "Error expanding argument: %s\n",
 					current->args[i]);
 			}
 			i++;

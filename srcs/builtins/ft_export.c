@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:45:23 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/17 15:49:09 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/18 14:43:51 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,7 @@ static void	set_new_env_variables(char *arg, t_env **copied_env)
 
 	if (is_invalid_arg(arg))
 	{
-		fprintf(stderr, "export: `" "%s': " "not a valid idenifier\n", arg);
+		ft_fprintf(2, "export: `" "%s': " "not a valid idenifier\n", arg);
 		return ;
 	} // todo
 	get_name_and_value(&name, &value, arg, &append);

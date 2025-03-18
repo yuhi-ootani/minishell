@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 15:07:23 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/17 18:53:04 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/18 19:24:39 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,8 @@
 
 void	syntax_error(const char *statement)
 {
-	// Print an error message to stderr and exit
-	printf("%s\n", statement);
-	fprintf(stderr, "Minishell: syntax error\n");
+	ft_printf("%s\n", statement);
+	ft_fprintf(2, "Minishell: syntax error\n");
 	exit(EXIT_FAILURE);
 }
 
@@ -26,7 +25,7 @@ t_command	*create_command_node(void)
 
 	new_command = (t_command *)malloc(sizeof(t_command));
 	if (!new_command)
-		syntax_error("create_command_node"); //
+		syntax_error("create_command_node");
 	new_command->args = NULL;
 	new_command->input_file = NULL;
 	new_command->is_heredoc = false;
@@ -61,7 +60,6 @@ void	add_argument(t_command *command, char *new_argument)
 	}
 	new_args[count] = ft_strdup(new_argument);
 	if (!new_args[count])
-		free(new_args);                      // Kiki add this line
 	syntax_error("new_args strdup failed."); // todo
 	new_args[count + 1] = NULL;
 	free(command->args);
@@ -125,9 +123,9 @@ bool	is_syntax_error(t_token *token_list)
 	{
 		if (current_token->type == TOKEN_PIPE && (former_token == NULL
 				|| current_token->next->type == TOKEN_PIPE))
-			return (fprintf(stdout, "pipe syntax error!\n"), true); // todo
+			return (printf("pipe syntax error!\n"), true); // todo
 		if (is_redirection_syntax_error(current_token, current_token->type))
-			return (fprintf(stdout, "readirection syntax error!\n"), true);
+			return (printf("readirection syntax error!\n"), true);
 		// todo
 		former_token = current_token;
 		current_token = current_token->next;
@@ -161,7 +159,7 @@ t_command	*parser(t_token *token_list)
 			current_command->next = create_command_node();
 			if (!current_command->next)
 			{
-				fprintf(stderr, "memory allocation failed for new command\n");
+				ft_fprintf(2, "memory allocation failed for new command\n");
 				return (NULL);
 			}
 			current_command = current_command->next;

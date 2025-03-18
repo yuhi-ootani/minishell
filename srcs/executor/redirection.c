@@ -4,7 +4,7 @@
 
 static bool	is_last_heredoc(t_command *command, size_t i)
 {
-	return (command->is_heredoc && strcmp(command->heredoc_files[i],
+	return (command->is_heredoc && ft_strcmp(command->heredoc_files[i],
 			command->input_file) == 0);
 }
 
@@ -20,7 +20,7 @@ static void	receive_input_in_child_process(t_command *command, int *pipefd)
 		line = readline("> ");
 		if (!line)
 			break ;
-		if (strcmp(line, command->heredoc_files[i]) == 0)
+		if (ft_strcmp(line, command->heredoc_files[i]) == 0)
 		{
 			free(line);
 			i++;
@@ -28,7 +28,7 @@ static void	receive_input_in_child_process(t_command *command, int *pipefd)
 		}
 		if (is_last_heredoc(command, i))
 		{
-			write(pipefd[1], line, strlen(line));
+			write(pipefd[1], line, ft_strlen(line));
 			write(pipefd[1], "\n", 1);
 		}
 		free(line);
