@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 11:09:19 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/15 18:13:54 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/17 11:02:16 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static int	append_to_result(t_expstate *status, const char *src, size_t src_len)
 			return (-1);
 		status->result = tmp;
 	}
-	memcpy(status->result + status->result_index, src, src_len);
+	ft_memcpy(status->result + status->result_index, src, src_len);
 	status->result_index += src_len;
 	status->result[status->result_index] = '\0';
 	return (0);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:45:23 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/15 18:02:17 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/17 15:49:09 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ static void	set_env_value(t_env **copied_env, const char *new_name,
 	new_env = create_new_env_util(new_name, new_value, NULL);
 	if (!new_env)
 		return ; // todo
-	printf("new env added %s %s\n ", new_env->name, new_env->value);
 	env_add_back_util(copied_env, new_env);
 }
 
@@ -132,7 +131,7 @@ static void	set_new_env_variables(char *arg, t_env **copied_env)
 
 	if (is_invalid_arg(arg))
 	{
-		fprintf(stderr, "export: invalid format. Use VAR=value\n");
+		fprintf(stderr, "export: `" "%s': " "not a valid idenifier\n", arg);
 		return ;
 	} // todo
 	get_name_and_value(&name, &value, arg, &append);

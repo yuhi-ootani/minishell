@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 15:07:23 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/13 12:12:34 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/17 18:53:04 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,10 @@ void	add_argument(t_command *command, char *new_argument)
 		new_args[i] = command->args[i];
 		i++;
 	}
-	new_args[count] = strdup(new_argument);
+	new_args[count] = ft_strdup(new_argument);
 	if (!new_args[count])
-		syntax_error("new_args strdup failed."); // todo
+		free(new_args);                      // Kiki add this line
+	syntax_error("new_args strdup failed."); // todo
 	new_args[count + 1] = NULL;
 	free(command->args);
 	command->args = new_args;
@@ -72,28 +73,28 @@ void	set_redirection(t_command *command, t_token_type token_type,
 {
 	if (token_type == TOKEN_REDIR_IN)
 	{
-		command->input_file = strdup(filename); // strdup
+		command->input_file = ft_strdup(filename);
 		command->is_heredoc = false;
 	}
 	else if (token_type == TOKEN_HEREDOC)
 	{
-		command->input_file = strdup(filename); // strdup
+		command->input_file = ft_strdup(filename);
 		command->heredoc_files = realloc(command->heredoc_files, sizeof(char *)
 				* (command->heredoc_count + 1));
 		if (!command->heredoc_files)
 			exit(EXIT_FAILURE); // to do
-		command->heredoc_files[command->heredoc_count] = strdup(filename);
+		command->heredoc_files[command->heredoc_count] = ft_strdup(filename);
 		command->heredoc_count++;
 		command->is_heredoc = true;
 	}
 	else if (token_type == TOKEN_REDIR_OUT)
 	{
-		command->out_file = strdup(filename); // strdup
+		command->out_file = ft_strdup(filename);
 		command->is_append = false;
 	}
 	else if (token_type == TOKEN_APPEND)
 	{
-		command->out_file = strdup(filename); // strdup
+		command->out_file = ft_strdup(filename);
 		command->is_append = true;
 	}
 }
@@ -158,6 +159,11 @@ t_command	*parser(t_token *token_list)
 		else if (type == TOKEN_PIPE)
 		{
 			current_command->next = create_command_node();
+			if (!current_command->next)
+			{
+				fprintf(stderr, "memory allocation failed for new command\n");
+				return (NULL);
+			}
 			current_command = current_command->next;
 		}
 		token_list = token_list->next;

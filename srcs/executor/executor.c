@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/15 18:06:59 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/17 18:38:06 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,13 +52,12 @@ void	execute_external_command(t_minishell *shell)
 		{
 			fprintf(stderr, "%s: command not found\n",
 				shell->commands->args[0]);
-			// modified
-			exit(EXIT_FAILURE);
-			// modified
+				*(shell->exit_status) = 127; //changed
+			exit(127);
 		}
 	}
 	else
-		command_path = strdup(shell->commands->args[0]);
+		command_path = ft_strdup(shell->commands->args[0]);
 	envp_array = build_envp_array(shell->env);
 	if (!envp_array)
 		exit(EXIT_FAILURE); // todo
@@ -74,19 +73,19 @@ void	execute_external_command(t_minishell *shell)
 
 t_builtin_id	is_builtin(char *command_str)
 {
-	if (strcmp(command_str, "echo") == 0)
+	if (ft_strcmp(command_str, "echo") == 0)
 		return (FT_ECHO);
-	else if (strcmp(command_str, "cd") == 0)
+	else if (ft_strcmp(command_str, "cd") == 0)
 		return (FT_CD);
-	else if (strcmp(command_str, "pwd") == 0)
+	else if (ft_strcmp(command_str, "pwd") == 0)
 		return (FT_PWD);
-	else if (strcmp(command_str, "export") == 0)
+	else if (ft_strcmp(command_str, "export") == 0)
 		return (FT_EXPORT);
-	else if (strcmp(command_str, "unset") == 0)
+	else if (ft_strcmp(command_str, "unset") == 0)
 		return (FT_UNSET);
-	else if (strcmp(command_str, "env") == 0)
+	else if (ft_strcmp(command_str, "env") == 0)
 		return (FT_ENV);
-	else if (strcmp(command_str, "exit") == 0)
+	else if (ft_strcmp(command_str, "exit") == 0)
 		return (FT_EXIT);
 	else
 		return (NOT_BUILDIN);

@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:32:43 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/14 19:25:58 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/17 14:42:42 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,16 +31,15 @@ char	*prompt(void)
 	char	*cwd;
 	char	*prompt_str;
 	size_t	prompt_len;
-
 	cwd = get_current_directory();
-	prompt_len = strlen("🐾 ") + strlen(cwd) + strlen(" 🐾 $> ") + 1;
+	prompt_len = strlen("* ") + strlen(cwd) + strlen("* $> ") + 1;
 	prompt_str = malloc(prompt_len);
 	if (!prompt_str)
 	{
 		free(cwd);
 		return (NULL);
 	}
-	snprintf(prompt_str, prompt_len, "🐾 %s 🐾 $> ", cwd);
+	snprintf(prompt_str, prompt_len, "* %s* $> ", cwd);
 	free(cwd);
 	input = readline(prompt_str);
 	free(prompt_str);
