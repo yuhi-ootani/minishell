@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 10:17:05 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/18 19:23:02 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/19 11:53:13 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,20 @@ t_env	*create_new_env_util(const char *new_name, const char *new_value,
 		new_env->value = NULL;
 	new_env->next = new_next;
 	return (new_env);
+}
+
+void	free_env(t_env *env)
+{
+	t_env	*temp;
+
+	while (env)
+	{
+		temp = env->next;
+		free(env->name);
+		free(env->value);
+		free(env);
+		env = temp;
+	}
 }
 
 void	env_add_back_util(t_env **copied_env, t_env *new_env)
