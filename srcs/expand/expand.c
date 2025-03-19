@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 11:09:19 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/17 19:59:14 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/19 12:04:19 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,171 +25,161 @@ char	*get_env_value(t_env *env, const char *name)
 	return (NULL);
 }
 
-static int	append_to_result(t_expanded_str *status, const char *src,
+char	*get_env_name(const char *input)
+{
+	size_t	len;
+	char	*name;
+
+	if (!input)
+		return (NULL);
+	len = 0;
+	while (ft_isalnum(input[len]) || input[len] == '_')
+		len++;
+	name = (char *)ft_calloc((len + 1), sizeof(char));
+	if (!name)
+		return (NULL);
+	if (len > 0)
+		strncpy(name, input, len); // todo
+	name[len] = '\0';
+	return (name);
+}
+
+static int	append_to_buffer(t_expanded_str *expanded_str, const char *src,
 		size_t src_len)
 {
-	char	*tmp;
+	char	*new_buffer;
 
-	if (status->index + src_len >= status->size)
+	if (expanded_str->index + src_len >= expanded_str->size)
 	{
-		status->size = status->index + src_len + 1;
-		tmp = realloc(status->buffer, status->size);
-		if (!tmp)
+		expanded_str->size = expanded_str->index + src_len + 1;
+		new_buffer = realloc(expanded_str->buffer, expanded_str->size);
+		if (!new_buffer)
 			return (-1);
-		status->buffer = tmp;
+		expanded_str->buffer = new_buffer;
 	}
-	memcpy(status->buffer + status->index, src, src_len);
-	status->index += src_len;
-	status->buffer[status->index] = '\0';
+	memcpy(expanded_str->buffer + expanded_str->index, src, src_len);
+	expanded_str->index += src_len;
+	expanded_str->buffer[expanded_str->index] = '\0';
 	return (0);
 }
 
-static int	handle_exit_status(t_expanded_str *status)
+static int	append_exit_status(t_minishell *shell, t_expanded_str *expanded_str)
 {
-	char	buf[12];
+	char	*exit_status;
 
-	snprintf(buf, sizeof(buf), "%d", 0); // snprintf
-	return (append_to_result(status, buf, ft_strlen(buf)));
+	exit_status = ft_itoa(*shell->exit_status);
+	if (!exit_status)
+		return (-1);
+	if (append_to_buffer(expanded_str, exit_status, ft_strlen(exit_status)) ==
+		-1)
+	{
+		free(exit_status);
+		return (-1);
+	}
+	free(exit_status);
+	return (0);
 }
-static int	expand_variable(const char *input, size_t *i,
-		t_expanded_str *status, t_env *copied_env)
+
+int	append_env_value(t_minishell *shell, t_expanded_str *expanded_str,
+		const char *src_input, size_t *i)
 {
-	size_t	var_len;
+	size_t	name_len;
 	char	*name;
-	char	*val;
+	char	*value;
 
-	var_len = 0;
-	while (isalnum(input[*i + var_len]) || input[*i + var_len] == '_')
-		var_len++;
-	if (var_len > 0)
+	name = get_env_name(src_input + *i);
+	if (!name)
+		return (-1);
+	name_len = ft_strlen(name);
+	*i += name_len;
+	value = get_env_value(shell->env, name);
+	free(name);
+	if (value)
 	{
-		name = malloc(var_len + 1);
-		if (!name)
-			return (-1);
-		strncpy(name, input + *i, var_len);
-		name[var_len] = '\0';
-		val = get_env_value(copied_env, name);
-		free(name);
-		if (val)
+		if (append_to_buffer(expanded_str, value, ft_strlen(value)) == -1)
 		{
-			if (append_to_result(status, val, strlen(val)) == -1)
-				return (-1);
-		}
-		*i += var_len;
-	}
-	else
-	{
-		if (append_to_result(status, "$", 1) == -1)
+			free(value);
 			return (-1);
+		}
+		free(value);
 	}
 	return (0);
 }
 
-static int	decide_if_expand_or_not(const char *input, t_expanded_str *status,
-		t_env *copied_env)
+int	append_one_char(t_expanded_str *s_expanded_str, const char *src_input,
+		size_t *i)
 {
-	size_t	i;
-
-	i = 0;
-	while (input[i])
+	if (src_input[*i] == '\'' && !s_expanded_str->in_double_quote)
 	{
-		if (input[i] == '\'' && !status->in_double_quote)
-		{
-			status->in_single_quote = !status->in_single_quote;
-			if (append_to_result(status, &input[i], 1) == -1)
-				return (-1);
-			i++;
-			continue ;
-		}
-		if (input[i] == '"' && !status->in_single_quote)
-		{
-			status->in_double_quote = !status->in_double_quote;
-			if (append_to_result(status, &input[i], 1) == -1)
-				return (-1);
-			i++;
-			continue ;
-		}
-		if (input[i] == '$' && !status->in_single_quote)
-		{
-			i++;
-			if (input[i] == '?') // this will move to executor
-			{
-				if (handle_exit_status(status) == -1)
-					return (-1);
-				i++;
-			}
-			else
-			{
-				if (expand_variable(input, &i, status, copied_env) == -1)
-					return (-1);
-			}
-			continue ;
-		}
-		if (append_to_result(status, &input[i], 1) == -1)
-			return (-1);
-		i++;
+		s_expanded_str->in_single_quote = !s_expanded_str->in_single_quote;
 	}
+	else if (src_input[*i] == '"' && !s_expanded_str->in_single_quote)
+	{
+		s_expanded_str->in_double_quote = !s_expanded_str->in_double_quote;
+	}
+	if (append_to_buffer(s_expanded_str, &src_input[*i], 1) == -1)
+		return (-1);
+	(*i)++;
 	return (0);
 }
 
-char	*set_argument_for_expansion(const char *input, t_env *copied_env)
+int	handle_dollar(t_minishell *shell, t_expanded_str *expanded_str,
+		const char *src_input, size_t *i)
+{
+	if (src_input[*i] == '\0' || (src_input[*i] == '"' && src_input[*i
+			+ 1] == '\0'))
+		return (append_to_buffer(expanded_str, "$", 1));
+	else if (src_input[*i] == '?')
+	{
+		(*i)++;
+		return (append_exit_status(shell, expanded_str));
+	}
+	else if (ft_isalpha(src_input[*i]) || src_input[*i] == '_')
+	{
+		return (append_env_value(shell, expanded_str, src_input, i));
+	}
+	else if (src_input[*i] == '\'' || src_input[*i] == '"')
+		return (0);
+	(*i)++;
+	return (0);
+}
+
+static t_expanded_str	init_expanded_str(const char *arg_src)
 {
 	t_expanded_str	expanded_str;
 
-	expanded_str.size = strlen(input) + 1;
+	expanded_str.size = ft_strlen(arg_src) + 1;
 	expanded_str.index = 0;
 	expanded_str.in_single_quote = false;
 	expanded_str.in_double_quote = false;
-	expanded_str.buffer = malloc(expanded_str.size);
+	expanded_str.buffer = ft_calloc(sizeof(char), expanded_str.size);
+	return (expanded_str);
+}
+
+char	*get_expanded_str(t_minishell *shell, const char *src_input)
+{
+	t_expanded_str	expanded_str;
+	size_t			i;
+
+	if (!src_input)
+		return (NULL);
+	expanded_str = init_expanded_str(src_input);
 	if (!expanded_str.buffer)
 		return (NULL);
-	expanded_str.buffer[0] = '\0';
-	if (decide_if_expand_or_not(input, &expanded_str, copied_env))
+	i = 0;
+	while (src_input[i])
 	{
-		free(expanded_str.buffer);
-		return (NULL);
+		if (src_input[i] == '$' && !expanded_str.in_single_quote)
+		{
+			i++;
+			if (handle_dollar(shell, &expanded_str, src_input, &i) == -1)
+				return (free(expanded_str.buffer), NULL);
+		}
+		else
+		{
+			if (append_one_char(&expanded_str, src_input, &i) == -1)
+				return (free(expanded_str.buffer), NULL);
+		}
 	}
 	return (expanded_str.buffer);
-}
-
-char	*remove_quotes(const char *input)
-{
-	char	*result;
-	size_t	j;
-	bool	in_single;
-	bool	in_double;
-
-	in_single = false;
-	in_double = false;
-	result = malloc(strlen(input) + 1);
-	if (!result)
-		return (NULL);
-	j = 0;
-	while (*input)
-	{
-		if (*input == '\'' && !in_double)
-			in_single = !in_single;
-		else if (*input == '"' && !in_single)
-			in_double = !in_double;
-		else
-			result[j++] = *input;
-		input++;
-	}
-	result[j] = '\0';
-	return (result);
-}
-
-void	expand_commands(t_minishell *shell)
-{
-	t_command	*current;
-	char		**new_args;
-
-	current = shell->commands;
-	while (current)
-	{
-		new_args = expander(shell, current->args);
-		ft_array_free(current->args);
-		current->args = new_args;
-		current = current->next;
-	}
 }

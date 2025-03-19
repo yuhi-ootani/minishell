@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/17 19:57:26 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/19 11:30:11 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,10 +169,9 @@ typedef struct s_expanded_str
 }								t_expanded_str;
 
 void							expand_commands(t_minishell *shell);
-char							*set_argument_for_expansion(const char *input,
-									t_env *copied_env);
+char							*get_expanded_str(t_minishell *shell,
+									const char *src_input);
 char							**expander(t_minishell *shell, char **args);
-char							*remove_quotes(const char *input);
 
 // ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▄▖ ▗▄▄▖
 // ▐▌    ▝▚▞▘ ▐▌   ▐▌   ▐▌ ▐▌  █ ▐▌ ▐▌▐▌ ▐▌

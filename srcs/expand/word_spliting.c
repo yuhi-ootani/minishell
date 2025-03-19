@@ -57,51 +57,94 @@ char	**append_string_arrays(char **array1, char **array2)
 	return (new_array);
 }
 
+char	*remove_quotes(const char *input)
+{
+	char	*result;
+	size_t	j;
+	bool	in_single;
+	bool	in_double;
+
+	in_single = false;
+	in_double = false;
+	result = malloc(strlen(input) + 1);
+	if (!result)
+		return (NULL);
+	j = 0;
+	while (*input)
+	{
+		if (*input == '\'' && !in_double)
+			in_single = !in_single;
+		else if (*input == '"' && !in_single)
+			in_double = !in_double;
+		else
+			result[j++] = *input;
+		input++;
+	}
+	result[j] = '\0';
+	return (result);
+}
+
 char	**expander(t_minishell *shell, char **args)
 {
 	size_t	i;
-	char	**new_array;
+	size_t	j;
 	char	**result;
 	char	**splited_args;
 	char	*spaces;
-	char	*expanded;
-	char	*removed;
+	char	**tmp_array;
+	char	*tmp;
 
 	// char	*no_quotes;
 	spaces = delimiters;
-	new_array = NULL;
 	result = NULL;
 	i = 0;
 	while (args[i])
 	{
-		expanded = set_argument_for_expansion(args[i], shell->env);
-		if (!expanded)
+		tmp = get_expanded_str(shell, args[i]);
+		if (!tmp)
 		{
 			i++;
 			continue ;
 		}
 		if (args[i][0] != '\"' && args[i][ft_strlen(args[i]) - 1] != '\"')
-			splited_args = ft_split(expanded, spaces);
+			// to modifired
+			splited_args = ft_split(tmp, spaces);
 		else
-			splited_args = ft_split(expanded, "");
-		new_array = append_string_arrays(result, splited_args);
-		ft_array_free(splited_args);
-		free(result);
-		result = new_array;
-		i++;
-	}
-	i = 0;
-	while (result[i])
-	{
-		removed = remove_quotes(result[i]);
-		if (removed)
+			splited_args = ft_split(tmp, "");
+		free(tmp);
+		j = 0;
+		while (splited_args[j])
 		{
-			free(result[i]);
-			result[i] = removed;
+			tmp = remove_quotes(splited_args[j]);
+			if (tmp)
+			{
+				free(splited_args[j]);
+				splited_args[j] = tmp;
+			}
+			j++;
 		}
+		tmp_array = append_string_arrays(result, splited_args);
+		ft_array_free(splited_args);
+		ft_array_free(result);
+		result = tmp_array;
 		i++;
 	}
 	return (result);
+}
+
+void	expand_commands(t_minishell *shell)
+{
+	t_command	*current;
+	char		**new_args;
+
+	current = shell->commands;
+	while (current)
+	{
+		new_args = expander(shell, current->args);
+		ft_array_free(current->args);
+		current->args = new_args;
+		current = current->next;
+	}
 }
 
 // // Example usage
