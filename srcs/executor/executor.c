@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/19 13:28:01 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/19 14:44:00 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	execute_external_command(t_minishell *shell)
 		{
 			fprintf(stderr, "%s: command not found\n",
 				shell->commands->args[0]);
-				*(shell->exit_status) = 127; //changed
+			*(shell->exit_status) = 127; // changed
 			exit(127);
 		}
 	}
@@ -186,6 +186,11 @@ void	command_executor(t_minishell *shell)
 	t_exec	exec_info;
 
 	init_exec_info(&exec_info);
+	if (!shell->commands->args)
+	{
+		handle_redirection(shell->commands);
+		return ;
+	}
 	exec_info.builtin_id = is_builtin(shell->commands->args[0]);
 	if (is_single_builtin_command(shell, &exec_info))
 	{

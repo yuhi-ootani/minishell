@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 15:07:23 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/17 18:53:04 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/19 13:46:54 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,7 @@ void	add_argument(t_command *command, char *new_argument)
 	}
 	new_args[count] = ft_strdup(new_argument);
 	if (!new_args[count])
-		free(new_args);                      // Kiki add this line
-	syntax_error("new_args strdup failed."); // todo
+		syntax_error("new_args strdup failed."); // todo
 	new_args[count + 1] = NULL;
 	free(command->args);
 	command->args = new_args;

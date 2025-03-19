@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 11:09:19 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/19 13:30:59 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/19 13:39:27 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ char	*get_env_value(t_env *env, const char *name)
 
 char	*get_env_name(const char *input)
 {
-	size_t	var_len;
 	size_t	len;
 	char	*name;
 

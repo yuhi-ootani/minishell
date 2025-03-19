@@ -98,7 +98,7 @@ char	**expander(t_minishell *shell, char **args)
 	spaces = delimiters;
 	result = NULL;
 	i = 0;
-	while (args[i])
+	while (args && args[i])
 	{
 		tmp = get_expanded_str(shell, args[i]);
 		if (!tmp)

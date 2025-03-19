@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/19 13:31:35 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/19 17:31:20 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,9 +132,12 @@ void	free_commands(t_command *head)
 
 char	*get_input(void)
 {
-	char	*input_line;
+	static int	interactive = -1;
+	char		*input_line;
 
-	if (!isatty(STDIN_FILENO))
+	if (interactive == -1)
+		interactive = isatty(STDIN_FILENO);
+	if (interactive == false)
 	{
 		input_line = ft_get_next_line(STDIN_FILENO);
 		if (input_line)
@@ -163,7 +166,11 @@ int	main(int argc, char **argv, char **envp)
 {
 	char		*input;
 	t_minishell	*shell;
+	int			original_stdin;
+	int			original_stdout;
 
+	original_stdin = dup(STDIN_FILENO);
+	original_stdout = dup(STDOUT_FILENO);
 	if (argc > 1)
 		printf("minishell: %s: No such file or directory\n", argv[1]);
 	shell = create_shell_struct();
@@ -194,9 +201,16 @@ int	main(int argc, char **argv, char **envp)
 				print_commands(shell->commands);
 				command_executor(shell);
 			}
+			// free_token_list(shell->tokens);
+			// shell->tokens = NULL;
+			// free_command_list(shell->commands);
+			// shell->commands = NULL;
+			dup2(original_stdin, STDIN_FILENO);
+			dup2(original_stdout, STDOUT_FILENO);
 		}
 		else
 			break ;
 	}
+	close(original_stdin);
 	return (0);
 }
