@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/17 15:38:28 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/19 13:31:35 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,47 @@ void	free_commands(t_command *head)
 	}
 }
 
+// input = prompt();
+// if (!input)
+// {
+// 	printf("exit\n");
+// 	break ;
+// }
+// if (*input)
+// 	add_history(input);
+// tokens_list = lexer(input);
+// command_list = parser(tokens_list);
+// if (command_list)
+// {
+// 	if (is_builtin(command_list->args[0]) == FT_EXIT)
+// 	{
+// 		exit_code = ft_exit(command_list);
+// 		break ;
+// 	}
+// 	single_command_executor(command_list, envp);
+// }
+// free(input);
+// free_tokens(tokens_list);
+// free_commands(command_list);
+// }
+// return (exit_code);
+// }
+
+char	*get_input(void)
+{
+	char	*input_line;
+
+	if (!isatty(STDIN_FILENO))
+	{
+		input_line = ft_get_next_line(STDIN_FILENO);
+		if (input_line)
+			return (input_line);
+		else
+			return (NULL);
+	}
+	return (prompt());
+}
+
 static t_minishell	*create_shell_struct(void)
 {
 	t_minishell	*new_shell;
@@ -131,18 +172,14 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		if (g_signal)
-		{
 			g_signal = 0;
-			input = prompt();
-			if (!input)
-			{
-				printf("exit\n");
-				break ;
-			}
+		input = get_input();
+		if (!input)
+		{
+			printf("exit\n");
+			break ;
 		}
-		else
-			input = prompt();
-		if (input)
+		if (input && input[0] != '\n') // to do
 		{
 			if (!input[0])
 				continue ;
@@ -153,13 +190,10 @@ int	main(int argc, char **argv, char **envp)
 			shell->commands = parser(shell->tokens);
 			if (shell->commands)
 			{
-				expand_commands(shell->commands, shell->env);
+				expand_commands(shell);
 				print_commands(shell->commands);
 				command_executor(shell);
 			}
-			free(input);
-			free_tokens(shell->tokens);
-			free_commands(shell->commands);
 		}
 		else
 			break ;

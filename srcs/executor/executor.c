@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/17 18:38:06 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/19 13:28:01 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	*search_command_in_path(const char *command)
 	path_env = getenv("PATH");
 	if (!path_env)
 		return (NULL);
-	splited_paths = ft_split(path_env, ':');
+	splited_paths = ft_split(path_env, ":");
 	i = 0;
 	while (splited_paths && splited_paths[i])
 	{
