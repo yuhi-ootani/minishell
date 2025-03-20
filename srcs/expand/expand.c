@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 11:09:19 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/20 19:36:51 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/20 20:10:44 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 char	*get_env_value(t_env *env, const char *name)
 {
-	char *copied_value;
+	char	*copied_value;
+
 	if (!env || !name)
 		return (NULL);
 	while (env)
