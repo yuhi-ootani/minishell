@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/18 14:46:30 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/20 19:17:57 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,9 @@ void	execute_external_command(t_minishell *shell)
 		command_path = search_command_in_path(shell->commands->args[0]);
 		if (!command_path)
 		{
-			ft_fprintf(2, "%s: command not found\n",
-				shell->commands->args[0]);
-				*(shell->exit_status) = 127; //changed
-			exit(127);
+			ft_fprintf(2, "%s: command not found\n", shell->commands->args[0]);
+			(shell->exit_status) = 127; // changed
+			exit(shell->exit_status);
 		}
 	}
 	else
@@ -119,6 +118,8 @@ static void	run_single_builtin_in_parent(t_minishell *shell, t_exec *exec_info)
 {
 	handle_redirection(shell->commands);
 	exec_info->builtins[exec_info->builtin_id](shell);
+	if (exec_info->builtin_id == FT_EXIT)
+	exit(shell->exit_status);
 }
 
 bool	is_single_builtin_command(t_minishell *shell, t_exec *exec_info)
@@ -151,8 +152,8 @@ void	run_forked_commands(t_minishell *shell, t_exec *exec_info)
 			perror("fork");     // modified
 			exit(EXIT_FAILURE); // modified
 		}
-		if (!shell->commands->next)
-			waitpid(pids[i], shell->exit_status, 0);
+		// if (!shell->commands->next)
+		// 	waitpid(pids[i], &shell->exit_status, 0);
 		if (exec_info->input_fd != STDIN_FILENO)
 			close(exec_info->input_fd);
 		if (shell->commands->next)
@@ -164,8 +165,16 @@ void	run_forked_commands(t_minishell *shell, t_exec *exec_info)
 		i++;
 	}
 	// Now wait for all children
+	// for (int j = 0; j < i; j++)
+	// 	waitpid(pids[j], &shell->exit_status, 0);
 	for (int j = 0; j < i; j++)
-		waitpid(pids[j], shell->exit_status, 0);
+	{
+		waitpid(pids[j], &shell->exit_status, 0);
+		if (WIFEXITED(shell->exit_status))
+			shell->exit_status = WEXITSTATUS(shell->exit_status);
+		else
+			shell->exit_status = 1;
+	}
 }
 
 static void	init_exec_info(t_exec *exec_info)

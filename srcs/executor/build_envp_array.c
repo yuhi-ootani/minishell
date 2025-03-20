@@ -2,24 +2,6 @@
 
 #include "../../include/minishell.h"
 
-char	*ft_strjoin_three(char *str1, char *str2, char *str3)
-{
-	char	*tmp;
-	char	*result;
-
-	if (!str1 || !str2)
-		return (NULL);
-	if (!str3)
-		str3 = "";
-	tmp = ft_strjoin(str1, str2);
-	if (!tmp)
-		return (NULL);
-	result = ft_strjoin(tmp, str3);
-	free(tmp);
-	if (!result)
-		return (NULL);
-	return (result);
-}
 
 char	**build_envp_array(t_env *env)
 {

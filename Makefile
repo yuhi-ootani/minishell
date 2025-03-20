@@ -6,7 +6,7 @@
 #    By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 11:52:00 by otaniyuhi         #+#    #+#              #
-#    Updated: 2025/03/12 20:17:43 by oyuhi            ###   ########.fr        #
+#    Updated: 2025/03/17 12:12:37 by oyuhi            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,7 +37,7 @@ SRCS = $(MAIN_DIR)/main.c $(MAIN_DIR)/init_env.c  \
 	   $(PROMPT_DIR)/prompt.c \
 	   $(LEXER_DIR)/lexer.c $(LEXER_DIR)/token_word.c \
 	   $(PARSER_DIR)/parser.c \
-	   $(EXPAND_DIR)/expand.c \
+	   $(EXPAND_DIR)/expand.c $(EXPAND_DIR)/word_spliting.c \
        $(SIGNALS_DIR)/signals.c \
 	   $(UTILS_DIR)/utils.c \
 	   $(EXECUTOR_DIR)/executor.c $(EXECUTOR_DIR)/redirection.c $(EXECUTOR_DIR)/build_envp_array.c  \
