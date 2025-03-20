@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 14:32:39 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/04 18:33:17 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/20 12:02:55 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -303,18 +303,18 @@ t_token	*lexer(const char *input)
 	return (tokens);
 }
 
-void	free_tokens(t_token *tokens)
-{
-	t_token	*tmp;
+// void	free_tokens(t_token *tokens)
+// {
+// 	t_token	*tmp;
 
-	while (tokens)
-	{
-		tmp = tokens;
-		tokens = tokens->next;
-		free(tmp->value);
-		free(tmp);
-	}
-}
+// 	while (tokens)
+// 	{
+// 		tmp = tokens;
+// 		tokens = tokens->next;
+// 		free(tmp->value);
+// 		free(tmp);
+// 	}
+// }
 
 void	print_tokens(t_token *tokens)
 {

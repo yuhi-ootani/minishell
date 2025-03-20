@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/19 13:27:56 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/20 16:28:15 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@
 
 # define delimiters " \t\n"
 
+typedef struct s_minishell		t_minishell;
+
 // ▗▖  ▗▖ ▗▄▖ ▗▄▄▄▖▗▖  ▗▖
 // ▐▛▚▞▜▌▐▌ ▐▌  █  ▐▛▚▖▐▌
 // ▐▌  ▐▌▐▛▀▜▌  █  ▐▌ ▝▜▌
@@ -45,7 +47,8 @@ typedef struct s_env
 }								t_env;
 
 /* prototype */
-t_env							*env_duplication(char **envp_srcs);
+void							init_shell_struct(t_minishell *shell,
+									char **envp);
 
 // RubiFont
 // ▗▄▄▖ ▗▄▄▖  ▗▄▖ ▗▖  ▗▖▗▄▄▄▖
@@ -140,6 +143,7 @@ t_env							*create_new_env_util(const char *new_name,
 									const char *new_value, t_env *new_next);
 void							env_add_back_util(t_env **copied_env,
 									t_env *new_env);
+void							free_copied_env(t_env *env);
 
 // ▗▄▄▄▖      ▗▖  ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖   ▗▖
 //   █        ▐▛▚▞▜▌  █  ▐▛▚▖▐▌  █  ▐▌   ▐▌ ▐▌▐▌   ▐▌   ▐▌
@@ -152,6 +156,8 @@ typedef struct s_minishell
 	t_token						*tokens;
 	t_command					*commands;
 	int							*exit_status;
+	int							original_stdin;
+	int							original_stdout;
 }								t_minishell;
 
 // ▗▄▄▄▖▗▖  ▗▖▗▄▄▖  ▗▄▖ ▗▖  ▗▖▗▄▄▄
@@ -217,5 +223,17 @@ void							sort_and_print_env(t_env **copied_env);
 void							ft_unset(t_minishell *shell);
 void							ft_env(t_minishell *shell);
 void							ft_exit(t_minishell *shell);
+
+typedef enum e_exit_status
+{
+	FAIL_DUP = 255,
+}								t_exit_status;
+
+// ▗▄▄▄ ▗▄▄▄▖▗▄▄▖ ▗▖ ▗▖ ▗▄▄▖    ▗▖ ▗▖▗▄▄▄▖▗▄▄▄▖▗▖    ▗▄▄▖
+// ▐▌  █▐▌   ▐▌ ▐▌▐▌ ▐▌▐▌       ▐▌ ▐▌  █    █  ▐▌   ▐▌
+// ▐▌  █▐▛▀▀▘▐▛▀▚▖▐▌ ▐▌▐▌▝▜▌    ▐▌ ▐▌  █    █  ▐▌    ▝▀▚▖
+// ▐▙▄▄▀▐▙▄▄▖▐▙▄▞▘▝▚▄▞▘▝▚▄▞▘    ▝▚▄▞▘  █  ▗▄█▄▖▐▙▄▄▖▗▄▄▞▘
+
+void							print_commands(t_command *head);
 
 #endif

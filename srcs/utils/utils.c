@@ -6,13 +6,13 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 10:17:05 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/15 16:59:26 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/20 16:28:06 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
- int	ft_isnumber(char *str)
+int	ft_isnumber(char *str)
 {
 	int	i;
 
@@ -95,7 +95,7 @@ t_env	*create_new_env_util(const char *new_name, const char *new_value,
 
 void	env_add_back_util(t_env **copied_env, t_env *new_env)
 {
-	t_env *tmp;
+	t_env	*tmp;
 
 	tmp = *copied_env;
 	if (!tmp)
@@ -106,4 +106,18 @@ void	env_add_back_util(t_env **copied_env, t_env *new_env)
 	while (tmp->next)
 		tmp = tmp->next;
 	tmp->next = new_env;
+}
+
+void	free_copied_env(t_env *env)
+{
+	t_env	*tmp;
+
+	while (env)
+	{
+		tmp = env->next;
+		free(env->name);
+		free(env->value);
+		free(env);
+		env = tmp;
+	}
 }
