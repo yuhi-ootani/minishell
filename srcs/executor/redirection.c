@@ -8,12 +8,11 @@ static bool	is_last_heredoc(t_command *command, size_t i)
 			command->input_file) == 0);
 }
 
-static void	receive_input_in_child_process(t_command *command, int *pipefd)
+static void	readline_till_heredoc(t_command *command, int *pipefd)
 {
 	char	*line;
 	size_t	i;
 
-	close(pipefd[0]);
 	i = 0;
 	while (i < command->heredoc_count)
 	{
@@ -33,31 +32,19 @@ static void	receive_input_in_child_process(t_command *command, int *pipefd)
 		}
 		free(line);
 	}
-	close(pipefd[1]);
-	exit(EXIT_SUCCESS);
 }
 
 static void	handle_heredoc(t_command *command)
 {
-	int		pipefd[2];
-	pid_t	pid;
-	int		status;
+	int	pipefd[2];
 
 	if (pipe(pipefd) == -1)
 	{
 		perror("pipe in heredoc");
 		exit(EXIT_FAILURE); // TODO
 	}
-	pid = fork();
-	if (pid == -1)
-	{
-		perror("fork");
-		exit(EXIT_FAILURE);
-	}
-	if (pid == 0)
-		receive_input_in_child_process(command, pipefd);
+	readline_till_heredoc(command, pipefd);
 	close(pipefd[1]);
-	waitpid(pid, &status, 0);
 	if (command->is_heredoc)
 		dup2(pipefd[0], STDIN_FILENO);
 	close(pipefd[0]);

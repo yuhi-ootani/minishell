@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:32:43 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/18 19:24:08 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/20 19:29:15 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,21 +25,25 @@ char	*get_current_directory(void)
 	return (cwd);
 }
 
+#define COLOR_CYAN "\033[36m"
+#define COLOR_RESET "\033[0m"
+
 char	*prompt(void)
 {
 	char	*input;
 	char	*cwd;
 	char	*prompt_str;
 	size_t	prompt_len;
+
 	cwd = get_current_directory();
-	prompt_len = ft_strlen("* ") + ft_strlen(cwd) + ft_strlen("* $> ") + 1;
+	prompt_len = ft_strlen("MINISHELL:") + ft_strlen(cwd) + ft_strlen("$> ") + 1;
 	prompt_str = malloc(prompt_len);
 	if (!prompt_str)
 	{
 		free(cwd);
 		return (NULL);
 	}
-	snprintf(prompt_str, prompt_len, "* %s* $> ", cwd); //snprintf
+	snprintf(prompt_str, prompt_len, "MINISHELL:%s$ ", cwd);
 	free(cwd);
 	input = readline(prompt_str);
 	free(prompt_str);

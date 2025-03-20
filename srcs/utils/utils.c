@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 10:17:05 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/19 11:53:13 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/20 19:44:24 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,19 @@ void	env_add_back_util(t_env **copied_env, t_env *new_env)
 	tmp->next = new_env;
 }
 
+void	free_copied_env(t_env *env)
+{
+	t_env	*tmp;
+
+	while (env)
+	{
+		tmp = env->next;
+		free(env->name);
+		free(env->value);
+		free(env);
+		env = tmp;
+	}
+}
 int	ft_fputchar_fd(int fd, char c)
 {
 	return (write(fd, &c, 1));

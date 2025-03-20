@@ -6,70 +6,12 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/19 14:56:15 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/20 19:30:08 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-// Print a single command's information
-
-void	print_command(t_command *command, int cmd_index)
-{
-	size_t	i;
-
-	i = 0;
-	printf("Command %d:\n", cmd_index);
-	// Print arguments
-	if (command->args)
-	{
-		while (command->args[i])
-		{
-			printf("  Arg %ld: %s\n", i, command->args[i]);
-			i++;
-		}
-	}
-	else
-	{
-		printf("  No arguments\n");
-	}
-	// Print redirections, if any
-	if (command->input_file)
-		printf("  Input redirection: %s\n", command->input_file);
-	if (command->heredoc_count > 0)
-	{
-		i = 0;
-		while (i < command->heredoc_count)
-		{
-			printf("heredoc_files[%ld]:%s\n", i, command->heredoc_files[i]);
-			i++;
-		}
-	}
-	if (command->out_file)
-	{
-		printf("  Output redirection: %s\n", command->out_file);
-		printf("  Append mode: %s\n", command->is_append ? "Yes" : "No");
-	}
-	printf("\n");
-}
-
-// Print all commands in the linked list
-void	print_commands(t_command *head)
-{
-	int			cmd_index;
-	t_command	*current;
-
-	cmd_index = 0;
-	current = head;
-	while (current)
-	{
-		print_command(current, cmd_index);
-		current = current->next;
-		cmd_index++;
-	}
-}
-
-// Free a single command node (including its arguments and redirection strings)
 void	free_command(t_command *command)
 {
 	int	i;
@@ -91,7 +33,6 @@ void	free_command(t_command *command)
 	free(command);
 }
 
-// Free the entire linked list of commands
 void	free_commands(t_command *head)
 {
 	t_command	*tmp;
@@ -103,102 +44,106 @@ void	free_commands(t_command *head)
 		free_command(tmp);
 	}
 }
-
-// input = prompt();
-// if (!input)
-// {
-// 	printf("exit\n");
-// 	break ;
-// }
-// if (*input)
-// 	add_history(input);
-// tokens_list = lexer(input);
-// command_list = parser(tokens_list);
-// if (command_list)
-// {
-// 	if (is_builtin(command_list->args[0]) == FT_EXIT)
-// 	{
-// 		exit_code = ft_exit(command_list);
-// 		break ;
-// 	}
-// 	single_command_executor(command_list, envp);
-// }
-// free(input);
-// free_tokens(tokens_list);
-// free_commands(command_list);
-// }
-// return (exit_code);
-// }
-
-char	*get_input(void)
+void	free_tokens(t_token *tokens)
 {
-	char	*input_line;
+	t_token	*tmp;
 
-	if (!isatty(STDIN_FILENO))
+	while (tokens)
 	{
-		input_line = ft_get_next_line(STDIN_FILENO);
-		if (input_line)
-			return (input_line);
-		else
-			return (NULL);
+		tmp = tokens;
+		tokens = tokens->next;
+		free(tmp->value);
+		free(tmp);
 	}
-	return (prompt());
 }
 
-static t_minishell	*create_shell_struct(void)
+char	*get_input(int argc, char **argv, bool *interactive)
 {
-	t_minishell	*new_shell;
+	static bool	initialized = false;
+	char		*input_line;
+	int			fd;
 
-	new_shell = (t_minishell *)malloc(sizeof(t_minishell));
-	if (!new_shell)
-		return (NULL);
-	new_shell->env = NULL;
-	new_shell->tokens = NULL;
-	new_shell->commands = NULL;
-	new_shell->exit_status = 0;
-	return (new_shell);
+	if (initialized == false)
+	{
+		if (argc > 1)
+		{
+			fd = open(argv[1], O_RDONLY);
+			if (fd == -1)
+			{
+				perror("Failed to open file");
+				return (NULL); // Handle the error if file can't be opened
+			}
+			if (dup2(fd, STDIN_FILENO) == -1)
+			{
+				perror("Failed to duplicate file descriptor");
+				close(fd);
+				return (NULL);
+			}
+			close(fd);
+		}
+		if (!isatty(STDIN_FILENO))
+			*interactive = false;
+		initialized = true;
+	}
+	if (!*interactive)
+	{
+		input_line = ft_get_next_line(STDIN_FILENO);
+		if (input_line && strncmp(input_line, "#", 1) == 0)
+		{
+			free(input_line);
+			input_line = ft_get_next_line(STDIN_FILENO);
+		}
+		return (input_line);
+	}
+	else
+		return (prompt());
 }
 
 int	main(int argc, char **argv, char **envp)
 {
+	bool		interactive;
 	char		*input;
-	t_minishell	*shell;
+	t_minishell	shell;
 
-	if (argc > 1)
-		printf("minishell: %s: No such file or directory\n", argv[1]);
-	shell = create_shell_struct();
-	shell->env = env_duplication(envp);
+	interactive = true;
+	init_shell_struct(&shell, envp);
 	setup_signals();
 	while (1)
 	{
 		if (g_signal)
 			g_signal = 0;
-		input = get_input();
+		input = get_input(argc, argv, &interactive);
 		if (!input)
 		{
-			printf("exit\n");
+			printf("exit\n"); // todo
 			break ;
 		}
 		if (input && input[0] != '\n') // to do
 		{
 			if (!input[0])
 				continue ;
-			shell->tokens = lexer(input);
-			if (shell->tokens)
-				print_tokens(shell->tokens);
-			shell->commands = parser(shell->tokens);
-			if (shell->commands)
+			shell.tokens = lexer(input);
+			if (shell.tokens)
+				print_tokens(shell.tokens);
+			shell.commands = parser(shell.tokens);
+			if (shell.commands)
 			{
-				expand_commands(shell);
-				print_commands(shell->commands);
-				command_executor(shell);
+				expand_commands(&shell);
+				print_commands(shell.commands);
+				command_executor(&shell);
 			}
-			free(input);
-			free_tokens(shell->tokens);
-			free_commands(shell->commands);
+			free_tokens(shell.tokens);
+			shell.tokens = NULL;
+			free_commands(shell.commands);
+			shell.commands = NULL;
+			if (interactive)
+				dup2(shell.original_stdin, STDIN_FILENO);
+			dup2(shell.original_stdout, STDOUT_FILENO);
 		}
 		else
 			break ;
 	}
+	close(shell.original_stdin);
+	close(shell.original_stdout);
 	return (0);
 }

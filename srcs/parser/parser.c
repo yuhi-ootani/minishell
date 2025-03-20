@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 15:07:23 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/18 19:24:39 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/20 19:29:42 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void	add_argument(t_command *command, char *new_argument)
 	}
 	new_args[count] = ft_strdup(new_argument);
 	if (!new_args[count])
-	syntax_error("new_args strdup failed."); // todo
+		syntax_error("new_args strdup failed."); // todo
 	new_args[count + 1] = NULL;
 	free(command->args);
 	command->args = new_args;

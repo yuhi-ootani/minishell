@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 14:32:39 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/18 14:28:42 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/20 19:30:22 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -303,18 +303,18 @@ t_token	*lexer(const char *input)
 	return (tokens);
 }
 
-void	free_tokens(t_token *tokens)
-{
-	t_token	*tmp;
+// void	free_tokens(t_token *tokens)
+// {
+// 	t_token	*tmp;
 
-	while (tokens)
-	{
-		tmp = tokens;
-		tokens = tokens->next;
-		free(tmp->value);
-		free(tmp);
-	}
-}
+// 	while (tokens)
+// 	{
+// 		tmp = tokens;
+// 		tokens = tokens->next;
+// 		free(tmp->value);
+// 		free(tmp);
+// 	}
+// }
 
 void	print_tokens(t_token *tokens)
 {
