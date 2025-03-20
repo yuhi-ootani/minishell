@@ -32,10 +32,10 @@ t_env	*env_duplication(char **envp_srcs)
 
 void	keep_original_fds(t_minishell *shell)
 {
-	shell->original_stdin = dup(STDIN_FILENO);
+	shell->original_stdin = dup2(STDIN_FILENO, 3);
 	if (shell->original_stdin == -1)
 		exit(FAIL_DUP);
-	shell->original_stdout = dup(STDOUT_FILENO);
+	shell->original_stdout = dup2(STDOUT_FILENO, 4);
 	if (shell->original_stdout == -1)
 		exit(FAIL_DUP);
 }
