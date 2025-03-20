@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/20 16:17:49 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/20 20:03:27 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,35 +57,11 @@ void	free_tokens(t_token *tokens)
 	}
 }
 
-char	*get_input(int argc, char **argv, bool *interactive)
+char	*get_input(bool interactive_mode)
 {
-	static bool	initialized = false;
-	char		*input_line;
-	int			fd;
+	char	*input_line;
 
-	if (initialized == false)
-	{
-		if (argc > 1)
-		{
-			fd = open(argv[1], O_RDONLY);
-			if (fd == -1)
-			{
-				perror("Failed to open file");
-				return (NULL); // Handle the error if file can't be opened
-			}
-			if (dup2(fd, STDIN_FILENO) == -1)
-			{
-				perror("Failed to duplicate file descriptor");
-				close(fd);
-				return (NULL);
-			}
-			close(fd);
-		}
-		if (!isatty(STDIN_FILENO))
-			*interactive = false;
-		initialized = true;
-	}
-	if (!*interactive)
+	if (!interactive_mode)
 	{
 		input_line = ft_get_next_line(STDIN_FILENO);
 		if (input_line && strncmp(input_line, "#", 1) == 0)
@@ -99,20 +75,71 @@ char	*get_input(int argc, char **argv, bool *interactive)
 		return (prompt());
 }
 
+void	free_shell(t_minishell *shell)
+{
+	printf("stdin:%d, stdout:%d\n", shell->original_stdin,
+		shell->original_stdout);
+	close(shell->original_stdout);
+	close(shell->original_stdin);
+	free_copied_env(shell->env);
+	if (shell->tokens)
+		free_tokens(shell->tokens);
+	if (shell->commands)
+		free_commands(shell->commands);
+}
+
+int	get_exit_status(int err) // Fix: Use a proper function parameter
+{
+	if (err == ENOENT)
+		return (127);
+	else if (err == EACCES)
+		return (126);
+	else
+		return (1);
+}
+
+bool	decide_input_fd(t_minishell *shell, int argc, char **argv)
+{
+	int	fd;
+
+	if (argc > 1)
+	{
+		fd = open(argv[1], O_RDONLY);
+		if (fd == -1)
+		{
+			free_shell(shell);
+			shell->exit_status = get_exit_status(errno);
+			fprintf(stderr, "MINISHELL: %s: %s\n", argv[1], strerror(errno));
+			// fprintf
+			exit(shell->exit_status);
+		}
+		if (dup2(fd, STDIN_FILENO) == -1)
+		{
+			free_shell(shell);
+			exit(FAIL_DUP);
+		}
+		close(fd);
+		return (false);
+	}
+	else if (!isatty(STDIN_FILENO))
+		return (false);
+	return (true);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
-	bool		interactive;
+	bool		interactive_mode;
 	char		*input;
 	t_minishell	shell;
 
-	interactive = true;
 	init_shell_struct(&shell, envp);
+	interactive_mode = decide_input_fd(&shell, argc, argv);
 	setup_signals();
 	while (1)
 	{
 		if (g_signal)
 			g_signal = 0;
-		input = get_input(argc, argv, &interactive);
+		input = get_input(interactive_mode);
 		if (!input)
 		{
 			printf("exit\n"); // todo
@@ -136,7 +163,7 @@ int	main(int argc, char **argv, char **envp)
 			shell.tokens = NULL;
 			free_commands(shell.commands);
 			shell.commands = NULL;
-			if (interactive)
+			if (interactive_mode)
 				dup2(shell.original_stdin, STDIN_FILENO);
 			dup2(shell.original_stdout, STDOUT_FILENO);
 		}

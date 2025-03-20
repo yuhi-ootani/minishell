@@ -6,7 +6,7 @@
 #    By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 11:52:00 by otaniyuhi         #+#    #+#              #
-#    Updated: 2025/03/20 15:47:07 by oyuhi            ###   ########.fr        #
+#    Updated: 2025/03/20 16:49:34 by oyuhi            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -78,6 +78,5 @@ fclean: clean
 
 
 re: fclean all
-
 
 .PHONY: all clean fclean re

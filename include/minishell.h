@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/20 16:28:15 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/20 19:28:15 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,7 +155,7 @@ typedef struct s_minishell
 	t_env						*env;
 	t_token						*tokens;
 	t_command					*commands;
-	int							*exit_status;
+	int							exit_status;
 	int							original_stdin;
 	int							original_stdout;
 }								t_minishell;
