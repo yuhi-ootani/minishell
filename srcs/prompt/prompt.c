@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:32:43 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/20 19:29:15 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/21 12:10:29 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ char	*prompt(void)
 	free(prompt_str);
 	if (!input)
 	{
-		printf("exit\n");
+		printf("exit_promt\n");
 		return (NULL);
 	}
 	if (*input)

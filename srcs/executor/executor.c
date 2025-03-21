@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/20 19:32:05 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/21 12:11:15 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ static void	run_single_builtin_in_parent(t_minishell *shell, t_exec *exec_info)
 	handle_redirection(shell->commands);
 	exec_info->builtins[exec_info->builtin_id](shell);
 	if (exec_info->builtin_id == FT_EXIT)
-	exit(shell->exit_status);
+		exit(shell->exit_status);
 }
 
 bool	is_single_builtin_command(t_minishell *shell, t_exec *exec_info)

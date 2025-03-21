@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/20 20:07:22 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/21 16:04:01 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ char	*get_input(bool interactive_mode)
 	if (!interactive_mode)
 	{
 		input_line = ft_get_next_line(STDIN_FILENO);
-		if (input_line && strncmp(input_line, "#", 1) == 0)
+		if (input_line && ft_strncmp(input_line, "#", 1) == 0)
 		{
 			free(input_line);
 			input_line = ft_get_next_line(STDIN_FILENO);
@@ -109,8 +109,7 @@ bool	decide_input_fd(t_minishell *shell, int argc, char **argv)
 		{
 			free_shell(shell);
 			shell->exit_status = get_exit_status(errno);
-			fprintf(stderr, "MINISHELL: %s: %s\n", argv[1], strerror(errno));
-			// fprintf
+			ft_fprintf(stderr, "MINISHELL: %s: %s\n", argv[1], strerror(errno));
 			exit(shell->exit_status);
 		}
 		if (dup2(fd, STDIN_FILENO) == -1)
