@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 15:07:23 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/20 19:29:42 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/21 18:16:34 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,9 @@ void	add_argument(t_command *command, char *new_argument)
 void	set_redirection(t_command *command, t_token_type token_type,
 		char *filename)
 {
+	size_t	old_size;
+	size_t	new_size;
+
 	if (token_type == TOKEN_REDIR_IN)
 	{
 		command->input_file = ft_strdup(filename);
@@ -77,8 +80,10 @@ void	set_redirection(t_command *command, t_token_type token_type,
 	else if (token_type == TOKEN_HEREDOC)
 	{
 		command->input_file = ft_strdup(filename);
-		command->heredoc_files = realloc(command->heredoc_files, sizeof(char *)
-				* (command->heredoc_count + 1));
+		old_size = sizeof(char *) * command->heredoc_count;
+		new_size = sizeof(char *) * (command->heredoc_count + 1);
+		command->heredoc_files = ft_realloc(command->heredoc_files,
+				old_size, new_size);
 		if (!command->heredoc_files)
 			exit(EXIT_FAILURE); // to do
 		command->heredoc_files[command->heredoc_count] = ft_strdup(filename);

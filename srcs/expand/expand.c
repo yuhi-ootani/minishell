@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 11:09:19 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/20 19:36:51 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/21 18:19:13 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 char	*get_env_value(t_env *env, const char *name)
 {
-	char *copied_value;
+	char	*copied_value;
+
 	if (!env || !name)
 		return (NULL);
 	while (env)
@@ -48,18 +49,42 @@ char	*get_env_name(const char *input)
 	return (name);
 }
 
+// static int	append_to_buffer(t_expanded_str *expanded_str, const char *src,
+// 		size_t src_len)
+// {
+// 	char	*new_buffer;
+
+// 	if (expanded_str->index + src_len >= expanded_str->size)
+// 	{
+// 		expanded_str->size = expanded_str->index + src_len + 1;
+// 		new_buffer = realloc(expanded_str->buffer, expanded_str->size);
+// 		if (!new_buffer)
+// 			return (-1);
+// 		expanded_str->buffer = new_buffer;
+// 	}
+// 	ft_memcpy(expanded_str->buffer + expanded_str->index, src, src_len);
+// 	expanded_str->index += src_len;
+// 	expanded_str->buffer[expanded_str->index] = '\0';
+// 	return (0);
+// }
+
+/*same function as above just with ft_realloc*/
 static int	append_to_buffer(t_expanded_str *expanded_str, const char *src,
 		size_t src_len)
 {
 	char	*new_buffer;
+	size_t	old_size;
+	size_t	new_size;
 
 	if (expanded_str->index + src_len >= expanded_str->size)
 	{
-		expanded_str->size = expanded_str->index + src_len + 1;
-		new_buffer = realloc(expanded_str->buffer, expanded_str->size);
+		old_size = expanded_str->size;
+		new_size = expanded_str->index + src_len + 1;
+		new_buffer = ft_realloc(expanded_str->buffer, old_size, new_size);
 		if (!new_buffer)
 			return (-1);
 		expanded_str->buffer = new_buffer;
+		expanded_str->size = new_size;
 	}
 	ft_memcpy(expanded_str->buffer + expanded_str->index, src, src_len);
 	expanded_str->index += src_len;

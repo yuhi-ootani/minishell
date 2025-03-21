@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:34:11 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/14 15:03:31 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/21 18:21:18 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@
 // static void	double_word_capacity(char *word, size_t *capacity)
 // {
 // 	(*capacity) *= 2;
-// 	word = (char *)realloc(word, *capacity); // realloc
+// 	word = (char *)realloc(word, *capacity);
 // 	if (!word)
 // 		exit(EXIT_FAILURE); // exit status!!!
 // }
@@ -101,12 +101,25 @@ static bool	is_unquoted_space(const char *input, size_t *i, char quote)
 	return (!quote && isspace(input[*i]));
 }
 
+// static void	double_word_capacity(char **word, size_t *capacity)
+// {
+// 	(*capacity) *= 2;
+// 	*word = (char *)realloc(*word, *capacity);
+// 	if (!*word)
+// 		exit(EXIT_FAILURE); // exit status!!!
+// }
+
 static void	double_word_capacity(char **word, size_t *capacity)
 {
-	(*capacity) *= 2;
-	*word = (char *)realloc(*word, *capacity); // realloc
-	if (!*word)
-		exit(EXIT_FAILURE); // exit status!!!
+	size_t	old_capacity;
+	char	*new_word;
+
+	old_capacity = *capacity;
+	*capacity *= 2;
+	new_word = ft_realloc(*word, old_capacity, *capacity);
+	if (!new_word)
+		exit(EXIT_FAILURE); // TODO: add better error handling
+	*word = new_word;
 }
 
 static char	*extract_word(const char *input, size_t *i)
@@ -143,7 +156,7 @@ static char	*extract_word(const char *input, size_t *i)
 
 void	add_word_token(const char *input, size_t *i, t_token **tokens)
 {
-	char *word;
+	char	*word;
 
 	word = extract_word(input, i);
 	if (word && *word != '\0')

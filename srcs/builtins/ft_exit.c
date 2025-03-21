@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:44:02 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/21 14:20:39 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/21 18:23:47 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,13 +58,6 @@ int	ft_atoi_long(const char *str, bool *error)
 		i++;
 	}
 	return ((int)(num * neg));
-}
-
-void	free_shell(t_minishell *shell)
-{
-	free(shell->env);
-	free(shell->tokens);
-	free(shell->commands);
 }
 
 int	more_than_two_arguments(t_minishell *shell)

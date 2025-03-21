@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/21 16:04:01 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/21 18:22:35 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ bool	decide_input_fd(t_minishell *shell, int argc, char **argv)
 		{
 			free_shell(shell);
 			shell->exit_status = get_exit_status(errno);
-			ft_fprintf(stderr, "MINISHELL: %s: %s\n", argv[1], strerror(errno));
+			ft_fprintf(2, "MINISHELL: %s: %s\n", argv[1], strerror(errno));
 			exit(shell->exit_status);
 		}
 		if (dup2(fd, STDIN_FILENO) == -1)
