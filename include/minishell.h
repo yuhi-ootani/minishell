@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/20 20:07:37 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/21 16:38:38 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ typedef struct s_env
 /* prototype */
 void							init_shell_struct(t_minishell *shell,
 									char **envp);
+bool							decide_input_fd(t_minishell *shell, int argc,
+									char **argv);
 
 // RubiFont
 // ▗▄▄▖ ▗▄▄▖  ▗▄▖ ▗▖  ▗▖▗▄▄▄▖
@@ -57,8 +59,8 @@ void							init_shell_struct(t_minishell *shell,
 // ▐▌   ▐▌ ▐▌▝▚▄▞▘▐▌  ▐▌  █
 
 /* prototype */
-char							*prompt(void);
-char							*get_current_directory(void);
+char							*get_input(t_minishell *shell,
+									bool interactive_mode);
 
 // ▗▖   ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖▗▄▄▖
 // ▐▌   ▐▌    ▝▚▞▘ ▐▌   ▐▌ ▐▌
@@ -155,6 +157,7 @@ void							free_env(t_env *env);
 typedef struct s_minishell
 {
 	t_env						*env;
+	char						*input;
 	t_token						*tokens;
 	t_command					*commands;
 	int							exit_status;
@@ -238,5 +241,13 @@ typedef enum e_exit_status
 // ▐▙▄▄▀▐▙▄▄▖▐▙▄▞▘▝▚▄▞▘▝▚▄▞▘    ▝▚▄▞▘  █  ▗▄█▄▖▐▙▄▄▖▗▄▄▞▘
 
 void							print_commands(t_command *head);
+
+// ▗▄▄▄▖▗▄▄▖ ▗▄▄▄▖▗▄▄▄▖
+// ▐▌   ▐▌ ▐▌▐▌   ▐▌
+// ▐▛▀▀▘▐▛▀▚▖▐▛▀▀▘▐▛▀▀▘
+// ▐▌   ▐▌ ▐▌▐▙▄▄▖▐▙▄▄▖
+
+void							free_shell(t_minishell *shell);
+int								get_exit_status(int err);
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:44:02 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/20 16:48:22 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/21 12:21:55 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,14 +59,6 @@ int	ft_atoi_long(const char *str, bool *error)
 	}
 	return ((int)(num * neg));
 }
-
-void	free_shell(t_minishell *shell)
-{
-	free(shell->env);
-	free(shell->tokens);
-	free(shell->commands);
-}
-
 int	more_than_two_arguments(t_minishell *shell)
 {
 	t_command	*command;
@@ -121,7 +113,7 @@ void	ft_exit(t_minishell *shell)
 		return ;
 	if (!command->args[1])
 	{
-		exit_code =shell->exit_status;
+		exit_code = shell->exit_status;
 	}
 	else
 	{
