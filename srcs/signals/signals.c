@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 13:41:58 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/18 19:23:17 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/22 10:20:57 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ void	setup_signals(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
-
 // volatile sig_atomic_t	g_signal = 0;
 
 // void	disable_ctrlc_display(void)
@@ -50,9 +49,8 @@ void	setup_signals(void)
 
 // void	handle_sigint(int signum)
 // {
-// 	 disable_ctrlc_display();
+// 		disable_ctrlc_display();
 // 	(void)signum;
 // 	g_signal = 1;
 // 	write(STDOUT_FILENO, "\n", 1);
 // }
-

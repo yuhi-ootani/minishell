@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:32:43 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/21 20:32:00 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/22 10:23:32 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,14 +59,14 @@ char	*prompt(t_minishell *shell)
 	return (input);
 }
 
-char	get_input(t_minishell *shell, bool interactive_mode)
+char	*get_input(t_minishell *shell, bool interactive_mode)
 {
 	char	*input_line;
 
 	if (!interactive_mode)
 	{
 		input_line = ft_get_next_line(STDIN_FILENO);
-		if (input_line && strncmp(input_line, "#", 1) == 0)
+		if (input_line && ft_strncmp(input_line, "#", 1) == 0)
 		{
 			free(input_line);
 			input_line = ft_get_next_line(STDIN_FILENO);

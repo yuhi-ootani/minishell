@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/21 16:37:52 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/22 10:28:49 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,6 @@ void	free_shell(t_minishell *shell)
 		free_commands(shell->commands);
 }
 
-
-
 int	get_exit_status(int err) // Fix: Use a proper function parameter
 {
 	if (err == ENOENT)
@@ -84,6 +82,8 @@ int	get_exit_status(int err) // Fix: Use a proper function parameter
 
 void	reset_shell_for_next_input(t_minishell *shell, bool interactive_mode)
 {
+	// Reset errno before reading input
+	errno = 0;
 	if (shell->input)
 	{
 		free(shell->input);
@@ -104,21 +104,19 @@ void	reset_shell_for_next_input(t_minishell *shell, bool interactive_mode)
 	dup2(shell->original_stdout, STDOUT_FILENO);
 }
 
-t_command	*build_commands_struct(t_minishell *shell)
+void	build_commands_struct(t_minishell *shell)
 {
-	t_token		*tokens;
-	t_command	*commands;
+	t_token	*tokens;
 
 	tokens = lexer(shell->input);
 	if (!tokens)
-		return (NULL);
+		return ;
 	print_tokens(tokens);
-	commands = parser(tokens);
-	if (!commands)
-		return (NULL);
+	shell->commands = parser(tokens);
+	if (!shell->commands)
+		return ;
 	expand_commands(shell);
-	print_commands(commands);
-	return (commands);
+	print_commands(shell->commands);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -131,19 +129,33 @@ int	main(int argc, char **argv, char **envp)
 	setup_signals();
 	while (1)
 	{
+		// signal 130
 		if (g_signal)
+		{
 			g_signal = 0;
+			shell.exit_status = 130;
+		}
 		shell.input = get_input(&shell, interactive_mode);
-		if (!shell.input && errno == 0)
-			break ;
-		if (shell.input && shell.input[0] && shell.input[0] != '\n') // to do
-			shell.commands = build_commands_struct(&shell);
-		if (shell.commands)
-			command_executor(&shell);
+		if (!shell.input)
+		{
+			if (errno == 0 && !interactive_mode)
+				break ;
+			else if (errno == 0 && !g_signal)
+			{
+				printf("fsdfsdfexit\n");
+				break ;
+			}
+		}
+		else // todo signal
+		{
+			if (shell.input && shell.input[0] && shell.input[0] != '\n')
+				// to do
+				build_commands_struct(&shell);
+			if (shell.commands)
+				command_executor(&shell);
+		}
 		reset_shell_for_next_input(&shell, interactive_mode);
 	}
 	free_shell(&shell);
-	return (0);
+	return (shell.exit_status);
 }
-
-
