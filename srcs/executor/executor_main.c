@@ -1,4 +1,14 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executor_main.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/24 17:16:42 by knemcova          #+#    #+#             */
+/*   Updated: 2025/03/24 18:28:04 by knemcova         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 // // int	main(void)
 // // {
@@ -69,7 +79,7 @@
 // 				free(line);
 // 				break ; // Delimiter reached.
 // 			}
-// 			write(pipefd[1], line, strlen(line));
+// 			write(pipefd[1], line, ft_strlen(line));
 // 			write(pipefd[1], "\n", 1);
 // 			free(line);
 // 		}

@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/24 16:30:26 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/24 18:35:24 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
 # include <termios.h>
 # include <unistd.h> //getcwd
 
-# define delimiters " \t\n"
+# define DELIMITERS " \t\n"
 
 typedef struct s_minishell		t_minishell;
 
@@ -94,7 +94,6 @@ t_token							*create_token(t_minishell *shell,
 bool							add_token(t_token **head, t_token *new_node);
 t_token							*tokenizer(t_minishell *shell);
 
-
 // ▗▄▄▖  ▗▄▖ ▗▄▄▖  ▗▄▄▖▗▄▄▄▖▗▄▄▖
 // ▐▌ ▐▌▐▌ ▐▌▐▌ ▐▌▐▌   ▐▌   ▐▌ ▐▌
 // ▐▛▀▘ ▐▛▀▜▌▐▛▀▚▖ ▝▀▚▖▐▛▀▀▘▐▛▀▚▖
@@ -128,8 +127,6 @@ void							handle_redirection(t_command *command);
 
 extern volatile sig_atomic_t	g_signal;
 
-
-
 void							setup_signals_child(void);
 void							setup_signals_parent(void);
 void							setup_signals_heredoc(void);
@@ -139,6 +136,7 @@ void							setup_signals_heredoc(void);
 // ▐▌ ▐▌  █    █  ▐▌    ▝▀▚▖
 // ▝▚▄▞▘  █  ▗▄█▄▖▐▙▄▄▖▗▄▄▞▘
 
+int								ft_isspace(int c);
 int								ft_isnumber(char *str);
 void							ft_putendl(char *s);
 size_t							count_env_util(t_env *env);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_word.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:34:11 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/24 15:41:29 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/24 17:21:17 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ static char	is_in_quote(char current_c, char *quote)
 
 static bool	is_unquoted_delimiter_or_operator(char current_c, char quote)
 {
-	if (!quote && ft_strchr(delimiters, current_c))
+	if (!quote && ft_strchr(DELIMITERS, current_c))
 		return (true);
 	else if (!quote && ft_strchr("|><", current_c))
 		return (true);

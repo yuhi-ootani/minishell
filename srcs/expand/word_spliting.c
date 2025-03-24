@@ -1,8 +1,16 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   word_spliting.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/24 18:00:40 by knemcova          #+#    #+#             */
+/*   Updated: 2025/03/24 18:28:18 by knemcova         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../../include/minishell.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 size_t	ft_array_count_str(char **array)
 {
@@ -66,7 +74,7 @@ char	*remove_quotes(const char *input)
 
 	in_single = false;
 	in_double = false;
-	result = malloc(strlen(input) + 1);
+	result = malloc(ft_strlen(input) + 1);
 	if (!result)
 		return (NULL);
 	j = 0;
@@ -84,48 +92,60 @@ char	*remove_quotes(const char *input)
 	return (result);
 }
 
+static char	**split_and_remove_quotes(char *str, const char *spaces)
+{
+	char	**splited_args;
+	char	*tmp;
+	size_t	j;
+
+	if (str[0] != '"' && str[ft_strlen(str) - 1] != '"')
+		splited_args = ft_split(str, spaces);
+	else
+		splited_args = ft_split(str, "");
+	j = 0;
+	while (splited_args && splited_args[j])
+	{
+		tmp = remove_quotes(splited_args[j]);
+		if (tmp)
+		{
+			free(splited_args[j]);
+			splited_args[j] = tmp;
+		}
+		j++;
+	}
+	return (splited_args);
+}
+
+void	append_expanded_argument(t_minishell *shell, char ***result, char *arg,
+		const char *spaces)
+{
+	char	*expanded;
+	char	**splited_args;
+	char	**tmp_array;
+
+	expanded = get_expanded_str(shell, arg);
+	if (!expanded)
+		return ;
+	splited_args = split_and_remove_quotes(expanded, spaces);
+	free(expanded);
+	tmp_array = append_string_arrays(*result, splited_args);
+	ft_array_free(splited_args);
+	ft_array_free(*result);
+	*result = tmp_array;
+}
+
 char	**expander(t_minishell *shell, char **args)
 {
 	size_t	i;
-	size_t	j;
 	char	**result;
-	char	**splited_args;
 	char	*spaces;
-	char	**tmp_array;
-	char	*tmp;
 
-	// char	*no_quotes;
-	spaces = delimiters;
+	spaces = DELIMITERS;
 	result = NULL;
 	i = 0;
 	while (args && args[i])
 	{
-		tmp = get_expanded_str(shell, args[i]);
-		if (!tmp)
-		{
-			i++;
-			continue ;
-		}
-		if (args[i][0] != '\"' && args[i][ft_strlen(args[i]) - 1] != '\"')
-			splited_args = ft_split(tmp, spaces);
-		else
-			splited_args = ft_split(tmp, "");
-		free(tmp);
-		j = 0;
-		while (splited_args[j])
-		{
-			tmp = remove_quotes(splited_args[j]);
-			if (tmp)
-			{
-				free(splited_args[j]);
-				splited_args[j] = tmp;
-			}
-			j++;
-		}
-		tmp_array = append_string_arrays(result, splited_args);
-		ft_array_free(splited_args);
-		ft_array_free(result);
-		result = tmp_array;
+		append_expanded_argument(shell, &result, args[i], spaces);
 		i++;
 	}
 	return (result);
@@ -167,4 +187,51 @@ void	expand_commands(t_minishell *shell)
 // 	//       We did NOT allocate each string. So we only free 'merged' itself.
 // 	free(merged);
 // 	return (0);
+// }
+
+// char	**expander(t_minishell *shell, char **args)
+// {
+// 	size_t	i;
+// 	size_t	j;
+// 	char	**result;
+// 	char	**splited_args;
+// 	char	*spaces;
+// 	char	**tmp_array;
+// 	char	*tmp;
+
+// 	// char	*no_quotes;
+// 	spaces = DELIMITERS;
+// 	result = NULL;
+// 	i = 0;
+// 	while (args && args[i])
+// 	{
+// 		tmp = get_expanded_str(shell, args[i]);
+// 		if (!tmp)
+// 		{
+// 			i++;
+// 			continue ;
+// 		}
+// 		if (args[i][0] != '\"' && args[i][ft_strlen(args[i]) - 1] != '\"')
+// 			splited_args = ft_split(tmp, spaces);
+// 		else
+// 			splited_args = ft_split(tmp, "");
+// 		free(tmp);
+// 		j = 0;
+// 		while (splited_args[j])
+// 		{
+// 			tmp = remove_quotes(splited_args[j]);
+// 			if (tmp)
+// 			{
+// 				free(splited_args[j]);
+// 				splited_args[j] = tmp;
+// 			}
+// 			j++;
+// 		}
+// 		tmp_array = append_string_arrays(result, splited_args);
+// 		ft_array_free(splited_args);
+// 		ft_array_free(result);
+// 		result = tmp_array;
+// 		i++;
+// 	}
+// 	return (result);
 // }

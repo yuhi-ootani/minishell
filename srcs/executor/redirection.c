@@ -105,7 +105,7 @@ void	handle_redirection(t_command *command)
 // 	file = open(filename, O_WRONLY | O_TRUNC | O_CREAT, 0644);
 // 	dup2(file, STDOUT_FILENO);
 // 	execve(command_args[0], command_args, envp);
-// 	// write(file, text, strlen(text));
+// 	// write(file, text, ft_strlen(text));
 // 	// write(file, "\n", 1);
 // 	close(file);
 // 	return (0);
