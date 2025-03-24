@@ -62,3 +62,45 @@ void	print_commands(t_command *head)
 }
 
 
+// ▗▄▄▄▖▗▄▖ ▗▖ ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖▗▄▄▄▄▖▗▄▄▄▖▗▄▄▖
+//   █ ▐▌ ▐▌▐▌▗▞▘▐▌   ▐▛▚▖▐▌  █     ▗▞▘▐▌   ▐▌ ▐▌
+//   █ ▐▌ ▐▌▐▛▚▖ ▐▛▀▀▘▐▌ ▝▜▌  █   ▗▞▘  ▐▛▀▀▘▐▛▀▚▖
+//   █ ▝▚▄▞▘▐▌ ▐▌▐▙▄▄▖▐▌  ▐▌▗▄█▄▖▐▙▄▄▄▖▐▙▄▄▖▐▌ ▐▌
+
+void	print_tokens(t_token *tokens)
+{
+	const char	*type_str;
+
+	while (tokens)
+	{
+		switch (tokens->type)
+		{
+		case TOKEN_WORD:
+			type_str = "ARG";
+			break ;
+		case TOKEN_PIPE:
+			type_str = "PIPE";
+			break ;
+		case TOKEN_REDIR_IN:
+			type_str = "REDIR_IN";
+			break ;
+		case TOKEN_REDIR_OUT:
+			type_str = "REDIR_OUT";
+			break ;
+		case TOKEN_APPEND:
+			type_str = "REDIR_APPEND";
+			break ;
+		case TOKEN_HEREDOC:
+			type_str = "HEREDOC";
+			break ;
+		case TOKEN_EOF:
+			type_str = "EOF";
+			break ;
+		default:
+			type_str = "UNKNOWN";
+			break ;
+		}
+		printf("[%s] '%s'\n", type_str, tokens->value ? tokens->value : "");
+		tokens = tokens->next;
+	}
+}

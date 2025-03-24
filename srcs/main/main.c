@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/24 09:08:17 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/24 14:51:16 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,24 +57,6 @@ void	free_tokens(t_token *tokens)
 	}
 }
 
-char	*get_input(bool interactive_mode)
-{
-	char	*input_line;
-
-	if (!interactive_mode)
-	{
-		input_line = ft_get_next_line(STDIN_FILENO);
-		if (input_line && ft_strncmp(input_line, "#", 1) == 0)
-		{
-			free(input_line);
-			input_line = ft_get_next_line(STDIN_FILENO);
-		}
-		return (input_line);
-	}
-	else
-		return (prompt());
-}
-
 void	free_shell(t_minishell *shell)
 {
 	close(shell->original_stdout);
@@ -118,16 +100,16 @@ void	build_commands_struct(t_minishell *shell)
 {
 	t_token	*tokens;
 
-	tokens = lexer(shell->input);
+	tokens = tokenizer(shell);
 	if (!tokens)
 		return ;
-	// print_tokens(tokens);
+	print_tokens(tokens);
 	shell->commands = parser(tokens);
 	free_tokens(tokens);
 	if (!shell->commands)
 		return ;
 	expand_commands(shell);
-	// print_commands(shell->commands);
+	print_commands(shell->commands);
 }
 
 void	exit_ctrl_D(t_minishell *shell)

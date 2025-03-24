@@ -3,16 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   token_word.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:34:11 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/21 18:21:18 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/24 15:41:29 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-/*yuyu no yacu*/
+// static bool	is_unquoted_space(const char *input, size_t *i, char quote);
+
+// static void	double_word_capacity(char **word, size_t *capacity)
+// {
+// 	size_t	old_capacity;
+// 	char	*new_word;
+
+// 	old_capacity = *capacity;
+// 	*capacity *= 2;
+// 	new_word = ft_realloc(*word, old_capacity, *capacity);
+// 	if (!new_word)
+// 		exit(EXIT_FAILURE); // TODO: add better error handling
+// 	*word = new_word;
+// }
 
 // static bool	is_quote(const char *input, size_t *i, char *quote)
 // {
@@ -33,17 +46,10 @@
 // 	}
 // 	return (false);
 // }
+
 // static bool	is_unquoted_space(const char *input, size_t *i, char quote)
 // {
-// 	return (!quote && isspace(input[*i]));
-// }
-
-// static void	double_word_capacity(char *word, size_t *capacity)
-// {
-// 	(*capacity) *= 2;
-// 	word = (char *)realloc(word, *capacity);
-// 	if (!word)
-// 		exit(EXIT_FAILURE); // exit status!!!
+// 	return (!quote && ft_strchr(delimiters, input[*i]));
 // }
 
 // static char	*extract_word(const char *input, size_t *i)
@@ -59,111 +65,118 @@
 // 	word = (char *)malloc(capacity);
 // 	if (!word)
 // 		exit(EXIT_FAILURE); // must modified !!!
-// 	while (input[*i] && !is_unquoted_space(input, i, &quote))
+// 	while (input[*i] && !is_unquoted_space(input, i, quote))
 // 	{
-// 		if (is_quote(input, i, &quote) == true)
+// 		if (is_quote(input, i, &quote))
+// 		{
+// 			if (len + 1 >= capacity)
+// 				double_word_capacity(&word, &capacity);
+// 			word[len++] = input[(*i) - 1];
 // 			continue ;
-// 		if (!quote && strchr("|><$", input[*i])) // strchr
+// 		}
+// 		if (!quote && ft_strchr("|><", input[*i]))
 // 			break ;
 // 		if (len + 1 >= capacity)
-// 			double_word_capacity(word, &capacity);
+// 			double_word_capacity(&word, &capacity);
 // 		word[len++] = input[(*i)++];
 // 	}
 // 	word[len] = '\0';
 // 	return (word);
 // }
 
-// yuyu code new
-static bool	is_unquoted_space(const char *input, size_t *i, char quote);
-
-static bool	is_quote(const char *input, size_t *i, char *quote)
-{
-	if (input[*i] == '\'' || input[*i] == '"')
-	{
-		if (!(*quote))
-		{
-			*quote = input[*i];
-			(*i)++;
-			return (true);
-		}
-		else if (input[*i] == *quote)
-		{
-			*quote = 0;
-			(*i)++;
-			return (true);
-		}
-	}
-	return (false);
-}
-
-static bool	is_unquoted_space(const char *input, size_t *i, char quote)
-{
-	return (!quote && isspace(input[*i]));
-}
+// static bool	is_unquoted_space(const char *input, size_t *i, char quote);
 
 // static void	double_word_capacity(char **word, size_t *capacity)
 // {
-// 	(*capacity) *= 2;
-// 	*word = (char *)realloc(*word, *capacity);
-// 	if (!*word)
-// 		exit(EXIT_FAILURE); // exit status!!!
+// 	size_t	old_capacity;
+// 	char	*new_word;
+
+// 	old_capacity = *capacity;
+// 	*capacity *= 2;
+// 	new_word = ft_realloc(*word, old_capacity, *capacity);
+// 	if (!new_word)
+// 		exit(EXIT_FAILURE); // TODO: add better error handling
+// 	*word = new_word;
 // }
 
-static void	double_word_capacity(char **word, size_t *capacity)
+static char	is_in_quote(char current_c, char *quote)
 {
-	size_t	old_capacity;
-	char	*new_word;
-
-	old_capacity = *capacity;
-	*capacity *= 2;
-	new_word = ft_realloc(*word, old_capacity, *capacity);
-	if (!new_word)
-		exit(EXIT_FAILURE); // TODO: add better error handling
-	*word = new_word;
+	if (current_c == '\'' || current_c == '"')
+	{
+		if (!(*quote))
+		{
+			return (current_c);
+		}
+		else if (current_c == *quote)
+		{
+			return (0);
+		}
+	}
+	return (*quote);
 }
 
-static char	*extract_word(const char *input, size_t *i)
+static bool	is_unquoted_delimiter_or_operator(char current_c, char quote)
 {
-	char	*word;
-	size_t	capacity;
+	if (!quote && ft_strchr(delimiters, current_c))
+		return (true);
+	else if (!quote && ft_strchr("|><", current_c))
+		return (true);
+	else
+		return (false);
+}
+
+size_t	calculate_word_length(const char *input, size_t *i)
+{
 	size_t	len;
 	char	quote;
 
-	len = 0;
 	quote = 0;
-	capacity = 64;
-	word = (char *)malloc(capacity);
-	if (!word)
-		exit(EXIT_FAILURE); // must modified !!!
-	while (input[*i] && !is_unquoted_space(input, i, quote))
+	len = 0;
+	while (input[*i] && !is_unquoted_delimiter_or_operator(input[*i], quote))
 	{
-		if (is_quote(input, i, &quote))
-		{
-			if (len + 1 >= capacity)
-				double_word_capacity(&word, &capacity);
-			word[len++] = input[(*i) - 1];
-			continue ;
-		}
-		if (!quote && strchr("|><", input[*i])) // strchr
-			break ;
-		if (len + 1 >= capacity)
-			double_word_capacity(&word, &capacity);
-		word[len++] = input[(*i)++];
+		quote = is_in_quote(input[*i], &quote);
+		len++;
+		(*i)++;
 	}
+	return (len);
+}
+
+static char	*extract_word(t_minishell *shell, size_t *i)
+{
+	char	*word;
+	size_t	len;
+	size_t	start;
+	char	*input;
+
+	start = *i;
+	input = shell->input;
+	len = calculate_word_length(input, i);
+	word = (char *)ft_calloc(len + 1, sizeof(char));
+	if (!word)
+	{
+		shell->exit_status = EXIT_FAILURE;
+		return (NULL);
+	}
+	ft_memcpy(word, input + start, len);
 	word[len] = '\0';
 	return (word);
 }
 
-void	add_word_token(const char *input, size_t *i, t_token **tokens)
+bool	add_word_token(t_minishell *shell, size_t *i, t_token **tokens)
 {
 	char	*word;
+	bool	malloc_fail;
 
-	word = extract_word(input, i);
-	if (word && *word != '\0')
+	malloc_fail = false;
+	word = extract_word(shell, i);
+	if (!word)
+		return (EXIT_FAILURE);
+	if (*word != '\0')
 	{
-		add_token(tokens, create_new_token(TOKEN_WORD, word));
+		malloc_fail = add_token(tokens, create_token(shell, TOKEN_WORD, word));
 		free(word);
 	}
 	else if (*word == '\0')
 		free(word);
+	return (malloc_fail);
 }

@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/24 09:06:33 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/24 15:38:37 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,10 +63,10 @@ bool							decide_input_fd(t_minishell *shell, int argc,
 char							*get_input(t_minishell *shell,
 									bool interactive_mode);
 
-// ▗▖   ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖▗▄▄▖
-// ▐▌   ▐▌    ▝▚▞▘ ▐▌   ▐▌ ▐▌
-// ▐▌   ▐▛▀▀▘  ▐▌  ▐▛▀▀▘▐▛▀▚▖
-// ▐▙▄▄▖▐▙▄▄▖▗▞▘▝▚▖▐▙▄▄▖▐▌ ▐▌
+// ▗▄▄▄▖▗▄▖ ▗▖ ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖▗▄▄▄▄▖▗▄▄▄▖▗▄▄▖
+//   █ ▐▌ ▐▌▐▌▗▞▘▐▌   ▐▛▚▖▐▌  █     ▗▞▘▐▌   ▐▌ ▐▌
+//   █ ▐▌ ▐▌▐▛▚▖ ▐▛▀▀▘▐▌ ▝▜▌  █   ▗▞▘  ▐▛▀▀▘▐▛▀▚▖
+//   █ ▝▚▄▞▘▐▌ ▐▌▐▙▄▄▖▐▌  ▐▌▗▄█▄▖▐▙▄▄▄▖▐▙▄▄▖▐▌ ▐▌
 
 typedef enum e_token_type
 {
@@ -87,15 +87,13 @@ typedef struct s_token
 }								t_token;
 
 /* prototype */
-void							add_word_token(const char *input, size_t *i,
+bool							add_word_token(t_minishell *shell, size_t *i,
 									t_token **tokens);
-t_token							*create_new_token(t_token_type type,
-									const char *value);
-void							add_token(t_token **head, t_token *new_node);
-t_token							*lexer(const char *input);
-void							print_tokens(t_token *tokens);
-void							free_tokens(t_token *tokens);
-void							free_copied_env(t_env *env);
+t_token							*create_token(t_minishell *shell,
+									t_token_type type, const char *value);
+bool							add_token(t_token **head, t_token *new_node);
+t_token							*tokenizer(t_minishell *shell);
+
 
 // ▗▄▄▖  ▗▄▖ ▗▄▄▖  ▗▄▄▖▗▄▄▄▖▗▄▄▖
 // ▐▌ ▐▌▐▌ ▐▌▐▌ ▐▌▐▌   ▐▌   ▐▌ ▐▌
@@ -243,6 +241,7 @@ typedef enum e_exit_status
 // ▐▙▄▄▀▐▙▄▄▖▐▙▄▞▘▝▚▄▞▘▝▚▄▞▘    ▝▚▄▞▘  █  ▗▄█▄▖▐▙▄▄▖▗▄▄▞▘
 
 void							print_commands(t_command *head);
+void							print_tokens(t_token *tokens);
 
 // ▗▄▄▄▖▗▄▄▖ ▗▄▄▄▖▗▄▄▄▖
 // ▐▌   ▐▌ ▐▌▐▌   ▐▌
@@ -251,5 +250,7 @@ void							print_commands(t_command *head);
 
 void							free_shell(t_minishell *shell);
 int								get_exit_status(int err);
+void							free_tokens(t_token *tokens);
+void							free_copied_env(t_env *env);
 
 #endif

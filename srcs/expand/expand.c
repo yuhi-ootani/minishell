@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 11:09:19 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/24 09:07:18 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/24 13:58:17 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ char	*get_env_name(const char *input)
 // 	return (0);
 // }
 
-/*same function as above just with ft_realloc*/
+
 static int	append_to_buffer(t_expanded_str *expanded_str, const char *src,
 		size_t src_len)
 {
