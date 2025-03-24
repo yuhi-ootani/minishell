@@ -36,6 +36,7 @@ static void	readline_till_heredoc(t_command *command, int *pipefd)
 
 static void	handle_heredoc(t_command *command)
 {
+	setup_signals_heredoc();
 	int	pipefd[2];
 
 	if (pipe(pipefd) == -1)

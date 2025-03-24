@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/24 09:08:17 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/24 10:49:40 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,24 +55,6 @@ void	free_tokens(t_token *tokens)
 		free(tmp->value);
 		free(tmp);
 	}
-}
-
-char	*get_input(bool interactive_mode)
-{
-	char	*input_line;
-
-	if (!interactive_mode)
-	{
-		input_line = ft_get_next_line(STDIN_FILENO);
-		if (input_line && ft_strncmp(input_line, "#", 1) == 0)
-		{
-			free(input_line);
-			input_line = ft_get_next_line(STDIN_FILENO);
-		}
-		return (input_line);
-	}
-	else
-		return (prompt());
 }
 
 void	free_shell(t_minishell *shell)
@@ -144,7 +126,7 @@ int	main(int argc, char **argv, char **envp)
 
 	init_shell_struct(&shell, envp);
 	interactive_mode = decide_input_fd(&shell, argc, argv);
-	setup_signals();
+	setup_signals_parent();
 	while (1)
 	{
 		if (g_signal)
