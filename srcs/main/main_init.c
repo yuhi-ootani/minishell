@@ -70,9 +70,7 @@ void	keep_original_fds(t_minishell *shell)
 
 void	init_shell_struct(t_minishell *shell, char **envp)
 {
-	shell->env = NULL;
 	shell->input = NULL;
-	shell->tokens = NULL;
 	shell->commands = NULL;
 	shell->exit_status = 0;
 	keep_original_fds(shell);

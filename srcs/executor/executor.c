@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/20 19:32:05 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/23 10:23:09 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,7 @@ t_builtin_id	is_builtin(char *command_str)
 
 static void	execute_child_process(t_minishell *shell, t_exec *exec_info)
 {
+	// reset_signal_handler();//todo
 	if (shell->commands->is_heredoc == false
 		&& exec_info->input_fd != STDIN_FILENO)
 	{
@@ -119,7 +120,7 @@ static void	run_single_builtin_in_parent(t_minishell *shell, t_exec *exec_info)
 	handle_redirection(shell->commands);
 	exec_info->builtins[exec_info->builtin_id](shell);
 	if (exec_info->builtin_id == FT_EXIT)
-	exit(shell->exit_status);
+		exit(shell->exit_status);
 }
 
 bool	is_single_builtin_command(t_minishell *shell, t_exec *exec_info)
@@ -194,6 +195,8 @@ void	command_executor(t_minishell *shell)
 {
 	t_exec	exec_info;
 
+	if (!shell->commands) // Added check
+		return ;
 	init_exec_info(&exec_info);
 	if (!shell->commands->args)
 	{

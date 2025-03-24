@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:32:43 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/22 10:23:32 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/23 19:59:21 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,14 +49,31 @@ char	*prompt(t_minishell *shell)
 		return (NULL);
 	input = readline(prompt_str);
 	free(prompt_str);
-	if (!input)
-	{
-		shell->exit_status = EXIT_FAILURE;
+	// Check for interruption (Ctrl+D)
+	if (!input && g_signal)
 		return (NULL);
-	}
-	if (*input)
+	// Even if input is non-NULL, if g_signal is set, ignore input.
+	if (g_signal)
+		shell->exit_status = 130;
+	if (input && *input)
 		add_history(input);
 	return (input);
+}
+
+char	*get_uncomment_line(void)
+{
+	char	*result;
+
+	while (1)
+	{
+		result = ft_get_next_line(STDIN_FILENO);
+		if (result && ft_strncmp(result, "#", 1) == 0)
+		{
+			free(result);
+		}
+		else
+			return (result);
+	}
 }
 
 char	*get_input(t_minishell *shell, bool interactive_mode)
@@ -65,18 +82,21 @@ char	*get_input(t_minishell *shell, bool interactive_mode)
 
 	if (!interactive_mode)
 	{
-		input_line = ft_get_next_line(STDIN_FILENO);
-		if (input_line && ft_strncmp(input_line, "#", 1) == 0)
-		{
-			free(input_line);
-			input_line = ft_get_next_line(STDIN_FILENO);
-		}
+		input_line = get_uncomment_line();
 		if (!input_line)
-			shell->exit_status = EXIT_FAILURE;
+		{
+			free_shell(shell);
+			if (errno)
+				exit(EXIT_FAILURE);
+			exit(EXIT_SUCCESS);
+		}
 		return (input_line);
 	}
 	else
-		return (prompt(shell));
+	{
+		input_line = prompt(shell);
+		return (input_line);
+	}
 }
 
 // char	*prompt(void)
