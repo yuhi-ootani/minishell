@@ -122,16 +122,6 @@
 // 	return (0);
 // }
 
-#include "../../include/minishell.h"
-#include "../../libft/libft.h"
-#include <readline/history.h>
-#include <readline/readline.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/wait.h>
-#include <unistd.h>
-
 /*
  * heredoc:
  * Reads lines from the user until the delimiter is entered.

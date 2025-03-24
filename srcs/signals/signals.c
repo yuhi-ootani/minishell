@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 13:41:58 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/23 10:28:39 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/24 11:51:16 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,50 @@
 
 volatile sig_atomic_t	g_signal = 0;
 
-void	handler(int status)
+// void	handler(int status)
+// {
+// 	if (status == SIGINT)
+// 	{
+// 		g_signal = 1;
+// 		write(STDOUT_FILENO, "\n", 1);
+// 		rl_on_new_line();
+// 		rl_replace_line("", 0);
+// 		rl_redisplay();
+// 	}
+// }
+
+
+// void	setup_signals_parent(void)
+// {
+// 	struct sigaction	sa;
+
+// 	sa.sa_handler = handler;
+// 	sigemptyset(&sa.sa_mask);
+// 	sa.sa_flags = SA_RESTART;
+// 	sigaction(SIGINT, &sa, NULL);
+// 	signal(SIGQUIT, SIG_IGN);
+// }
+
+// void	setup_signals_child(void)
+// {
+// 	signal(SIGINT, SIG_DFL);
+// 	signal(SIGQUIT, SIG_DFL);
+// }
+// void	setup_signals(void)
+// {
+// 	struct sigaction	sa;
+
+// 	sigemptyset(&sa.sa_mask);
+// 	sa.sa_handler = handler;
+// 	sa.sa_flags = SA_RESTART;
+// 	sigaction(SIGINT, &sa, NULL);
+// 	signal(SIGQUIT, SIG_IGN);
+// }
+
+
+void	sig_handler_parent(int sig)
 {
-	if (status == SIGINT)
+	if (sig == SIGINT)
 	{
 		g_signal = 1;
 		write(STDOUT_FILENO, "\n", 1);
@@ -25,32 +66,26 @@ void	handler(int status)
 		rl_redisplay();
 	}
 }
-void	setup_signals(void)
+
+void	setup_signals_child(void)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+}
+
+void	setup_signals_parent(void)
 {
 	struct sigaction	sa;
 
-	sa.sa_handler = handler;
+	sa.sa_handler = sig_handler_parent;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = SA_RESTART;
 	sigaction(SIGINT, &sa, NULL);
 	signal(SIGQUIT, SIG_IGN);
 }
 
-// volatile sig_atomic_t	g_signal = 0;
-
-// void	disable_ctrlc_display(void)
-// {
-// 	struct termios	term;
-
-// 	tcgetattr(STDIN_FILENO, &term);
-// 	term.c_lflag &= ~ECHOCTL;
-// 	tcsetattr(STDIN_FILENO, TCSANOW, &term);
-// }
-
-// void	handle_sigint(int signum)
-// {
-// 		disable_ctrlc_display();
-// 	(void)signum;
-// 	g_signal = 1;
-// 	write(STDOUT_FILENO, "\n", 1);
-// }
+void	setup_signals_heredoc(void)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_IGN);
+}

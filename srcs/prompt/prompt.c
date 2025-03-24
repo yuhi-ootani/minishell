@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prompt.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:32:43 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/24 09:08:55 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/24 09:57:15 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,28 +98,3 @@ char	*get_input(t_minishell *shell, bool interactive_mode)
 		return (input_line);
 	}
 }
-
-// char	*prompt(void)
-// {
-// 	char	*input;
-// 	char	*cwd;
-
-// 	while (1)
-// 	{
-// 		cwd = get_current_directory();
-// 		printf("🐾 %s 🐾 ", cwd);
-// 		free(cwd);
-// 		input = readline("$> ");
-// 		if (!input)
-// 		{
-// 			printf("exit\n");
-// 			break ;
-// 		}
-// 		if (*input)
-// 			add_history(input);
-// 		if (strcmp(input, "exit") == 0)
-// 			break ;
-// 		return (input);
-// 	}
-// 	return (NULL);
-// }

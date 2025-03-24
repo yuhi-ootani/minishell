@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/24 15:38:37 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/24 16:30:26 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,10 +128,11 @@ void							handle_redirection(t_command *command);
 
 extern volatile sig_atomic_t	g_signal;
 
-void							setup_signals(void);
-void							handle_sigint(int signum);
-void							setup_signals(void);
-void							disable_ctrlc_display(void);
+
+
+void							setup_signals_child(void);
+void							setup_signals_parent(void);
+void							setup_signals_heredoc(void);
 
 // ▗▖ ▗▖▗▄▄▄▖▗▄▄▄▖▗▖    ▗▄▄▖
 // ▐▌ ▐▌  █    █  ▐▌   ▐▌
