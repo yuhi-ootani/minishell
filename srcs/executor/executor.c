@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/24 16:06:44 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/24 17:29:46 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-char	*search_command_in_path(const char *command)
+char	*search_command_in_path(const char *cmd)
 {
 	char	*path_env;
 	char	**splited_paths;
@@ -28,7 +28,7 @@ char	*search_command_in_path(const char *command)
 	while (splited_paths && splited_paths[i])
 	{
 		tmp = ft_strjoin(splited_paths[i], "/");
-		full_command_path = ft_strjoin(tmp, command);
+		full_command_path = ft_strjoin(tmp, cmd);
 		free(tmp);
 		if (access(full_command_path, F_OK | X_OK) == 0)
 			return (ft_array_free(splited_paths), full_command_path);
@@ -251,7 +251,7 @@ void	command_executor(t_minishell *shell)
 
 // #define MAX_COMMANDS 1024
 
-// void	single_command_executor(t_command *command, char **envp)
+// void	single_command_executor(t_command *cmd, char **envp)
 // {
 // 	pid_t pids[MAX_COMMANDS];
 // 	size_t i = 0;
@@ -262,9 +262,9 @@ void	command_executor(t_minishell *shell)
 // 	// pid_t pid;
 // 	int status;
 
-// 	while (command)
+// 	while (cmd)
 // 	{
-// 		if (command->next)
+// 		if (cmd->next)
 // 		{
 // 			if (pipe(pipefd) < 0)
 // 			{
@@ -280,19 +280,19 @@ void	command_executor(t_minishell *shell)
 // 				dup2(in_fd, STDIN_FILENO);
 // 				close(in_fd);
 // 			}
-// 			if (command->next)
+// 			if (cmd->next)
 // 			{
 // 				dup2(pipefd[1], STDOUT_FILENO);
 // 				close(pipefd[0]);
 // 				close(pipefd[1]);
 // 			}
-// 			handle_redirection(command);
-// 			t_builtin_id buildin_index = is_builtin(command->args[0]);
+// 			handle_redirection(cmd);
+// 			t_builtin_id buildin_index = is_builtin(cmd->args[0]);
 
 // 			if (buildin_index != NOT_BUILDIN)
-// 				builtin_funcs[buildin_index](command); // Execute the function
+// 				builtin_funcs[buildin_index](cmd); // Execute the function
 // 			else
-// 				execute_external_command(command, envp);
+// 				execute_external_command(cmd, envp);
 // 		}
 // 		else if (pids[i] < 0)
 // 		{
@@ -305,12 +305,12 @@ void	command_executor(t_minishell *shell)
 // 		if (in_fd != STDIN_FILENO)
 // 			close(in_fd);
 
-// 		if (command->next)
+// 		if (cmd->next)
 // 		{
 // 			close(pipefd[1]);
 // 			in_fd = pipefd[0];
 // 		}
-// 		command = command->next;
+// 		cmd = cmd->next;
 // 		i++;
 // 	}
 

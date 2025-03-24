@@ -3,34 +3,34 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/24 16:25:42 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/24 18:59:50 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void	free_command(t_command *command)
+void	free_command(t_command *cmd)
 {
 	int	i;
 
 	i = 0;
-	if (command->args)
+	if (cmd->args)
 	{
-		while (command->args[i])
+		while (cmd->args[i])
 		{
-			free(command->args[i]);
+			free(cmd->args[i]);
 			i++;
 		}
-		free(command->args);
+		free(cmd->args);
 	}
-	if (command->input_file)
-		free(command->input_file);
-	if (command->out_file)
-		free(command->out_file);
-	free(command);
+	if (cmd->input_file)
+		free(cmd->input_file);
+	if (cmd->out_file)
+		free(cmd->out_file);
+	free(cmd);
 }
 
 void	free_commands(t_command *head)
@@ -103,13 +103,13 @@ void	build_commands_struct(t_minishell *shell)
 	tokens = tokenizer(shell);
 	if (!tokens)
 		return ;
-	print_tokens(tokens);
-	shell->commands = parser(tokens);
+	// print_tokens(tokens);
+	shell->commands = parser(shell, tokens);
 	free_tokens(tokens);
 	if (!shell->commands)
 		return ;
 	expand_commands(shell);
-	print_commands(shell->commands);
+	// print_commands(shell->commands);
 }
 
 void	exit_ctrl_D(t_minishell *shell)

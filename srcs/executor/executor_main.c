@@ -205,7 +205,7 @@ int	main(void)
 	// Print the contents of the heredoc.
 	printf("Heredoc contents:\n");
 	print_heredoc_contents(heredoc_fd);
-	// If you intend to use the heredoc as input for a command (via dup2),
+	// If you intend to use the heredoc as input for a cmd (via dup2),
 	// you would need to capture and store the data before printing it,
 	// because reading from the fd here consumes the input.
 	close(heredoc_fd);

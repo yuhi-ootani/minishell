@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 10:16:32 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/18 14:42:36 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/24 17:27:32 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@
 void	ft_cd(t_minishell *shell)
 {
 	char		*path;
-	t_command	*command;
+	t_command	*cmd;
 
-	command = shell->commands;
-	if (!command->args[1])
+	cmd = shell->commands;
+	if (!cmd->args[1])
 	{
 		path = getenv("HOME");
 		if (!path || *path == '\0')
@@ -28,7 +28,7 @@ void	ft_cd(t_minishell *shell)
 		}
 	}
 	else
-		path = command->args[1];
+		path = cmd->args[1];
 	if (chdir(path) != 0)
 	{
 		ft_fprintf(2, "cd: %s: %s\n", path, strerror(errno));

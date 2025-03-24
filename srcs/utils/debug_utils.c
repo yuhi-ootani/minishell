@@ -6,18 +6,18 @@
 // ▐▛▀▘ ▐▛▀▚▖  █  ▐▌ ▝▜▌  █      ▐▌   ▐▌ ▐▌▐▌  ▐▌▐▌  ▐▌▐▛▀▜▌▐▌ ▝▜▌▐▌  █
 // ▐▌   ▐▌ ▐▌▗▄█▄▖▐▌  ▐▌  █      ▝▚▄▄▖▝▚▄▞▘▐▌  ▐▌▐▌  ▐▌▐▌ ▐▌▐▌  ▐▌▐▙▄▄▀
 
-void	print_command(t_command *command, int cmd_index)
+void	print_command(t_command *cmd, int cmd_index)
 {
 	size_t	i;
 
 	i = 0;
-	printf("Command %d:\n", cmd_index);
+	printf("cmd %d:\n", cmd_index);
 	// Print arguments
-	if (command->args)
+	if (cmd->args)
 	{
-		while (command->args[i])
+		while (cmd->args[i])
 		{
-			printf("  Arg %ld: %s\n", i, command->args[i]);
+			printf("  Arg %ld: %s\n", i, cmd->args[i]);
 			i++;
 		}
 	}
@@ -26,21 +26,21 @@ void	print_command(t_command *command, int cmd_index)
 		printf("  No arguments\n");
 	}
 	// Print redirections, if any
-	if (command->input_file)
-		printf("  Input redirection: %s\n", command->input_file);
-	if (command->heredoc_count > 0)
+	if (cmd->input_file)
+		printf("  Input redirection: %s\n", cmd->input_file);
+	if (cmd->heredoc_count > 0)
 	{
 		i = 0;
-		while (i < command->heredoc_count)
+		while (i < cmd->heredoc_count)
 		{
-			printf("heredoc_files[%ld]:%s\n", i, command->heredoc_files[i]);
+			printf("heredoc_files[%ld]:%s\n", i, cmd->heredoc_files[i]);
 			i++;
 		}
 	}
-	if (command->out_file)
+	if (cmd->out_file)
 	{
-		printf("  Output redirection: %s\n", command->out_file);
-		printf("  Append mode: %s\n", command->is_append ? "Yes" : "No");
+		printf("  Output redirection: %s\n", cmd->out_file);
+		printf("  Append mode: %s\n", cmd->is_append ? "Yes" : "No");
 	}
 	printf("\n");
 }
@@ -48,8 +48,8 @@ void	print_command(t_command *command, int cmd_index)
 // Print all commands in the linked list
 void	print_commands(t_command *head)
 {
-	int cmd_index;
-	t_command *current;
+	int			cmd_index;
+	t_command	*current;
 
 	cmd_index = 0;
 	current = head;
@@ -60,7 +60,6 @@ void	print_commands(t_command *head)
 		cmd_index++;
 	}
 }
-
 
 // ▗▄▄▄▖▗▄▖ ▗▖ ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖▗▄▄▄▄▖▗▄▄▄▖▗▄▄▖
 //   █ ▐▌ ▐▌▐▌▗▞▘▐▌   ▐▛▚▖▐▌  █     ▗▞▘▐▌   ▐▌ ▐▌

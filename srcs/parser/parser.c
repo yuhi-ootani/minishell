@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 15:07:23 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/21 18:16:34 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/24 19:29:16 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,16 +37,16 @@ t_command	*create_command_node(void)
 	return (new_command);
 }
 
-void	add_argument(t_command *command, char *new_argument)
+void	add_argument(t_command *cmd, char *new_argument)
 {
 	size_t	count;
 	size_t	i;
 	char	**new_args;
 
 	count = 0;
-	if (command->args)
+	if (cmd->args)
 	{
-		while (command->args[count])
+		while (cmd->args[count])
 			count++;
 	}
 	new_args = (char **)malloc(sizeof(char *) * (count + 2));
@@ -55,109 +55,144 @@ void	add_argument(t_command *command, char *new_argument)
 	i = 0;
 	while (i < count)
 	{
-		new_args[i] = command->args[i];
+		new_args[i] = cmd->args[i];
 		i++;
 	}
 	new_args[count] = ft_strdup(new_argument);
 	if (!new_args[count])
 		syntax_error("new_args strdup failed."); // todo
 	new_args[count + 1] = NULL;
-	free(command->args);
-	command->args = new_args;
+	free(cmd->args);
+	cmd->args = new_args;
 }
 
-void	set_redirection(t_command *command, t_token_type token_type,
-		char *filename)
+void	set_redirection(t_command *cmd, t_token_type token_type, char *filename)
 {
 	size_t	old_size;
 	size_t	new_size;
 
 	if (token_type == TOKEN_REDIR_IN)
 	{
-		command->input_file = ft_strdup(filename);
-		command->is_heredoc = false;
+		cmd->input_file = ft_strdup(filename);
+		cmd->is_heredoc = false;
 	}
 	else if (token_type == TOKEN_HEREDOC)
 	{
-		command->input_file = ft_strdup(filename);
-		old_size = sizeof(char *) * command->heredoc_count;
-		new_size = sizeof(char *) * (command->heredoc_count + 1);
-		command->heredoc_files = ft_realloc(command->heredoc_files,
-				old_size, new_size);
-		if (!command->heredoc_files)
+		cmd->input_file = ft_strdup(filename);
+		old_size = sizeof(char *) * cmd->heredoc_count;
+		new_size = sizeof(char *) * (cmd->heredoc_count + 1);
+		cmd->heredoc_files = ft_realloc(cmd->heredoc_files, old_size, new_size);
+		if (!cmd->heredoc_files)
 			exit(EXIT_FAILURE); // to do
-		command->heredoc_files[command->heredoc_count] = ft_strdup(filename);
-		command->heredoc_count++;
-		command->is_heredoc = true;
+		cmd->heredoc_files[cmd->heredoc_count] = ft_strdup(filename);
+		cmd->heredoc_count++;
+		cmd->is_heredoc = true;
 	}
 	else if (token_type == TOKEN_REDIR_OUT)
 	{
-		command->out_file = ft_strdup(filename);
-		command->is_append = false;
+		cmd->out_file = ft_strdup(filename);
+		cmd->is_append = false;
 	}
 	else if (token_type == TOKEN_APPEND)
 	{
-		command->out_file = ft_strdup(filename);
-		command->is_append = true;
+		cmd->out_file = ft_strdup(filename);
+		cmd->is_append = true;
 	}
 }
 
-bool	is_redirection_syntax_error(t_token *current_token,
-		t_token_type current_type)
+bool	is_redirection_syntax_error(t_minishell *shell, t_token *current_token)
 {
-	t_token	*next_token;
+	t_token			*next_token;
+	t_token_type	current_type;
 
+	current_type = current_token->type;
 	next_token = current_token->next;
 	if (current_type == TOKEN_REDIR_IN || current_type == TOKEN_APPEND
 		|| current_type == TOKEN_REDIR_OUT || current_type == TOKEN_HEREDOC)
 	{
 		if (next_token == NULL || next_token->type != TOKEN_WORD)
+		{
+			shell->exit_status = 2;
+			if (next_token && next_token->value)
+				ft_fprintf(STDERR_FILENO,
+					"syntax error near unexpected token `%s'\n",
+					next_token->value);
+			else
+				ft_fprintf(STDERR_FILENO,
+					"syntax error near unexpected token `newline'\n");
 			return (true);
+		}
 	}
 	return (false);
 }
 
-bool	is_syntax_error(t_token *token_list)
+bool	is_pipe_syntax_error(t_minishell *shell, t_token *current_token,
+		t_token *prev_token)
 {
-	t_token	*former_token;
+	t_token_type	current_type;
+
+	current_type = current_token->type;
+	if (current_type == TOKEN_PIPE)
+	{
+		if (prev_token == NULL || current_token->next->type == TOKEN_PIPE)
+		// if (prev_token == NULL || prev_token != TOKEN_WORD
+		// 	|| current_token->next->type == TOKEN_PIPE)
+		{
+			shell->exit_status = 2;
+			ft_fprintf(STDERR_FILENO,
+				"syntax error near unexpected token `|'\n");
+			return (true);
+		}
+		if (current_token->next == NULL)
+		{
+			shell->exit_status = 2;
+			ft_fprintf(STDERR_FILENO,
+				"syntax error near unexpected token `newline'\n");
+			return (true);
+		}
+	}
+	return (false);
+}
+
+bool	is_syntax_error(t_minishell *shell, t_token *tokens)
+{
+	t_token	*prev_token;
 	t_token	*current_token;
 
-	former_token = NULL;
-	current_token = token_list;
+	prev_token = NULL;
+	current_token = tokens;
 	while (current_token->value && current_token->type != TOKEN_EOF)
 	{
-		if (current_token->type == TOKEN_PIPE && (former_token == NULL
-				|| current_token->next->type == TOKEN_PIPE))
-			return (printf("pipe syntax error!\n"), true); // todo
-		if (is_redirection_syntax_error(current_token, current_token->type))
-			return (printf("readirection syntax error!\n"), true);
-		// todo
-		former_token = current_token;
+		if (is_pipe_syntax_error(shell, current_token, prev_token))
+			return (true);
+		if (is_redirection_syntax_error(shell, current_token))
+			return (true);
+		prev_token = current_token;
 		current_token = current_token->next;
 	}
 	return (false);
 }
 
-t_command	*parser(t_token *token_list)
+t_command	*parser(t_minishell *shell, t_token *tokens)
 {
 	t_command		*head_command;
 	t_command		*current_command;
 	t_token_type	type;
 
-	if (is_syntax_error(token_list))
+	if (is_syntax_error(shell, tokens))
 		return (NULL);
 	head_command = create_command_node();
 	current_command = head_command;
-	while (token_list && token_list->type != TOKEN_EOF)
+	while (tokens && tokens->type != TOKEN_EOF)
 	{
-		type = token_list->type;
+		type = tokens->type;
 		if (type == TOKEN_WORD)
-			add_argument(current_command, token_list->value);
+			add_argument(current_command, tokens->value);
 		else if (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT
 			|| type == TOKEN_APPEND || type == TOKEN_HEREDOC)
 		{
-			set_redirection(current_command, type, token_list->next->value);
-			token_list = token_list->next;
+			set_redirection(current_command, type, tokens->next->value);
+			tokens = tokens->next;
 		}
 		else if (type == TOKEN_PIPE)
 		{
@@ -169,7 +204,7 @@ t_command	*parser(t_token *token_list)
 			}
 			current_command = current_command->next;
 		}
-		token_list = token_list->next;
+		tokens = tokens->next;
 	}
 	return (head_command);
 }
