@@ -107,7 +107,6 @@ char	**expander(t_minishell *shell, char **args)
 			continue ;
 		}
 		if (args[i][0] != '\"' && args[i][ft_strlen(args[i]) - 1] != '\"')
-			// to modifired
 			splited_args = ft_split(tmp, spaces);
 		else
 			splited_args = ft_split(tmp, "");

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/21 18:24:24 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/24 09:06:33 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,9 @@ typedef struct s_env
 void							init_shell_struct(t_minishell *shell,
 									char **envp);
 void							free_shell(t_minishell *shell);
+bool							decide_input_fd(t_minishell *shell, int argc,
+									char **argv);
+
 // RubiFont
 // ▗▄▄▖ ▗▄▄▖  ▗▄▖ ▗▖  ▗▖▗▄▄▄▖
 // ▐▌ ▐▌▐▌ ▐▌▐▌ ▐▌▐▛▚▞▜▌  █
@@ -57,8 +60,8 @@ void							free_shell(t_minishell *shell);
 // ▐▌   ▐▌ ▐▌▝▚▄▞▘▐▌  ▐▌  █
 
 /* prototype */
-char							*prompt(void);
-char							*get_current_directory(void);
+char							*get_input(t_minishell *shell,
+									bool interactive_mode);
 
 // ▗▖   ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖▗▄▄▖
 // ▐▌   ▐▌    ▝▚▞▘ ▐▌   ▐▌ ▐▌
@@ -157,7 +160,7 @@ void							*ft_realloc(void *ptr, size_t old_size,
 typedef struct s_minishell
 {
 	t_env						*env;
-	t_token						*tokens;
+	char						*input;
 	t_command					*commands;
 	int							exit_status;
 	int							original_stdin;
@@ -240,5 +243,13 @@ typedef enum e_exit_status
 // ▐▙▄▄▀▐▙▄▄▖▐▙▄▞▘▝▚▄▞▘▝▚▄▞▘    ▝▚▄▞▘  █  ▗▄█▄▖▐▙▄▄▖▗▄▄▞▘
 
 void							print_commands(t_command *head);
+
+// ▗▄▄▄▖▗▄▄▖ ▗▄▄▄▖▗▄▄▄▖
+// ▐▌   ▐▌ ▐▌▐▌   ▐▌
+// ▐▛▀▀▘▐▛▀▚▖▐▛▀▀▘▐▛▀▀▘
+// ▐▌   ▐▌ ▐▌▐▙▄▄▖▐▙▄▄▖
+
+void							free_shell(t_minishell *shell);
+int								get_exit_status(int err);
 
 #endif

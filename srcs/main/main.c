@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/21 18:22:35 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/24 09:08:17 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,13 +77,11 @@ char	*get_input(bool interactive_mode)
 
 void	free_shell(t_minishell *shell)
 {
-	printf("stdin:%d, stdout:%d\n", shell->original_stdin,
-		shell->original_stdout);
 	close(shell->original_stdout);
 	close(shell->original_stdin);
 	free_copied_env(shell->env);
-	if (shell->tokens)
-		free_tokens(shell->tokens);
+	if (shell->input)
+		free(shell->input);
 	if (shell->commands)
 		free_commands(shell->commands);
 }
@@ -98,37 +96,50 @@ int	get_exit_status(int err) // Fix: Use a proper function parameter
 		return (1);
 }
 
-bool	decide_input_fd(t_minishell *shell, int argc, char **argv)
+void	reset_shell_for_next_input(t_minishell *shell, bool interactive_mode)
 {
-	int	fd;
-
-	if (argc > 1)
+	errno = 0;
+	if (shell->input)
 	{
-		fd = open(argv[1], O_RDONLY);
-		if (fd == -1)
-		{
-			free_shell(shell);
-			shell->exit_status = get_exit_status(errno);
-			ft_fprintf(2, "MINISHELL: %s: %s\n", argv[1], strerror(errno));
-			exit(shell->exit_status);
-		}
-		if (dup2(fd, STDIN_FILENO) == -1)
-		{
-			free_shell(shell);
-			exit(FAIL_DUP);
-		}
-		close(fd);
-		return (false);
+		free(shell->input);
+		shell->input = NULL;
 	}
-	else if (!isatty(STDIN_FILENO))
-		return (false);
-	return (true);
+	if (shell->commands)
+	{
+		free_commands(shell->commands);
+		shell->commands = NULL;
+	}
+	if (interactive_mode)
+		dup2(shell->original_stdin, STDIN_FILENO);
+	dup2(shell->original_stdout, STDOUT_FILENO);
+}
+
+void	build_commands_struct(t_minishell *shell)
+{
+	t_token	*tokens;
+
+	tokens = lexer(shell->input);
+	if (!tokens)
+		return ;
+	// print_tokens(tokens);
+	shell->commands = parser(tokens);
+	free_tokens(tokens);
+	if (!shell->commands)
+		return ;
+	expand_commands(shell);
+	// print_commands(shell->commands);
+}
+
+void	exit_ctrl_D(t_minishell *shell)
+{
+	free_shell(shell);
+	printf("exit\n");
+	exit(shell->exit_status);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
 	bool		interactive_mode;
-	char		*input;
 	t_minishell	shell;
 
 	init_shell_struct(&shell, envp);
@@ -138,38 +149,18 @@ int	main(int argc, char **argv, char **envp)
 	{
 		if (g_signal)
 			g_signal = 0;
-		input = get_input(interactive_mode);
-		if (!input)
-		{
-			printf("exit\n"); // todo
-			break ;
-		}
-		if (input && input[0] != '\n') // to do
-		{
-			if (!input[0])
-				continue ;
-			shell.tokens = lexer(input);
-			if (shell.tokens)
-				print_tokens(shell.tokens);
-			shell.commands = parser(shell.tokens);
-			if (shell.commands)
-			{
-				expand_commands(&shell);
-				print_commands(shell.commands);
-				command_executor(&shell);
-			}
-			free_tokens(shell.tokens);
-			shell.tokens = NULL;
-			free_commands(shell.commands);
-			shell.commands = NULL;
-			if (interactive_mode)
-				dup2(shell.original_stdin, STDIN_FILENO);
-			dup2(shell.original_stdout, STDOUT_FILENO);
-		}
+		shell.input = get_input(&shell, interactive_mode);
+		if (!shell.input)
+			exit_ctrl_D(&shell);
 		else
-			break ;
+		{
+			if (shell.input && shell.input[0] && shell.input[0] != '\n')
+				build_commands_struct(&shell);
+			if (shell.commands)
+				command_executor(&shell);
+		}
+		reset_shell_for_next_input(&shell, interactive_mode);
 	}
-	close(shell.original_stdin);
-	close(shell.original_stdout);
-	return (0);
+	free_shell(&shell);
+	return (shell.exit_status);
 }

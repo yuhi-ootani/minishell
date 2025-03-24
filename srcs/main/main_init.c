@@ -2,6 +2,34 @@
 
 #include "../../include/minishell.h"
 
+bool	decide_input_fd(t_minishell *shell, int argc, char **argv)
+{
+	int	fd;
+
+	if (argc > 1)
+	{
+		fd = open(argv[1], O_RDONLY);
+		if (fd == -1)
+		{
+			free_shell(shell);
+			shell->exit_status = get_exit_status(errno);
+			ft_fprintf(STDERR_FILENO, "MINISHELL: %s: %s\n", argv[1],
+				strerror(errno));
+			exit(shell->exit_status);
+		}
+		if (dup2(fd, STDIN_FILENO) == -1)
+		{
+			free_shell(shell);
+			exit(EXIT_FAILURE);
+		}
+		close(fd);
+		return (false);
+	}
+	else if (!isatty(STDIN_FILENO))
+		return (false);
+	return (true);
+}
+
 t_env	*env_duplication(char **envp_srcs)
 {
 	t_env	*new_env;
@@ -34,16 +62,15 @@ void	keep_original_fds(t_minishell *shell)
 {
 	shell->original_stdin = dup2(STDIN_FILENO, 3);
 	if (shell->original_stdin == -1)
-		exit(FAIL_DUP);
+		exit(EXIT_FAILURE);
 	shell->original_stdout = dup2(STDOUT_FILENO, 4);
 	if (shell->original_stdout == -1)
-		exit(FAIL_DUP);
+		exit(EXIT_FAILURE);
 }
 
 void	init_shell_struct(t_minishell *shell, char **envp)
 {
-	shell->env = NULL;
-	shell->tokens = NULL;
+	shell->input = NULL;
 	shell->commands = NULL;
 	shell->exit_status = 0;
 	keep_original_fds(shell);

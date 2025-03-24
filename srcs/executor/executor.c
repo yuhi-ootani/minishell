@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/21 12:11:15 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/24 09:07:13 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,7 @@ t_builtin_id	is_builtin(char *command_str)
 
 static void	execute_child_process(t_minishell *shell, t_exec *exec_info)
 {
+	// reset_signal_handler();//todo
 	if (shell->commands->is_heredoc == false
 		&& exec_info->input_fd != STDIN_FILENO)
 	{
@@ -194,6 +195,8 @@ void	command_executor(t_minishell *shell)
 {
 	t_exec	exec_info;
 
+	if (!shell->commands) // Added check
+		return ;
 	init_exec_info(&exec_info);
 	if (!shell->commands->args)
 	{
