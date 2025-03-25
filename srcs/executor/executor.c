@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/24 18:40:32 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/25 09:49:05 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -329,58 +329,58 @@ void	command_executor(t_minishell *shell)
 
 /*yuyu code with my signals, long version */
 
-// void	run_forked_commands(t_minishell *shell, t_exec *exec_info)
-// {
-// 	int					i;
-// 	struct sigaction	old_int;
+void	run_forked_commands(t_minishell *shell, t_exec *exec_info)
+{
+	int					i;
+	struct sigaction	old_int;
 
-// 	pid_t pids[1000]; // Array to store PIDs for all commands
-// 	i = 0;
-// 	while (shell->commands)
-// 	{
-// 		if (shell->commands->next)
-// 		{
-// 			if (pipe(exec_info->pipe_fds) < 0)
-// 			{
-// 				perror("pipe");
-// 				return ;
-// 			}
-// 		}
-// 		pids[i] = fork();
-// 		if (pids[i] == 0)
-// 		{
-// 			setup_signals_child();
-// 			execute_child_process(shell, exec_info);
-// 		}
-// 		else if (pids[i] < 0)
-// 		{
-// 			perror("fork");     // modified
-// 			exit(EXIT_FAILURE); // modified
-// 		}
-// 		if (exec_info->input_fd != STDIN_FILENO)
-// 			close(exec_info->input_fd);
-// 		if (shell->commands->next)
-// 		{
-// 			close(exec_info->pipe_fds[1]);
-// 			exec_info->input_fd = exec_info->pipe_fds[0];
-// 		}
-// 		shell->commands = shell->commands->next;
-// 		i++;
-// 	}
-// 	sigaction(SIGINT, NULL, &old_int);
-// 	signal(SIGINT, SIG_IGN);
-// 	for (int j = 0; j < i; j++)
-// 	{
-// 		waitpid(pids[j], &shell->exit_status, 0);
-// 		if (WIFEXITED(shell->exit_status))
-// 			shell->exit_status = WEXITSTATUS(shell->exit_status);
-// 		else if (WIFSIGNALED(shell->exit_status))
-// 		{
-// 			printf("\n");
-// 			shell->exit_status = 128 + WTERMSIG(shell->exit_status);
-// 		}
-// 		else
-// 			shell->exit_status = 1;
-// 	}
-// 	sigaction(SIGINT, &old_int, NULL);
-// }
+	pid_t pids[1000]; // Array to store PIDs for all commands
+	i = 0;
+	while (shell->commands)
+	{
+		if (shell->commands->next)
+		{
+			if (pipe(exec_info->pipe_fds) < 0)
+			{
+				perror("pipe");
+				return ;
+			}
+		}
+		pids[i] = fork();
+		if (pids[i] == 0)
+		{
+			setup_signals_child();
+			execute_child_process(shell, exec_info);
+		}
+		else if (pids[i] < 0)
+		{
+			perror("fork");     // modified
+			exit(EXIT_FAILURE); // modified
+		}
+		if (exec_info->input_fd != STDIN_FILENO)
+			close(exec_info->input_fd);
+		if (shell->commands->next)
+		{
+			close(exec_info->pipe_fds[1]);
+			exec_info->input_fd = exec_info->pipe_fds[0];
+		}
+		shell->commands = shell->commands->next;
+		i++;
+	}
+	sigaction(SIGINT, NULL, &old_int);
+	signal(SIGINT, SIG_IGN);
+	for (int j = 0; j < i; j++)
+	{
+		waitpid(pids[j], &shell->exit_status, 0);
+		if (WIFEXITED(shell->exit_status))
+			shell->exit_status = WEXITSTATUS(shell->exit_status);
+		else if (WIFSIGNALED(shell->exit_status))
+		{
+			printf("\n");
+			shell->exit_status = 128 + WTERMSIG(shell->exit_status);
+		}
+		else
+			shell->exit_status = 1;
+	}
+	sigaction(SIGINT, &old_int, NULL);
+}
