@@ -3,22 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:44:02 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/24 17:28:38 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/25 09:54:54 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int	ft_isspace(int c)
-{
-	if (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\v'
-		|| c == '\f')
-		return (c);
-	return (0);
-}
 static bool	check_out_of_range(int neg, unsigned long long num, bool *error)
 {
 	unsigned long long	max_neg;
@@ -31,6 +24,7 @@ static bool	check_out_of_range(int neg, unsigned long long num, bool *error)
 	}
 	return (*error);
 }
+
 int	ft_atoi_long(const char *str, bool *error)
 {
 	unsigned long long	num;

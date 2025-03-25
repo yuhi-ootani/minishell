@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/24 17:34:04 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/25 09:55:08 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
 # include <termios.h>
 # include <unistd.h> //getcwd
 
-# define delimiters " \t\n"
+# define DELIMITERS " \t\n"
 
 typedef struct s_minishell		t_minishell;
 
@@ -136,6 +136,7 @@ void							setup_signals_heredoc(void);
 // ▐▌ ▐▌  █    █  ▐▌    ▝▀▚▖
 // ▝▚▄▞▘  █  ▗▄█▄▖▐▙▄▄▖▗▄▄▞▘
 
+int								ft_isspace(int c);
 int								ft_isnumber(char *str);
 void							ft_putendl(char *s);
 size_t							count_env_util(t_env *env);

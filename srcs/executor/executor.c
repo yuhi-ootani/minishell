@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/24 17:29:46 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/25 09:56:13 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,12 +127,6 @@ bool	is_single_builtin_command(t_minishell *shell, t_exec *exec_info)
 		&& exec_info->builtin_id != NOT_BUILDIN);
 }
 
-//
-// WEFEXITED turns true if the code was ended by exit return
-// WEXITSTATUS holds the number exit give
-// WIFSIGNALED turns true if the code was ended by a signl
-// WTERMSIG holds the number of exit of the singal
-
 static void	backup_and_ignore_sigint(struct sigaction *old_int)
 {
 	sigaction(SIGINT, NULL, old_int);
@@ -181,7 +175,10 @@ void	update_input_fd(t_minishell *shell, t_exec *exec_info)
 
 void	wait_for_children(pid_t *pids, int count, t_minishell *shell)
 {
-	for (int j = 0; j < count; j++)
+	int	j;
+
+	j = 0;
+	while (j < count)
 	{
 		waitpid(pids[j], &shell->exit_status, 0);
 		if (WIFEXITED(shell->exit_status))
@@ -193,8 +190,13 @@ void	wait_for_children(pid_t *pids, int count, t_minishell *shell)
 		}
 		else
 			shell->exit_status = 1;
+		j++;
 	}
 }
+// WEFEXITED turns true if the code was ended by exit return
+// WEXITSTATUS holds the number exit give
+// WIFSIGNALED turns true if the code was ended by a signl
+// WTERMSIG holds the number of exit of the singal
 
 void	run_forked_commands(t_minishell *shell, t_exec *exec_info)
 {

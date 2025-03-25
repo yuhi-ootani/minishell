@@ -6,12 +6,19 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 10:17:05 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/21 18:09:28 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/24 18:34:49 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
+int	ft_isspace(int c)
+{
+	if (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\v'
+		|| c == '\f')
+		return (c);
+	return (0);
+}
 int	ft_isnumber(char *str)
 {
 	int	i;

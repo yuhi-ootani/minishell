@@ -3,48 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:14:15 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/24 17:28:20 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/25 09:55:29 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-// void	ft_echo(t_minishell *shell)
-// {
-// 	int			i;
-// 	int			n_option;
-// 	int			j;
-// 	t_command	*cmd;
-
-// 	i = 1;
-// 	n_option = 0;
-// 	cmd = shell->commands;
-// 	while (cmd->args[i] && cmd->args[i][0] == '-')
-// 	{
-// 		j = 1;
-// 		while (cmd->args[i][j] && cmd->args[i][j] == 'n')
-// 			j++;
-// 		if (cmd->args[i][j] == '\0')
-// 		{
-// 			n_option = 1;
-// 			i++;
-// 		}
-// 		else
-// 			break ;
-// 	}
-// 	while (cmd->args[i])
-// 	{
-// 		ft_putstr_fd(cmd->args[i], 1);
-// 		if (cmd->args[i + 1])
-// 			write(1, " ", 1);
-// 		i++;
-// 	}
-// 	if (!n_option)
-// 		write(1, "\n", 1);
-// }
 
 int	parse_n_option(t_command *cmd, int *n_option)
 {
