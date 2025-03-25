@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 15:07:23 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/24 19:29:16 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/25 09:37:23 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,8 +135,6 @@ bool	is_pipe_syntax_error(t_minishell *shell, t_token *current_token,
 	if (current_type == TOKEN_PIPE)
 	{
 		if (prev_token == NULL || current_token->next->type == TOKEN_PIPE)
-		// if (prev_token == NULL || prev_token != TOKEN_WORD
-		// 	|| current_token->next->type == TOKEN_PIPE)
 		{
 			shell->exit_status = 2;
 			ft_fprintf(STDERR_FILENO,
