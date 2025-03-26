@@ -6,23 +6,11 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 18:00:40 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/26 13:23:52 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/26 14:21:29 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-size_t	ft_array_count_str(char **array)
-{
-	size_t	count;
-
-	count = 0;
-	while (array && array[count])
-	{
-		count++;
-	}
-	return (count);
-}
 
 bool	ft_array_nbr_dup(char **array_dst, char **array_src, size_t dst_start,
 		size_t dst_end)
