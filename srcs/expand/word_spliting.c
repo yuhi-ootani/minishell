@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   word_spliting.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 18:00:40 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/24 18:28:18 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/26 13:23:52 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,15 +134,17 @@ void	append_expanded_argument(t_minishell *shell, char ***result, char *arg,
 	*result = tmp_array;
 }
 
-char	**expander(t_minishell *shell, char **args)
+char	**expander(t_minishell *shell, t_command *cmd)
 {
 	size_t	i;
 	char	**result;
 	char	*spaces;
+	char	**args;
 
 	spaces = DELIMITERS;
 	result = NULL;
 	i = 0;
+	args = cmd->args;
 	while (args && args[i])
 	{
 		append_expanded_argument(shell, &result, args[i], spaces);
@@ -159,7 +161,7 @@ void	expand_commands(t_minishell *shell)
 	current = shell->commands;
 	while (current)
 	{
-		new_args = expander(shell, current->args);
+		new_args = expander(shell, current);
 		ft_array_free(current->args);
 		current->args = new_args;
 		current = current->next;

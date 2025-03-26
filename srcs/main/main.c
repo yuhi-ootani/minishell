@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/25 09:52:34 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/26 13:17:14 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	free_command(t_command *cmd)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
 	if (cmd->args)
@@ -26,10 +26,31 @@ void	free_command(t_command *cmd)
 		}
 		free(cmd->args);
 	}
-	if (cmd->input_file)
-		free(cmd->input_file);
-	if (cmd->out_file)
-		free(cmd->out_file);
+	// t_redirection
+	i = 0;
+	if (cmd->infiles)
+	{
+		while (i < cmd->infile_count)
+		{
+			free(cmd->infiles[i].filename);
+			i++;
+		}
+		free(cmd->infiles);
+	}
+	i = 0;
+	if (cmd->outfiles)
+	{
+		while (i < cmd->outfile_count)
+		{
+			free(cmd->outfiles[i].filename);
+			i++;
+		}
+		free(cmd->outfiles);
+	}
+	// if (cmd->input_file)
+	// 	free(cmd->input_file);
+	// if (cmd->out_file)
+	// 	free(cmd->out_file);
 	free(cmd);
 }
 
@@ -103,13 +124,13 @@ void	build_commands_struct(t_minishell *shell)
 	tokens = tokenizer(shell);
 	if (!tokens)
 		return ;
-	// print_tokens(tokens);
+	print_tokens(tokens);
 	shell->commands = parser(shell, tokens);
 	free_tokens(tokens);
 	if (!shell->commands)
 		return ;
 	expand_commands(shell);
-	// print_commands(shell->commands);
+	print_commands(shell->commands);
 }
 
 void	exit_ctrl_D(t_minishell *shell)
@@ -138,8 +159,8 @@ int	main(int argc, char **argv, char **envp)
 		{
 			if (shell.input && shell.input[0] && shell.input[0] != '\n')
 				build_commands_struct(&shell);
-			if (shell.commands)
-				command_executor(&shell);
+			// if (shell.commands)
+			// 	command_executor(&shell);
 		}
 		reset_shell_for_next_input(&shell, interactive_mode);
 	}

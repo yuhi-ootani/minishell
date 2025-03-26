@@ -8,7 +8,7 @@ static bool	is_last_heredoc(t_command *cmd, size_t i)
 			cmd->input_file) == 0);
 }
 
-static void	readline_till_heredoc(t_command *cmd, int *pipefd)
+static void	readline_till_EOF(t_command *cmd, int *pipefd)
 {
 	char	*line;
 	size_t	i;
@@ -44,7 +44,7 @@ static void	handle_heredoc(t_command *cmd)
 		perror("pipe in heredoc");
 		exit(EXIT_FAILURE); // TODO
 	}
-	readline_till_heredoc(cmd, pipefd);
+	readline_till_EOF(cmd, pipefd);
 	close(pipefd[1]);
 	if (cmd->is_heredoc)
 		dup2(pipefd[0], STDIN_FILENO);
@@ -55,7 +55,7 @@ static void	input_redirection(t_command *cmd)
 {
 	int	input_fd;
 
-	input_fd = open(cmd->input_file, O_RDONLY);
+	input_fd (cmd->input_file, O_RDONLY);
 	if (input_fd < 0)
 	{
 		perror("input fd open");
