@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 17:12:38 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/24 17:12:43 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/25 13:41:09 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ char	**build_envp_array(t_env *env)
 	count = count_env_util(env);
 	envp_array = (char **)malloc(sizeof(char *) * (count + 1));
 	if (!envp_array)
-		return (NULL); // todo
+		return (NULL);
 	count = 0;
 	tmp = env;
 	while (tmp)

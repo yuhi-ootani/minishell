@@ -6,23 +6,11 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 18:00:40 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/24 18:28:18 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/26 13:07:30 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-size_t	ft_array_count_str(char **array)
-{
-	size_t	count;
-
-	count = 0;
-	while (array && array[count])
-	{
-		count++;
-	}
-	return (count);
-}
 
 bool	ft_array_nbr_dup(char **array_dst, char **array_src, size_t dst_start,
 		size_t dst_end)
@@ -92,6 +80,8 @@ char	*remove_quotes(const char *input)
 	return (result);
 }
 
+//this 3 functions are the short version of the expander function
+
 static char	**split_and_remove_quotes(char *str, const char *spaces)
 {
 	char	**splited_args;
@@ -151,44 +141,6 @@ char	**expander(t_minishell *shell, char **args)
 	return (result);
 }
 
-void	expand_commands(t_minishell *shell)
-{
-	t_command	*current;
-	char		**new_args;
-
-	current = shell->commands;
-	while (current)
-	{
-		new_args = expander(shell, current->args);
-		ft_array_free(current->args);
-		current->args = new_args;
-		current = current->next;
-	}
-}
-
-// // Example usage
-// int	main(void)
-// {
-// 	char	*arr[] = {"Hello", "World",
-// 			"\" word                          split   \"", " Cut   Them     ",
-// 			" popo   ", NULL};
-// 	char	**merged;
-
-// 	merged = expander(arr);
-// 	if (!merged)
-// 	{
-// 		perror("append_string_arrays failed");
-// 		return (1);
-// 	}
-// 	// Print merged array
-// 	for (size_t i = 0; merged[i] != NULL; i++)
-// 		printf("%s$\n", merged[i]);
-// 	// NOTE: We only allocated 'merged' (the array of pointers).
-// 	//       We did NOT allocate each string. So we only free 'merged' itself.
-// 	free(merged);
-// 	return (0);
-// }
-
 // char	**expander(t_minishell *shell, char **args)
 // {
 // 	size_t	i;
@@ -234,4 +186,41 @@ void	expand_commands(t_minishell *shell)
 // 		i++;
 // 	}
 // 	return (result);
+// }
+
+void	expand_commands(t_minishell *shell)
+{
+	t_command	*current;
+	char		**new_args;
+
+	current = shell->commands;
+	while (current)
+	{
+		new_args = expander(shell, current->args);
+		ft_array_free(current->args);
+		current->args = new_args;
+		current = current->next;
+	}
+}
+// // Example usage
+// int	main(void)
+// {
+// 	char	*arr[] = {"Hello", "World",
+// 			"\" word                          split   \"", " Cut   Them     ",
+// 			" popo   ", NULL};
+// 	char	**merged;
+
+// 	merged = expander(arr);
+// 	if (!merged)
+// 	{
+// 		perror("append_string_arrays failed");
+// 		return (1);
+// 	}
+// 	// Print merged array
+// 	for (size_t i = 0; merged[i] != NULL; i++)
+// 		printf("%s$\n", merged[i]);
+// 	// NOTE: We only allocated 'merged' (the array of pointers).
+// 	//       We did NOT allocate each string. So we only free 'merged' itself.
+// 	free(merged);
+// 	return (0);
 // }

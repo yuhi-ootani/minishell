@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 11:09:19 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/24 13:58:17 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/26 10:35:49 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ char	*get_env_name(const char *input)
 // 	if (expanded_str->index + src_len >= expanded_str->size)
 // 	{
 // 		expanded_str->size = expanded_str->index + src_len + 1;
-// 		new_buffer = realloc(expanded_str->buffer, expanded_str->size);
+// 		new_buffer = ft_realloc(expanded_str->buffer, expanded_str->size);
 // 		if (!new_buffer)
 // 			return (-1);
 // 		expanded_str->buffer = new_buffer;

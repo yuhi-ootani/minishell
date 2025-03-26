@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 15:07:23 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/21 18:16:34 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/26 15:35:07 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,33 @@ bool	is_redirection_syntax_error(t_token *current_token,
 	return (false);
 }
 
-bool	is_syntax_error(t_token *token_list)
+// bool	is_pipe_syntax_error(t_minishell *shell, t_token *current_token,
+// 		t_token *prev_token)
+// {
+// 	t_token_type	current_type;
+
+// 	current_type = current_token->type;
+// 	if (current_type == TOKEN_PIPE)
+// 	{
+// 		if (prev_token || en == current_token->next->type == TOKEN_PIPE)
+// 		{
+// 			shell->exit_status = 2;
+// 			ft_fprintf(STDERR_FILENO,
+// 				"syntax error near unexpected token `|'\n");
+// 			return (true);
+// 		}
+// 		if (current_token->next == NULL)
+// 		{
+// 			shell->exit_status = 2;
+// 			ft_fprintf(STDERR_FILENO,
+// 				"syntax error near unexpected token `newline'\n");
+// 			return (true);
+// 		}
+// 	}
+// 	return (false);
+// }
+
+bool	is_syntax_error( t_token *token_list)
 {
 	t_token	*former_token;
 	t_token	*current_token;

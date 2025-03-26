@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/24 18:35:24 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/26 15:15:28 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@
 # include <unistd.h> //getcwd
 
 # define DELIMITERS " \t\n"
-
 typedef struct s_minishell		t_minishell;
 
 // ▗▖  ▗▖ ▗▄▖ ▗▄▄▄▖▗▖  ▗▖
@@ -146,8 +145,6 @@ void							env_add_back_util(t_env **copied_env,
 									t_env *new_env);
 int								ft_fprintf(int fd, const char *format, ...);
 void							free_env(t_env *env);
-void							*ft_realloc(void *ptr, size_t old_size,
-									size_t new_size);
 
 // ▗▄▄▄▖      ▗▖  ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖   ▗▖
 //   █        ▐▛▚▞▜▌  █  ▐▛▚▖▐▌  █  ▐▌   ▐▌ ▐▌▐▌   ▐▌   ▐▌
