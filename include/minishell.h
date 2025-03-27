@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/26 15:15:28 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/26 18:25:03 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 # include <unistd.h> //getcwd
 
 # define DELIMITERS " \t\n"
+
 typedef struct s_minishell		t_minishell;
 
 // ▗▖  ▗▖ ▗▄▖ ▗▄▄▄▖▗▖  ▗▖
@@ -98,20 +99,32 @@ t_token							*tokenizer(t_minishell *shell);
 // ▐▛▀▘ ▐▛▀▜▌▐▛▀▚▖ ▝▀▚▖▐▛▀▀▘▐▛▀▚▖
 // ▐▌   ▐▌ ▐▌▐▌ ▐▌▗▄▄▞▘▐▙▄▄▖▐▌ ▐▌
 
+typedef struct s_redirection
+{
+	char						*filename;
+	t_token_type				type;
+}								t_redirection;
+
 typedef struct s_command
 {
 	char						**args;
-	char						*input_file;
-	bool						is_heredoc;
-	char						**heredoc_files;
-	size_t						heredoc_count;
-	char						*out_file;
-	bool						is_append;
+	t_redirection				*infiles;
+	size_t						infile_count;
+	t_redirection				*outfiles;
+	size_t						outfile_count;
+	// char						*input_file;
+	// bool						is_heredoc;
+	// char						**heredoc_files;
+	// size_t						heredoc_count;
+	// char						*out_file;
+	// bool						is_append;
 	struct s_command			*next;
 }								t_command;
 
-t_command						*parser(t_token *token_list);
-
+t_command						*parser(t_minishell *shell, t_token *tokens);
+bool							is_syntax_error(t_minishell *shell,
+									t_token *tokens);
+bool							is_redirection_type(t_token_type type);
 // ▗▄▄▖ ▗▄▄▄▖▗▄▄▄ ▗▄▄▄▖▗▄▄▖ ▗▄▄▄▖ ▗▄▄▖▗▄▄▄▖▗▄▄▄▖ ▗▄▖ ▗▖  ▗▖
 // ▐▌ ▐▌▐▌   ▐▌  █  █  ▐▌ ▐▌▐▌   ▐▌     █    █  ▐▌ ▐▌▐▛▚▖▐▌
 // ▐▛▀▚▖▐▛▀▀▘▐▌  █  █  ▐▛▀▚▖▐▛▀▀▘▐▌     █    █  ▐▌ ▐▌▐▌ ▝▜▌
@@ -143,7 +156,6 @@ t_env							*create_new_env_util(const char *new_name,
 									const char *new_value, t_env *new_next);
 void							env_add_back_util(t_env **copied_env,
 									t_env *new_env);
-int								ft_fprintf(int fd, const char *format, ...);
 void							free_env(t_env *env);
 
 // ▗▄▄▄▖      ▗▖  ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖   ▗▖
@@ -248,5 +260,5 @@ void							free_shell(t_minishell *shell);
 int								get_exit_status(int err);
 void							free_tokens(t_token *tokens);
 void							free_copied_env(t_env *env);
-
+void							free_commands(t_command *head);
 #endif

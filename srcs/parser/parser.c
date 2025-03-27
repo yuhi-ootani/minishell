@@ -6,196 +6,269 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 15:07:23 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/26 15:35:07 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/26 16:03:30 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void	syntax_error(const char *statement)
+bool	is_redirection_type(t_token_type type)
 {
-	ft_printf("%s\n", statement);
-	ft_fprintf(2, "Minishell: syntax error\n");
-	exit(EXIT_FAILURE);
+	return (type == TOKEN_REDIR_IN || type == TOKEN_APPEND
+		|| type == TOKEN_REDIR_OUT || type == TOKEN_HEREDOC);
 }
 
-t_command	*create_command_node(void)
+t_command	*create_command_node(t_minishell *shell)
 {
 	t_command	*new_command;
 
 	new_command = (t_command *)malloc(sizeof(t_command));
 	if (!new_command)
-		syntax_error("create_command_node");
+	{
+		shell->exit_status = EXIT_FAILURE;
+		return (NULL);
+	}
 	new_command->args = NULL;
-	new_command->input_file = NULL;
-	new_command->is_heredoc = false;
-	new_command->heredoc_files = NULL;
-	new_command->heredoc_count = 0;
-	new_command->out_file = NULL;
-	new_command->is_append = false;
+	// t_redirection
+	new_command->infiles = NULL;
+	new_command->infile_count = 0;
+	new_command->outfiles = NULL;
+	new_command->outfile_count = 0;
+	// new_command->input_file = NULL;
+	// new_command->is_heredoc = false;
+	// new_command->heredoc_files = NULL;
+	// new_command->heredoc_count = 0;
+	// new_command->out_file = NULL;
+	// new_command->is_append = false;
 	new_command->next = NULL;
 	return (new_command);
 }
 
-void	add_argument(t_command *command, char *new_argument)
+bool	add_argument(t_minishell *shell, t_command *cmd, char *new_arg)
 {
 	size_t	count;
-	size_t	i;
 	char	**new_args;
-
-	count = 0;
-	if (command->args)
-	{
-		while (command->args[count])
-			count++;
-	}
-	new_args = (char **)malloc(sizeof(char *) * (count + 2));
-	if (!new_args)
-		syntax_error("new_args failed!"); // todo
-	i = 0;
-	while (i < count)
-	{
-		new_args[i] = command->args[i];
-		i++;
-	}
-	new_args[count] = ft_strdup(new_argument);
-	if (!new_args[count])
-		syntax_error("new_args strdup failed."); // todo
-	new_args[count + 1] = NULL;
-	free(command->args);
-	command->args = new_args;
-}
-
-void	set_redirection(t_command *command, t_token_type token_type,
-		char *filename)
-{
 	size_t	old_size;
 	size_t	new_size;
 
-	if (token_type == TOKEN_REDIR_IN)
+	// size_t	i;
+	count = ft_array_count_str(cmd->args);
+	old_size = (count + 1) * sizeof(char *);
+	new_size = (count + 2) * sizeof(char *);
+	new_args = (char **)ft_realloc(cmd->args, old_size, new_size);
+	if (!new_args)
 	{
-		command->input_file = ft_strdup(filename);
-		command->is_heredoc = false;
+		shell->exit_status = EXIT_FAILURE;
+		return (false);
 	}
-	else if (token_type == TOKEN_HEREDOC)
+	new_args[count] = ft_strdup(new_arg);
+	if (!new_arg[count])
 	{
-		command->input_file = ft_strdup(filename);
-		old_size = sizeof(char *) * command->heredoc_count;
-		new_size = sizeof(char *) * (command->heredoc_count + 1);
-		command->heredoc_files = ft_realloc(command->heredoc_files,
-				old_size, new_size);
-		if (!command->heredoc_files)
-			exit(EXIT_FAILURE); // to do
-		command->heredoc_files[command->heredoc_count] = ft_strdup(filename);
-		command->heredoc_count++;
-		command->is_heredoc = true;
+		free(new_args);
+		shell->exit_status = EXIT_FAILURE;
+		return (false);
 	}
-	else if (token_type == TOKEN_REDIR_OUT)
-	{
-		command->out_file = ft_strdup(filename);
-		command->is_append = false;
-	}
-	else if (token_type == TOKEN_APPEND)
-	{
-		command->out_file = ft_strdup(filename);
-		command->is_append = true;
-	}
+	new_args[count + 1] = NULL;
+	cmd->args = new_args;
+	return (true);
+	// new_args = (char **)malloc(sizeof(char *) * (count + 2));
+	// if (!new_args)
+	// 	syntax_error("new_args failed!"); // todo
+	// i = 0;
+	// while (i < count)
+	// {
+	// 	new_args[i] = cmd->args[i];
+	// 	i++;
+	// }
+	// new_args[count] = ft_strdup(new_argument);
+	// if (!new_args[count])
+	// 	syntax_error("new_args strdup failed."); // todo
+	// new_args[count + 1] = NULL;
+	// free(cmd->args);
+	// cmd->args = new_args;
 }
 
-bool	is_redirection_syntax_error(t_token *current_token,
-		t_token_type current_type)
+t_redirection	*add_redirection_file(t_minishell *shell, t_token *token,
+		t_redirection *old_files, size_t old_count)
 {
-	t_token	*next_token;
+	size_t			old_size;
+	size_t			new_size;
+	t_redirection	*new_files;
+	char			*filename;
 
-	next_token = current_token->next;
-	if (current_type == TOKEN_REDIR_IN || current_type == TOKEN_APPEND
-		|| current_type == TOKEN_REDIR_OUT || current_type == TOKEN_HEREDOC)
+	filename = token->next->value;
+	old_size = (old_count + 1) * sizeof(t_redirection);
+	new_size = (old_count + 2) * sizeof(t_redirection);
+	new_files = (t_redirection *)ft_realloc(old_files, old_size, new_size);
+	if (!new_files)
 	{
-		if (next_token == NULL || next_token->type != TOKEN_WORD)
-			return (true);
-	}
-	return (false);
-}
-
-// bool	is_pipe_syntax_error(t_minishell *shell, t_token *current_token,
-// 		t_token *prev_token)
-// {
-// 	t_token_type	current_type;
-
-// 	current_type = current_token->type;
-// 	if (current_type == TOKEN_PIPE)
-// 	{
-// 		if (prev_token || en == current_token->next->type == TOKEN_PIPE)
-// 		{
-// 			shell->exit_status = 2;
-// 			ft_fprintf(STDERR_FILENO,
-// 				"syntax error near unexpected token `|'\n");
-// 			return (true);
-// 		}
-// 		if (current_token->next == NULL)
-// 		{
-// 			shell->exit_status = 2;
-// 			ft_fprintf(STDERR_FILENO,
-// 				"syntax error near unexpected token `newline'\n");
-// 			return (true);
-// 		}
-// 	}
-// 	return (false);
-// }
-
-bool	is_syntax_error( t_token *token_list)
-{
-	t_token	*former_token;
-	t_token	*current_token;
-
-	former_token = NULL;
-	current_token = token_list;
-	while (current_token->value && current_token->type != TOKEN_EOF)
-	{
-		if (current_token->type == TOKEN_PIPE && (former_token == NULL
-				|| current_token->next->type == TOKEN_PIPE))
-			return (printf("pipe syntax error!\n"), true); // todo
-		if (is_redirection_syntax_error(current_token, current_token->type))
-			return (printf("readirection syntax error!\n"), true);
-		// todo
-		former_token = current_token;
-		current_token = current_token->next;
-	}
-	return (false);
-}
-
-t_command	*parser(t_token *token_list)
-{
-	t_command		*head_command;
-	t_command		*current_command;
-	t_token_type	type;
-
-	if (is_syntax_error(token_list))
+		shell->exit_status = EXIT_FAILURE;
 		return (NULL);
-	head_command = create_command_node();
-	current_command = head_command;
-	while (token_list && token_list->type != TOKEN_EOF)
+	}
+	new_files[old_count].filename = ft_strdup(filename);
+	if (!new_files[old_count].filename)
 	{
-		type = token_list->type;
-		if (type == TOKEN_WORD)
-			add_argument(current_command, token_list->value);
-		else if (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT
-			|| type == TOKEN_APPEND || type == TOKEN_HEREDOC)
+		free(new_files);
+		shell->exit_status = EXIT_FAILURE;
+		return (NULL);
+	}
+	new_files[old_count].type = token->type;
+	new_files[old_count + 1].filename = NULL;
+	return (new_files);
+}
+
+bool	set_redirection(t_minishell *shell, t_command *cmd, t_token *tokens)
+{
+	// t_redirection
+	if (tokens->type == TOKEN_REDIR_IN || tokens->type == TOKEN_HEREDOC)
+	{
+		cmd->infiles = add_redirection_file(shell, tokens, cmd->infiles,
+				cmd->infile_count);
+		if (!cmd->infiles)
+			return (false);
+		cmd->infile_count++;
+	}
+	else if (tokens->type == TOKEN_REDIR_OUT || tokens->type == TOKEN_APPEND)
+	{
+		cmd->outfiles = add_redirection_file(shell, tokens, cmd->outfiles,
+				cmd->outfile_count);
+		if (!cmd->outfiles)
+			return (false);
+		cmd->outfile_count++;
+	}
+	return (true);
+}
+
+bool	add_token_content_to_cmd(t_minishell *shell, t_token *tokens,
+		t_command *cmd)
+{
+	if (tokens->type == TOKEN_WORD)
+	{
+		if (!add_argument(shell, cmd, tokens->value))
+			return (false);
+	}
+	else if (is_redirection_type(tokens->type))
+	{
+		if (!set_redirection(shell, cmd, tokens))
+			return (false);
+	}
+	return (true);
+}
+
+t_token	*move_to_next_token(t_token *tokens)
+{
+	if (!tokens)
+		return (NULL);
+	if (is_redirection_type(tokens->type))
+	{
+		tokens = tokens->next;
+		if (tokens)
+			tokens = tokens->next;
+		return (tokens);
+	}
+	return (tokens->next);
+}
+
+t_command	*convert_token_into_cmd(t_minishell *shell, t_token *tokens)
+{
+	t_command	*head_cmd;
+	t_command	*current_command;
+
+	head_cmd = create_command_node(shell);
+	if (!head_cmd)
+		return (NULL);
+	current_command = head_cmd;
+	while (tokens && tokens->type != TOKEN_EOF)
+	{
+		if (tokens->type == TOKEN_PIPE)
 		{
-			set_redirection(current_command, type, token_list->next->value);
-			token_list = token_list->next;
-		}
-		else if (type == TOKEN_PIPE)
-		{
-			current_command->next = create_command_node();
+			current_command->next = create_command_node(shell);
 			if (!current_command->next)
-			{
-				ft_fprintf(2, "memory allocation failed for new command\n");
-				return (NULL);
-			}
+				return (free_commands(head_cmd), NULL);
 			current_command = current_command->next;
 		}
-		token_list = token_list->next;
+		else
+		{
+			if (!add_token_content_to_cmd(shell, tokens, current_command))
+				return (free_commands(head_cmd), NULL);
+		}
+		tokens = move_to_next_token(tokens);
 	}
-	return (head_command);
+	return (head_cmd);
 }
+
+t_command	*parser(t_minishell *shell, t_token *tokens)
+{
+	if (is_syntax_error(shell, tokens))
+		return (NULL);
+	return (convert_token_into_cmd(shell, tokens));
+}
+
+// void	add_file_back(t_file **head, t_file *new_file)
+// {
+// 	t_file	*current;
+
+// 	if (!*head)
+// 	{
+// 		*head = new_file;
+// 		return ;
+// 	}
+// 	current = *head;
+// 	while (current->next)
+// 		current = current->next;
+// 	current->next = new_file;
+// }
+
+// bool	set_input_redirection(t_minishell *shell, t_command *cmd,
+// 		t_token *tokens)
+// {
+// 	t_file *new_file;
+
+// 	new_file = create_redir_file(shell, tokens);
+// 	if (!new_file)
+// 		return (false);
+// 	add_file_back(&cmd->infiles, new_file);
+// 	cmd->infile_count++;
+// 	return (true);
+// }
+
+// MUKASHINO YATSU
+
+// bool	set_input_redirection(t_minishell *shell, t_command *cmd,
+// 		char *filename)
+// {
+// 	cmd->is_heredoc = false;
+// 	cmd->input_file = ft_strdup(filename);
+// 	if (cmd->input_file)
+// 	{
+// 		shell->exit_status = EXIT_FAILURE;
+// 		return (false);
+// 	}
+// 	return (true);
+// }
+
+// bool	set_input_heredoc(t_minishell *shell, t_command *cmd, char *filename)
+// {
+// 	size_t	old_size;
+// 	size_t	new_size;
+
+// 	cmd->input_file = ft_strdup(filename); // may not update infile
+// 	old_size = sizeof(char *) * (cmd->heredoc_count + 1);
+// 	new_size = sizeof(char *) * (cmd->heredoc_count + 2);
+// 	cmd->heredoc_files = ft_realloc(cmd->heredoc_files, old_size, new_size);
+// 	if (!cmd->heredoc_files)
+// 	{
+// 		shell->exit_status = EXIT_FAILURE;
+// 		return (false);
+// 	}
+// 	cmd->heredoc_files[cmd->heredoc_count] = ft_strdup(filename);
+// 	if (!cmd->heredoc_files[cmd->heredoc_count])
+// 	{
+// 		shell->exit_status = EXIT_FAILURE;
+// 		return (false);
+// 	}
+// 	cmd->heredoc_count++;
+// 	cmd->heredoc_files[cmd->heredoc_count] = NULL;
+// 	cmd->is_heredoc = true;
+// 	return (true);
+// }

@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/26 15:15:42 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/27 10:00:47 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ void	build_commands_struct(t_minishell *shell)
 	if (!tokens)
 		return ;
 	// print_tokens(tokens);
-	shell->commands = parser(tokens);
+	shell->commands = parser(shell, tokens);
 	free_tokens(tokens);
 	if (!shell->commands)
 		return ;

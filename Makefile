@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+         #
+#    By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 11:52:00 by otaniyuhi         #+#    #+#              #
-#    Updated: 2025/03/20 16:49:34 by oyuhi            ###   ########.fr        #
+#    Updated: 2025/03/26 15:49:23 by knemcova         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,7 +36,7 @@ EXECUTOR_DIR = srcs/executor
 SRCS = $(MAIN_DIR)/main.c $(MAIN_DIR)/main_init.c  \
 	   $(PROMPT_DIR)/prompt.c \
 	   $(LEXER_DIR)/lexer.c $(LEXER_DIR)/token_word.c \
-	   $(PARSER_DIR)/parser.c \
+	   $(PARSER_DIR)/parser.c \ $(PARSER_DIR)/parser_check_syntax.c \
 	   $(EXPAND_DIR)/expand.c $(EXPAND_DIR)/word_spliting.c \
        $(SIGNALS_DIR)/signals.c \
 	   $(EXECUTOR_DIR)/executor.c $(EXECUTOR_DIR)/redirection.c $(EXECUTOR_DIR)/build_envp_array.c  \
