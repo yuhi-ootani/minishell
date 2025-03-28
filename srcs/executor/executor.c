@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/28 12:04:40 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/28 16:04:45 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,11 +91,12 @@ t_builtin_id	is_builtin(char *command_str)
 
 static void	execute_child_process(t_minishell *shell, t_exec *exec_info)
 {
-	size_t	infile_count;
-
-	infile_count = shell->commands->infile_count;
-	if (shell->commands->infiles[infile_count - 1].type == TOKEN_HEREDOC
-		&& exec_info->input_fd != STDIN_FILENO)
+	// 	size_t	infile_count;
+	// 	infile_count = shell->commands->infile_count;
+	// if (infile_count > 0 && shell->commands->infiles[infile_count
+	// 	- 1].type == TOKEN_HEREDOC && exec_info->input_fd != STDIN_FILENO)
+	if (exec_info->input_fd != STDIN_FILENO
+		&& shell->commands->infile_count == 0)
 	{
 		dup2(exec_info->input_fd, STDIN_FILENO);
 		close(exec_info->input_fd);
@@ -260,15 +261,18 @@ void	command_executor(t_minishell *shell)
 
 // void	single_command_executor(t_command *cmd, char **envp)
 // {
-// 	pid_t pids[MAX_COMMANDS];
-// 	size_t i = 0;
+// 	pid_t			pids[MAX_COMMANDS];
+// 	size_t			i;
+// 	int				pipefd[2];
+// 	int				in_fd;
+// 	int				status;
+// 	t_builtin_id	buildin_index;
+
+// 	i = 0;
 // 	static int (*builtin_funcs[])(t_command *) = {ft_echo, ft_cd, ft_pwd,
 // 		ft_export, ft_unset, ft_env, ft_exit};
-// 	int pipefd[2];
-// 	int in_fd = STDIN_FILENO;
+// 	in_fd = STDIN_FILENO;
 // 	// pid_t pid;
-// 	int status;
-
 // 	while (cmd)
 // 	{
 // 		if (cmd->next)
@@ -294,8 +298,7 @@ void	command_executor(t_minishell *shell)
 // 				close(pipefd[1]);
 // 			}
 // 			handle_redirection(cmd);
-// 			t_builtin_id buildin_index = is_builtin(cmd->args[0]);
-
+// 			buildin_index = is_builtin(cmd->args[0]);
 // 			if (buildin_index != NOT_BUILDIN)
 // 				builtin_funcs[buildin_index](cmd); // Execute the function
 // 			else
@@ -306,12 +309,9 @@ void	command_executor(t_minishell *shell)
 // 			perror("fork");     // modified
 // 			exit(EXIT_FAILURE); // modified
 // 		}
-
 // 		// waitpid(pid, &status, 0);
-
 // 		if (in_fd != STDIN_FILENO)
 // 			close(in_fd);
-
 // 		if (cmd->next)
 // 		{
 // 			close(pipefd[1]);
@@ -320,13 +320,12 @@ void	command_executor(t_minishell *shell)
 // 		cmd = cmd->next;
 // 		i++;
 // 	}
-
 // 	// Wait for all children after forking them all.
 // 	for (size_t j = 0; j < i; j++)
 // 		waitpid(pids[j], &status, 0);
 // }
 
-/*yuyu code with my signals, long version */
+// /*yuyu code with my signals, long version */
 
 // void	run_forked_commands(t_minishell *shell, t_exec *exec_info)
 // {

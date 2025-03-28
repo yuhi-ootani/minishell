@@ -6,7 +6,7 @@ static bool	is_last_heredoc(t_command *cmd, size_t i)
 {
 	return (cmd->infile_count == i + 1);
 }
-// todo expand a heredoc input
+
 static void	readline_till_EOF(t_command *cmd, int *pipefd, size_t i)
 {
 	char	*line;
@@ -30,18 +30,31 @@ static void	readline_till_EOF(t_command *cmd, int *pipefd, size_t i)
 		}
 		free(line);
 	}
+	// todo expand a heredoc input
+}
+
+t_token_type	last_infile_type(t_command *cmd)
+{
+	if (cmd->infile_count == 0)
+		return (TOKEN_WORD);
+	return (cmd->infiles[cmd->infile_count - 1].type);
 }
 
 static void	handle_heredoc(t_command *cmd)
 {
 	int		pipefd[2];
 	size_t	i;
+	bool	last_is_heredoc;
 
+	last_is_heredoc = (TOKEN_HEREDOC == last_infile_type(cmd));
 	setup_signals_heredoc();
-	if (pipe(pipefd) == -1)
+	if (last_is_heredoc)
 	{
-		perror("pipe in heredoc");
-		exit(EXIT_FAILURE); // TODO
+		if (pipe(pipefd) == -1)
+		{
+			perror("pipe in heredoc");
+			exit(EXIT_FAILURE); // TODO
+		}
 	}
 	i = 0;
 	while (i < cmd->infile_count)
@@ -50,10 +63,12 @@ static void	handle_heredoc(t_command *cmd)
 			readline_till_EOF(cmd, pipefd, i);
 		i++;
 	}
-	close(pipefd[1]);
-	if (cmd->infiles[cmd->infile_count - 1].type == TOKEN_HEREDOC)
+	if (last_is_heredoc)
+	{
+		close(pipefd[1]);
 		dup2(pipefd[0], STDIN_FILENO);
-	close(pipefd[0]);
+		close(pipefd[0]);
+	}
 }
 
 static void	input_redirection(t_command *cmd)
@@ -65,21 +80,25 @@ static void	input_redirection(t_command *cmd)
 	i = 0;
 	while (i < cmd->infile_count)
 	{
-		filename = cmd->infiles[i].filename;
-		infile_fd = open(filename, O_RDONLY);
-		if (infile_fd < 0)
+		if (cmd->infiles[i].type == TOKEN_REDIR_IN)
 		{
-			fprintf(stderr, "MINISHELL: %s: %s\n", filename, strerror(errno));
-			exit(EXIT_FAILURE);
+			filename = cmd->infiles[i].filename;
+			infile_fd = open(filename, O_RDONLY);
+			if (infile_fd < 0)
+			{
+				fprintf(stderr, "MINISHELL: %s: %s\n", filename,
+					strerror(errno));
+				exit(EXIT_FAILURE);
+			}
+			if (i + 1 == cmd->infile_count)
+				dup2(infile_fd, STDIN_FILENO);
+			close(infile_fd);
 		}
-		if (i + 1 == cmd->infile_count)
-			dup2(infile_fd, STDIN_FILENO);
-		close(infile_fd);
 		i++;
 	}
 }
 
-static void	output_redirection(t_command *cmd)
+void	output_redirection(t_command *cmd)
 {
 	int				outfile_fd;
 	size_t			i;
