@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:44:02 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/24 18:35:51 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/25 09:54:54 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,10 +56,10 @@ int	ft_atoi_long(const char *str, bool *error)
 
 int	more_than_two_arguments(t_minishell *shell)
 {
-	t_command	*command;
+	t_command	*cmd;
 
-	command = shell->commands;
-	if (command->args[1] && command->args[2])
+	cmd = shell->commands;
+	if (cmd->args[1] && cmd->args[2])
 	{
 		ft_fprintf(2, "exit: too many arguments\n");
 		shell->exit_status = 2;
@@ -70,13 +70,13 @@ int	more_than_two_arguments(t_minishell *shell)
 
 void	check_number(t_minishell *shell)
 {
-	t_command	*command;
+	t_command	*cmd;
 	char		*arg;
 	bool		error;
 	long long	exit_code;
 
-	command = shell->commands;
-	arg = command->args[1];
+	cmd = shell->commands;
+	arg = cmd->args[1];
 	if (!ft_isnumber(arg))
 	{
 		ft_fprintf(2, "exit: %s: numeric argument required\n", arg);
@@ -100,20 +100,20 @@ void	check_number(t_minishell *shell)
 void	ft_exit(t_minishell *shell)
 {
 	int			exit_code;
-	t_command	*command;
+	t_command	*cmd;
 
-	command = shell->commands;
+	cmd = shell->commands;
 	printf("exit\n");
 	if (more_than_two_arguments(shell))
 		return ;
-	if (!command->args[1])
+	if (!cmd->args[1])
 	{
 		exit_code = shell->exit_status;
 	}
 	else
 	{
 		check_number(shell);
-		exit_code = (ft_atoi_long(command->args[1], &(bool){false}) % 256);
+		exit_code = (ft_atoi_long(cmd->args[1], &(bool){false}) % 256);
 		shell->exit_status = exit_code;
 	}
 	free_shell(shell);

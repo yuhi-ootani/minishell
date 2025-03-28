@@ -6,31 +6,52 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/27 10:00:47 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/27 10:10:44 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void	free_command(t_command *command)
+void	free_command(t_command *cmd)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
-	if (command->args)
+	if (cmd->args)
 	{
-		while (command->args[i])
+		while (cmd->args[i])
 		{
-			free(command->args[i]);
+			free(cmd->args[i]);
 			i++;
 		}
-		free(command->args);
+		free(cmd->args);
 	}
-	if (command->input_file)
-		free(command->input_file);
-	if (command->out_file)
-		free(command->out_file);
-	free(command);
+	// t_redirection
+	i = 0;
+	if (cmd->infiles)
+	{
+		while (i < cmd->infile_count)
+		{
+			free(cmd->infiles[i].filename);
+			i++;
+		}
+		free(cmd->infiles);
+	}
+	i = 0;
+	if (cmd->outfiles)
+	{
+		while (i < cmd->outfile_count)
+		{
+			free(cmd->outfiles[i].filename);
+			i++;
+		}
+		free(cmd->outfiles);
+	}
+	// if (cmd->input_file)
+	// 	free(cmd->input_file);
+	// if (cmd->out_file)
+	// 	free(cmd->out_file);
+	free(cmd);
 }
 
 void	free_commands(t_command *head)
@@ -103,13 +124,13 @@ void	build_commands_struct(t_minishell *shell)
 	tokens = tokenizer(shell);
 	if (!tokens)
 		return ;
-	// print_tokens(tokens);
+	print_tokens(tokens);
 	shell->commands = parser(shell, tokens);
 	free_tokens(tokens);
 	if (!shell->commands)
 		return ;
 	expand_commands(shell);
-	// print_commands(shell->commands);
+	print_commands(shell->commands);
 }
 
 void	exit_ctrl_D(t_minishell *shell)
@@ -138,8 +159,8 @@ int	main(int argc, char **argv, char **envp)
 		{
 			if (shell.input && shell.input[0] && shell.input[0] != '\n')
 				build_commands_struct(&shell);
-			if (shell.commands)
-				command_executor(&shell);
+			// if (shell.commands)
+			// 	command_executor(&shell);
 		}
 		reset_shell_for_next_input(&shell, interactive_mode);
 	}

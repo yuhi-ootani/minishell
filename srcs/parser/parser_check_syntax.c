@@ -55,8 +55,8 @@ bool	is_pipe_syntax_error(t_minishell *shell, t_token *current_token,
 
 bool	is_syntax_error(t_minishell *shell, t_token *tokens)
 {
-	t_token *prev_token;
-	t_token *current_token;
+	t_token	*prev_token;
+	t_token	*current_token;
 
 	prev_token = NULL;
 	current_token = tokens;

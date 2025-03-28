@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_unset.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:44:32 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/18 19:22:28 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/24 17:28:49 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,13 @@ void	ft_unset(t_minishell *shell)
 	char		*var_name;
 	t_env		*prev_env;
 	t_env		*tmp_env;
-	t_command	*command;
+	t_command	*cmd;
 
 	i = 1;
-	command = shell->commands;
-	while (command->args[i])
+	cmd = shell->commands;
+	while (cmd->args[i])
 	{
-		var_name = command->args[i];
+		var_name = cmd->args[i];
 		prev_env = NULL;
 		tmp_env = shell->env;
 		while (tmp_env)

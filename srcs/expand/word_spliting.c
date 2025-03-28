@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 18:00:40 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/26 13:07:30 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/27 10:38:55 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,15 +124,17 @@ void	append_expanded_argument(t_minishell *shell, char ***result, char *arg,
 	*result = tmp_array;
 }
 
-char	**expander(t_minishell *shell, char **args)
+char	**expander(t_minishell *shell, t_command *cmd)
 {
 	size_t	i;
 	char	**result;
 	char	*spaces;
+	char	**args;
 
 	spaces = DELIMITERS;
 	result = NULL;
 	i = 0;
+	args = cmd->args;
 	while (args && args[i])
 	{
 		append_expanded_argument(shell, &result, args[i], spaces);
@@ -140,6 +142,44 @@ char	**expander(t_minishell *shell, char **args)
 	}
 	return (result);
 }
+
+void	expand_commands(t_minishell *shell)
+{
+	t_command	*current;
+	char		**new_args;
+
+	current = shell->commands;
+	while (current)
+	{
+		new_args = expander(shell, current);
+		ft_array_free(current->args);
+		current->args = new_args;
+		current = current->next;
+	}
+}
+
+// // Example usage
+// int	main(void)
+// {
+// 	char	*arr[] = {"Hello", "World",
+// 			"\" word                          split   \"", " Cut   Them     ",
+// 			" popo   ", NULL};
+// 	char	**merged;
+
+// 	merged = expander(arr);
+// 	if (!merged)
+// 	{
+// 		perror("append_string_arrays failed");
+// 		return (1);
+// 	}
+// 	// Print merged array
+// 	for (size_t i = 0; merged[i] != NULL; i++)
+// 		printf("%s$\n", merged[i]);
+// 	// NOTE: We only allocated 'merged' (the array of pointers).
+// 	//       We did NOT allocate each string. So we only free 'merged' itself.
+// 	free(merged);
+// 	return (0);
+// }
 
 // char	**expander(t_minishell *shell, char **args)
 // {
@@ -188,20 +228,20 @@ char	**expander(t_minishell *shell, char **args)
 // 	return (result);
 // }
 
-void	expand_commands(t_minishell *shell)
-{
-	t_command	*current;
-	char		**new_args;
+// void	expand_commands(t_minishell *shell)
+// {
+// 	t_command	*current;
+// 	char		**new_args;
 
-	current = shell->commands;
-	while (current)
-	{
-		new_args = expander(shell, current->args);
-		ft_array_free(current->args);
-		current->args = new_args;
-		current = current->next;
-	}
-}
+// 	current = shell->commands;
+// 	while (current)
+// 	{
+// 		new_args = expander(shell, current->args);
+// 		ft_array_free(current->args);
+// 		current->args = new_args;
+// 		current = current->next;
+// 	}
+// }
 // // Example usage
 // int	main(void)
 // {

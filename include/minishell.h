@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/26 18:25:03 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/27 15:35:51 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,12 +125,13 @@ t_command						*parser(t_minishell *shell, t_token *tokens);
 bool							is_syntax_error(t_minishell *shell,
 									t_token *tokens);
 bool							is_redirection_type(t_token_type type);
+
 // ▗▄▄▖ ▗▄▄▄▖▗▄▄▄ ▗▄▄▄▖▗▄▄▖ ▗▄▄▄▖ ▗▄▄▖▗▄▄▄▖▗▄▄▄▖ ▗▄▖ ▗▖  ▗▖
 // ▐▌ ▐▌▐▌   ▐▌  █  █  ▐▌ ▐▌▐▌   ▐▌     █    █  ▐▌ ▐▌▐▛▚▖▐▌
 // ▐▛▀▚▖▐▛▀▀▘▐▌  █  █  ▐▛▀▚▖▐▛▀▀▘▐▌     █    █  ▐▌ ▐▌▐▌ ▝▜▌
 // ▐▌ ▐▌▐▙▄▄▖▐▙▄▄▀▗▄█▄▖▐▌ ▐▌▐▙▄▄▖▝▚▄▄▖  █  ▗▄█▄▖▝▚▄▞▘▐▌  ▐▌
 
-void							handle_redirection(t_command *command);
+void							handle_redirection(t_command *cmd);
 
 //  ▗▄▄▖▗▄▄▄▖ ▗▄▄▖▗▖  ▗▖ ▗▄▖ ▗▖
 // ▐▌     █  ▐▌   ▐▛▚▖▐▌▐▌ ▐▌▐▌
@@ -190,7 +191,7 @@ typedef struct s_expanded_str
 void							expand_commands(t_minishell *shell);
 char							*get_expanded_str(t_minishell *shell,
 									const char *src_input);
-char							**expander(t_minishell *shell, char **args);
+char							**expander(t_minishell *shell, t_command *cmd);
 
 // ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▄▖ ▗▄▄▖
 // ▐▌    ▝▚▞▘ ▐▌   ▐▌   ▐▌ ▐▌  █ ▐▌ ▐▌▐▌ ▐▌
@@ -250,6 +251,7 @@ typedef enum e_exit_status
 
 void							print_commands(t_command *head);
 void							print_tokens(t_token *tokens);
+size_t							ft_array_count_str(char **array);
 
 // ▗▄▄▄▖▗▄▄▖ ▗▄▄▄▖▗▄▄▄▖
 // ▐▌   ▐▌ ▐▌▐▌   ▐▌
@@ -261,4 +263,5 @@ int								get_exit_status(int err);
 void							free_tokens(t_token *tokens);
 void							free_copied_env(t_env *env);
 void							free_commands(t_command *head);
+
 #endif

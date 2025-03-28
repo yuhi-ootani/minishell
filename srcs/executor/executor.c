@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/26 16:19:08 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/27 10:30:11 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,8 +251,6 @@ void	command_executor(t_minishell *shell)
 		run_forked_commands(shell, &exec_info);
 }
 
-
-
 // void	run_forked_commands(t_minishell *shell, t_exec *exec_info)
 // {
 // 	int					i;
@@ -312,13 +310,9 @@ void	command_executor(t_minishell *shell)
 // 	sigaction(SIGINT, &previous_int, NULL);
 // }
 
-
-
-
-
 // #define MAX_COMMANDS 1024
 
-// void	single_command_executor(t_command *command, char **envp)
+// void	single_command_executor(t_command *cmd, char **envp)
 // {
 // 	pid_t pids[MAX_COMMANDS];
 // 	size_t i = 0;
@@ -329,9 +323,9 @@ void	command_executor(t_minishell *shell)
 // // 	// pid_t pid;
 // 	int status;
 
-// 	while (command)
+// 	while (cmd)
 // 	{
-// 		if (command->next)
+// 		if (cmd->next)
 // 		{
 // 			if (pipe(pipefd) < 0)
 // 			{
@@ -347,19 +341,19 @@ void	command_executor(t_minishell *shell)
 // 				dup2(in_fd, STDIN_FILENO);
 // 				close(in_fd);
 // 			}
-// 			if (command->next)
+// 			if (cmd->next)
 // 			{
 // 				dup2(pipefd[1], STDOUT_FILENO);
 // 				close(pipefd[0]);
 // 				close(pipefd[1]);
 // 			}
-// 			handle_redirection(command);
-// 			t_builtin_id buildin_index = is_builtin(command->args[0]);
+// 			handle_redirection(cmd);
+// 			t_builtin_id buildin_index = is_builtin(cmd->args[0]);
 
 // 			if (buildin_index != NOT_BUILDIN)
-// 				builtin_funcs[buildin_index](command); // Execute the function
+// 				builtin_funcs[buildin_index](cmd); // Execute the function
 // 			else
-// 				execute_external_command(command, envp);
+// 				execute_external_command(cmd, envp);
 // 		}
 // 		else if (pids[i] < 0)
 // 		{
@@ -372,12 +366,12 @@ void	command_executor(t_minishell *shell)
 // 		if (in_fd != STDIN_FILENO)
 // 			close(in_fd);
 
-// 		if (command->next)
+// 		if (cmd->next)
 // 		{
 // 			close(pipefd[1]);
 // 			in_fd = pipefd[0];
 // 		}
-// 		command = command->next;
+// 		cmd = cmd->next;
 // 		i++;
 // 	}
 
@@ -386,10 +380,12 @@ void	command_executor(t_minishell *shell)
 // 		waitpid(pids[j], &status, 0);
 // }
 
-// yuyu code without signals
+/*yuyu code with my signals, long version */
+
 // void	run_forked_commands(t_minishell *shell, t_exec *exec_info)
 // {
-// 	int	i;
+// 	int					i;
+// 	struct sigaction	old_int;
 
 // 	pid_t pids[1000]; // Array to store PIDs for all commands
 // 	i = 0;
@@ -405,14 +401,15 @@ void	command_executor(t_minishell *shell)
 // 		}
 // 		pids[i] = fork();
 // 		if (pids[i] == 0)
+// 		{
+// 			setup_signals_child();
 // 			execute_child_process(shell, exec_info);
+// 		}
 // 		else if (pids[i] < 0)
 // 		{
 // 			perror("fork");     // modified
 // 			exit(EXIT_FAILURE); // modified
 // 		}
-// 		// if (!shell->commands->next)
-// 		// 	waitpid(pids[i], &shell->exit_status, 0);
 // 		if (exec_info->input_fd != STDIN_FILENO)
 // 			close(exec_info->input_fd);
 // 		if (shell->commands->next)
@@ -423,15 +420,20 @@ void	command_executor(t_minishell *shell)
 // 		shell->commands = shell->commands->next;
 // 		i++;
 // 	}
-// 	// Now wait for all children
-// 	// for (int j = 0; j < i; j++)
-// 	// 	waitpid(pids[j], &shell->exit_status, 0);
+// 	sigaction(SIGINT, NULL, &old_int);
+// 	signal(SIGINT, SIG_IGN);
 // 	for (int j = 0; j < i; j++)
 // 	{
 // 		waitpid(pids[j], &shell->exit_status, 0);
 // 		if (WIFEXITED(shell->exit_status))
 // 			shell->exit_status = WEXITSTATUS(shell->exit_status);
+// 		else if (WIFSIGNALED(shell->exit_status))
+// 		{
+// 			printf("\n");
+// 			shell->exit_status = 128 + WTERMSIG(shell->exit_status);
+// 		}
 // 		else
 // 			shell->exit_status = 1;
 // 	}
+// 	sigaction(SIGINT, &old_int, NULL);
 // }

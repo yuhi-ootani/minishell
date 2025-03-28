@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 15:07:23 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/26 16:03:30 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/28 10:54:08 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ bool	add_argument(t_minishell *shell, t_command *cmd, char *new_arg)
 		return (false);
 	}
 	new_args[count] = ft_strdup(new_arg);
-	if (!new_arg[count])
+	if (!new_args[count])
 	{
 		free(new_args);
 		shell->exit_status = EXIT_FAILURE;

@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 11:09:19 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/26 10:35:49 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/27 10:20:01 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,10 @@ char	*get_env_name(const char *input)
 
 	if (!input)
 		return (NULL);
-	len = 0;
+	if (ft_isalpha(input[0]) || input[0] == '_')
+		len = 1;
+	else
+		return (NULL);
 	while (ft_isalnum(input[len]) || input[len] == '_')
 		len++;
 	name = (char *)ft_calloc((len + 1), sizeof(char));
@@ -67,7 +70,6 @@ char	*get_env_name(const char *input)
 // 	expanded_str->buffer[expanded_str->index] = '\0';
 // 	return (0);
 // }
-
 
 static int	append_to_buffer(t_expanded_str *expanded_str, const char *src,
 		size_t src_len)
@@ -173,7 +175,8 @@ int	handle_dollar(t_minishell *shell, t_expanded_str *expanded_str,
 	return (0);
 }
 
-static t_expanded_str	init_expanded_str(const char *arg_src)
+static t_expanded_str	init_expanded_str(t_minishell *shell,
+		const char *arg_src)
 {
 	t_expanded_str	expanded_str;
 
@@ -182,6 +185,10 @@ static t_expanded_str	init_expanded_str(const char *arg_src)
 	expanded_str.in_single_quote = false;
 	expanded_str.in_double_quote = false;
 	expanded_str.buffer = ft_calloc(sizeof(char), expanded_str.size);
+	if (!expanded_str.buffer)
+	{
+		shell->exit_status = EXIT_FAILURE;
+	}
 	return (expanded_str);
 }
 
@@ -192,7 +199,7 @@ char	*get_expanded_str(t_minishell *shell, const char *src_input)
 
 	if (!src_input)
 		return (NULL);
-	expanded_str = init_expanded_str(src_input);
+	expanded_str = init_expanded_str(shell, src_input);
 	if (!expanded_str.buffer)
 		return (NULL);
 	i = 0;
