@@ -4,26 +4,24 @@
 
 static bool	is_last_heredoc(t_command *cmd, size_t i)
 {
-	return (cmd->is_heredoc && ft_strcmp(cmd->heredoc_files[i],
-			cmd->input_file) == 0);
+	return (cmd->infile_count == i + 1);
 }
-
-static void	readline_till_EOF(t_command *cmd, int *pipefd)
+// todo expand a heredoc input
+static void	readline_till_EOF(t_command *cmd, int *pipefd, size_t i)
 {
 	char	*line;
-	size_t	i;
+	char	*EOF_name;
 
-	i = 0;
-	while (i < cmd->heredoc_count)
+	EOF_name = cmd->infiles[i].filename;
+	while (1)
 	{
 		line = readline("> ");
 		if (!line)
 			break ;
-		if (ft_strcmp(line, cmd->heredoc_files[i]) == 0)
+		if (ft_strcmp(line, EOF_name) == 0)
 		{
 			free(line);
-			i++;
-			continue ;
+			break ;
 		}
 		if (is_last_heredoc(cmd, i))
 		{
@@ -36,7 +34,8 @@ static void	readline_till_EOF(t_command *cmd, int *pipefd)
 
 static void	handle_heredoc(t_command *cmd)
 {
-	int	pipefd[2];
+	int		pipefd[2];
+	size_t	i;
 
 	setup_signals_heredoc();
 	if (pipe(pipefd) == -1)
@@ -44,55 +43,84 @@ static void	handle_heredoc(t_command *cmd)
 		perror("pipe in heredoc");
 		exit(EXIT_FAILURE); // TODO
 	}
-	readline_till_EOF(cmd, pipefd);
+	i = 0;
+	while (i < cmd->infile_count)
+	{
+		if (cmd->infiles[i].type == TOKEN_HEREDOC)
+			readline_till_EOF(cmd, pipefd, i);
+		i++;
+	}
 	close(pipefd[1]);
-	if (cmd->is_heredoc)
+	if (cmd->infiles[cmd->infile_count - 1].type == TOKEN_HEREDOC)
 		dup2(pipefd[0], STDIN_FILENO);
 	close(pipefd[0]);
 }
 
 static void	input_redirection(t_command *cmd)
 {
-	int	input_fd;
+	int		infile_fd;
+	size_t	i;
+	char	*filename;
 
-	input_fd (cmd->input_file, O_RDONLY);
-	if (input_fd < 0)
+	i = 0;
+	while (i < cmd->infile_count)
 	{
-		perror("input fd open");
-		exit(EXIT_FAILURE);
+		filename = cmd->infiles[i].filename;
+		infile_fd = open(filename, O_RDONLY);
+		if (infile_fd < 0)
+		{
+			fprintf(stderr, "MINISHELL: %s: %s\n", filename, strerror(errno));
+			exit(EXIT_FAILURE);
+		}
+		if (i + 1 == cmd->infile_count)
+			dup2(infile_fd, STDIN_FILENO);
+		close(infile_fd);
+		i++;
 	}
-	dup2(input_fd, STDIN_FILENO);
-	close(input_fd);
 }
 
 static void	output_redirection(t_command *cmd)
 {
-	int	flags;
-	int	output_fd;
+	int				outfile_fd;
+	size_t			i;
+	char			*filename;
+	int				flags;
+	t_token_type	type;
 
+	i = 0;
 	flags = O_WRONLY | O_CREAT;
-	if (cmd->is_append)
-		flags |= O_APPEND;
-	else
-		flags |= O_TRUNC;
-	output_fd = open(cmd->out_file, flags, 0644);
-	if (output_fd < 0)
+	while (i < cmd->outfile_count)
 	{
-		perror("open output redirection file"); // modified
-		exit(EXIT_FAILURE);                     // modified
+		filename = cmd->outfiles[i].filename;
+		type = cmd->outfiles[i].type;
+		if (i + 1 == cmd->outfile_count && type == TOKEN_APPEND)
+			flags |= O_APPEND;
+		else if (i + 1 == cmd->outfile_count && type == TOKEN_REDIR_OUT)
+			flags |= O_TRUNC;
+		outfile_fd = open(filename, flags, 0644);
+		if (outfile_fd < 0)
+		{
+			perror("open output redirection file");
+			exit(EXIT_FAILURE);
+		}
+		if (i + 1 == cmd->outfile_count)
+			dup2(outfile_fd, STDOUT_FILENO);
+		close(outfile_fd);
+		i++;
 	}
-	dup2(output_fd, STDOUT_FILENO);
-	close(output_fd);
 }
 
 void	handle_redirection(t_command *cmd)
 {
-	if (cmd->heredoc_count > 0)
+	if (cmd->infile_count > 0)
+	{
 		handle_heredoc(cmd);
-	if (cmd->is_heredoc == false && cmd->input_file)
 		input_redirection(cmd);
-	if (cmd->out_file)
+	}
+	if (cmd->outfile_count > 0)
+	{
 		output_redirection(cmd);
+	}
 }
 
 // int	main(int argc, char **argv, char **envp)

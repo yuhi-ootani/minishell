@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/25 09:56:13 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/28 12:04:40 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,10 @@ t_builtin_id	is_builtin(char *command_str)
 
 static void	execute_child_process(t_minishell *shell, t_exec *exec_info)
 {
-	if (shell->commands->is_heredoc == false
+	size_t	infile_count;
+
+	infile_count = shell->commands->infile_count;
+	if (shell->commands->infiles[infile_count - 1].type == TOKEN_HEREDOC
 		&& exec_info->input_fd != STDIN_FILENO)
 	{
 		dup2(exec_info->input_fd, STDIN_FILENO);
@@ -248,7 +251,9 @@ void	command_executor(t_minishell *shell)
 		run_single_builtin_in_parent(shell, &exec_info);
 	}
 	else
+	{
 		run_forked_commands(shell, &exec_info);
+	}
 }
 
 // #define MAX_COMMANDS 1024

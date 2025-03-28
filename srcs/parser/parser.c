@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 15:07:23 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/28 10:19:05 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/28 11:44:17 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,17 +29,10 @@ t_command	*create_command_node(t_minishell *shell)
 		return (NULL);
 	}
 	new_command->args = NULL;
-	// t_redirection
 	new_command->infiles = NULL;
 	new_command->infile_count = 0;
 	new_command->outfiles = NULL;
 	new_command->outfile_count = 0;
-	// new_command->input_file = NULL;
-	// new_command->is_heredoc = false;
-	// new_command->heredoc_files = NULL;
-	// new_command->heredoc_count = 0;
-	// new_command->out_file = NULL;
-	// new_command->is_append = false;
 	new_command->next = NULL;
 	return (new_command);
 }
@@ -47,45 +40,29 @@ t_command	*create_command_node(t_minishell *shell)
 bool	add_argument(t_minishell *shell, t_command *cmd, char *new_arg)
 {
 	size_t	count;
-	char	**new_args;
+	char	**result;
 	size_t	old_size;
 	size_t	new_size;
 
-	// size_t	i;
 	count = ft_array_count_str(cmd->args);
 	old_size = (count + 1) * sizeof(char *);
 	new_size = (count + 2) * sizeof(char *);
-	new_args = (char **)ft_realloc(cmd->args, old_size, new_size);
-	if (!new_args)
+	result = (char **)ft_realloc(cmd->args, old_size, new_size);
+	if (!result)
 	{
 		shell->exit_status = EXIT_FAILURE;
 		return (false);
 	}
-	new_args[count] = ft_strdup(new_arg);
-	if (!new_args[count])
+	result[count] = ft_strdup(new_arg);
+	if (!result[count])
 	{
-		free(new_args);
+		free(result);
 		shell->exit_status = EXIT_FAILURE;
 		return (false);
 	}
-	new_args[count + 1] = NULL;
-	cmd->args = new_args;
+	result[count + 1] = NULL;
+	cmd->args = result;
 	return (true);
-	// new_args = (char **)malloc(sizeof(char *) * (count + 2));
-	// if (!new_args)
-	// 	syntax_error("new_args failed!"); // todo
-	// i = 0;
-	// while (i < count)
-	// {
-	// 	new_args[i] = cmd->args[i];
-	// 	i++;
-	// }
-	// new_args[count] = ft_strdup(new_argument);
-	// if (!new_args[count])
-	// 	syntax_error("new_args strdup failed."); // todo
-	// new_args[count + 1] = NULL;
-	// free(cmd->args);
-	// cmd->args = new_args;
 }
 
 t_redirection	*add_redirection_file(t_minishell *shell, t_token *token,
@@ -119,7 +96,6 @@ t_redirection	*add_redirection_file(t_minishell *shell, t_token *token,
 
 bool	set_redirection(t_minishell *shell, t_command *cmd, t_token *tokens)
 {
-	// t_redirection
 	if (tokens->type == TOKEN_REDIR_IN || tokens->type == TOKEN_HEREDOC)
 	{
 		cmd->infiles = add_redirection_file(shell, tokens, cmd->infiles,

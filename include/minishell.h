@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/27 14:23:12 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/28 11:42:08 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,12 +112,6 @@ typedef struct s_command
 	size_t						infile_count;
 	t_redirection				*outfiles;
 	size_t						outfile_count;
-	// char						*input_file;
-	// bool						is_heredoc;
-	// char						**heredoc_files;
-	// size_t						heredoc_count;
-	// char						*out_file;
-	// bool						is_append;
 	struct s_command			*next;
 }								t_command;
 

@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/27 14:30:06 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/28 11:44:00 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ void	free_command(t_command *cmd)
 		}
 		free(cmd->args);
 	}
-	// t_redirection
 	i = 0;
 	if (cmd->infiles)
 	{
@@ -48,10 +47,6 @@ void	free_command(t_command *cmd)
 		}
 		free(cmd->outfiles);
 	}
-	// if (cmd->input_file)
-	// 	free(cmd->input_file);
-	// if (cmd->out_file)
-	// 	free(cmd->out_file);
 	free(cmd);
 }
 
@@ -160,8 +155,8 @@ int	main(int argc, char **argv, char **envp)
 		{
 			if (shell.input && shell.input[0] && shell.input[0] != '\n')
 				build_commands_struct(&shell);
-			// if (shell.commands)
-			// 	command_executor(&shell);
+			if (shell.commands)
+				command_executor(&shell);
 		}
 		reset_shell_for_next_input(&shell, interactive_mode);
 	}
