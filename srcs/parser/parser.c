@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 15:07:23 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/26 13:05:17 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/28 10:19:05 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ bool	add_argument(t_minishell *shell, t_command *cmd, char *new_arg)
 		return (false);
 	}
 	new_args[count] = ft_strdup(new_arg);
-	if (!new_arg[count])
+	if (!new_args[count])
 	{
 		free(new_args);
 		shell->exit_status = EXIT_FAILURE;

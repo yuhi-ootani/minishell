@@ -6,142 +6,134 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 18:00:40 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/26 14:21:29 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/27 14:24:33 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-bool	ft_array_nbr_dup(char **array_dst, char **array_src, size_t dst_start,
-		size_t dst_end)
+static void	remove_quotes_and_copy(char *dst, const char *src)
 {
-	size_t	dst_i;
-	size_t	src_i;
+	bool	in_single;
+	bool	in_double;
+	size_t	i;
 
-	dst_i = dst_start;
-	src_i = 0;
-	if (!array_dst || !array_src)
-		return (false);
-	while (dst_i < dst_end && array_src[src_i])
+	i = 0;
+	in_single = false;
+	in_double = false;
+	while (*src)
 	{
-		array_dst[dst_i] = ft_strdup(array_src[src_i]);
-		// malloc fail
-		dst_i++;
-		src_i++;
+		if (*src == '\'' && !in_double)
+			in_single = !in_single;
+		else if (*src == '"' && !in_single)
+			in_double = !in_double;
+		else
+		{
+			dst[i] = *src;
+			i++;
+		}
+		src++;
+	}
+	dst[i] = '\0';
+}
+
+char	*remove_quotes(t_minishell *shell, const char *input)
+{
+	char	*result;
+
+	result = (char *)ft_calloc(sizeof(char), ft_strlen(input) + 1);
+	if (!result)
+	{
+		shell->exit_status = EXIT_FAILURE;
+		return (NULL);
+	}
+	remove_quotes_and_copy(result, input);
+	return (result);
+}
+
+static bool	quote_removal(t_minishell *shell, char **args)
+{
+	char	*tmp;
+	size_t	i;
+
+	i = 0;
+	while (args && args[i])
+	{
+		tmp = remove_quotes(shell, args[i]);
+		if (tmp)
+		{
+			free(args[i]);
+			args[i] = tmp;
+		}
+		else
+			return (false);
+		i++;
 	}
 	return (true);
 }
 
-char	**append_string_arrays(char **array1, char **array2)
-{
-	size_t	len1;
-	size_t	len2;
-	char	**new_array;
-
-	len1 = 0;
-	len2 = 0;
-	if (array1)
-		len1 = ft_array_count_str(array1);
-	if (array2)
-		len2 = ft_array_count_str(array2);
-	new_array = (char **)malloc(sizeof(char *) * (len1 + len2 + 1));
-	if (!new_array)
-		return (NULL); // Allocation failed
-	ft_array_nbr_dup(new_array, array1, 0, len1);
-	ft_array_nbr_dup(new_array, array2, len1, len1 + len2);
-	new_array[len1 + len2] = NULL;
-	return (new_array);
-}
-
-char	*remove_quotes(const char *input)
-{
-	char	*result;
-	size_t	j;
-	bool	in_single;
-	bool	in_double;
-
-	in_single = false;
-	in_double = false;
-	result = malloc(ft_strlen(input) + 1);
-	if (!result)
-		return (NULL);
-	j = 0;
-	while (*input)
-	{
-		if (*input == '\'' && !in_double)
-			in_single = !in_single;
-		else if (*input == '"' && !in_single)
-			in_double = !in_double;
-		else
-			result[j++] = *input;
-		input++;
-	}
-	result[j] = '\0';
-	return (result);
-}
-
-static char	**split_and_remove_quotes(char *str, const char *spaces)
+char	**word_splitting(t_minishell *shell, char *str)
 {
 	char	**splited_args;
-	char	*tmp;
-	size_t	j;
 
 	if (str[0] != '"' && str[ft_strlen(str) - 1] != '"')
-		splited_args = ft_split(str, spaces);
+		splited_args = ft_split(str, DELIMITERS);
 	else
 		splited_args = ft_split(str, "");
-	j = 0;
-	while (splited_args && splited_args[j])
+	if (!splited_args)
 	{
-		tmp = remove_quotes(splited_args[j]);
-		if (tmp)
-		{
-			free(splited_args[j]);
-			splited_args[j] = tmp;
-		}
-		j++;
+		shell->exit_status = EXIT_FAILURE;
+		return (NULL);
 	}
 	return (splited_args);
 }
 
-void	append_expanded_argument(t_minishell *shell, char ***result, char *arg,
-		const char *spaces)
+char	**expander(t_minishell *shell, char *arg)
 {
-	char	*expanded;
-	char	**splited_args;
-	char	**tmp_array;
+	char	*expanded_str;
+	char	**result;
 
-	expanded = get_expanded_str(shell, arg);
-	if (!expanded)
-		return ;
-	splited_args = split_and_remove_quotes(expanded, spaces);
-	free(expanded);
-	tmp_array = append_string_arrays(*result, splited_args);
-	ft_array_free(splited_args);
-	ft_array_free(*result);
-	*result = tmp_array;
+	expanded_str = get_expanded_str(shell, arg);
+	if (!expanded_str)
+		return (NULL);
+	result = word_splitting(shell, expanded_str);
+	free(expanded_str);
+	if (!result)
+		return (NULL);
+	if (!quote_removal(shell, result))
+	{
+		ft_array_free(result);
+		return (NULL);
+	}
+	return (result);
 }
 
-char	**expander(t_minishell *shell, t_command *cmd)
+char	**create_expanded_args(t_minishell *shell, t_command *cmd)
 {
 	size_t	i;
 	char	**result;
-	char	*spaces;
-	char	**args;
+	char	**expanded;
+	char	**joined_array;
 
-	spaces = DELIMITERS;
 	result = NULL;
 	i = 0;
-	args = cmd->args;
-	while (args && args[i])
+	while (cmd->args && cmd->args[i])
 	{
-		append_expanded_argument(shell, &result, args[i], spaces);
+		expanded = expander(shell, cmd->args[i]);
+		if (!expanded)
+			return (NULL);
+		joined_array = ft_array_join(result, expanded);
+		ft_array_free(expanded);
+		ft_array_free(result);
+		result = joined_array;
+		if (!result)
+			return (NULL);
 		i++;
 	}
 	return (result);
 }
 
-void	expand_commands(t_minishell *shell)
+bool	expand_all_cmd_args(t_minishell *shell)
 {
 	t_command	*current;
 	char		**new_args;
@@ -149,11 +141,17 @@ void	expand_commands(t_minishell *shell)
 	current = shell->commands;
 	while (current)
 	{
-		new_args = expander(shell, current);
-		ft_array_free(current->args);
-		current->args = new_args;
+		if (current->args && current->args[0])
+		{
+			new_args = create_expanded_args(shell, current);
+			if (!new_args)
+				return (false);
+			ft_array_free(current->args);
+			current->args = new_args;
+		}
 		current = current->next;
 	}
+	return (true);
 }
 
 // // Example usage

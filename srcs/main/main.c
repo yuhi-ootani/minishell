@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/26 13:17:14 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/27 14:30:06 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ void	free_command(t_command *cmd)
 	{
 		while (cmd->args[i])
 		{
-			free(cmd->args[i]);
+			if (cmd->args[i])
+				free(cmd->args[i]);
 			i++;
 		}
 		free(cmd->args);
@@ -129,7 +130,7 @@ void	build_commands_struct(t_minishell *shell)
 	free_tokens(tokens);
 	if (!shell->commands)
 		return ;
-	expand_commands(shell);
+	expand_all_cmd_args(shell);
 	print_commands(shell->commands);
 }
 

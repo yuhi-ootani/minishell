@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_word.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:34:11 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/24 17:21:17 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/27 13:30:05 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,15 +99,15 @@
 // 	*word = new_word;
 // }
 
-static char	is_in_quote(char current_c, char *quote)
+char	is_in_quote(char c, char *quote)
 {
-	if (current_c == '\'' || current_c == '"')
+	if (c == '\'' || c == '"')
 	{
 		if (!(*quote))
 		{
-			return (current_c);
+			return (c);
 		}
-		else if (current_c == *quote)
+		else if (c == *quote)
 		{
 			return (0);
 		}
