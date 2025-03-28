@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+         #
+#    By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 11:52:00 by otaniyuhi         #+#    #+#              #
-#    Updated: 2025/03/28 10:26:56 by oyuhi            ###   ########.fr        #
+#    Updated: 2025/03/28 12:18:05 by knemcova         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ PROMPT_DIR = srcs/prompt
 LEXER_DIR = srcs/lexer
 PARSER_DIR = srcs/parser
 EXPAND_DIR = srcs/expand
-EXECUTOR_DIR = srcs/executor
+#  EXECUTOR_DIR = srcs/executor
 SIGNALS_DIR = srcs/signals
 BUILTINS_DIR = srcs/builtins
 UTILS_DIR = srcs/utils

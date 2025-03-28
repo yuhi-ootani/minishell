@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/28 11:44:00 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/28 16:53:44 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,12 @@ void	free_command(t_command *cmd)
 	{
 		while (cmd->args[i])
 		{
-			if (cmd->args[i])
-				free(cmd->args[i]);
+			free(cmd->args[i]);
 			i++;
 		}
 		free(cmd->args);
 	}
+	// t_redirection
 	i = 0;
 	if (cmd->infiles)
 	{
@@ -47,6 +47,10 @@ void	free_command(t_command *cmd)
 		}
 		free(cmd->outfiles);
 	}
+	// if (cmd->input_file)
+	// 	free(cmd->input_file);
+	// if (cmd->out_file)
+	// 	free(cmd->out_file);
 	free(cmd);
 }
 

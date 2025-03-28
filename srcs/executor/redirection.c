@@ -122,7 +122,6 @@ void	handle_redirection(t_command *cmd)
 		output_redirection(cmd);
 	}
 }
-
 // int	main(int argc, char **argv, char **envp)
 // {
 // 	const char *filename = "output.txt";

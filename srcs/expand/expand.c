@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 11:09:19 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/27 14:07:52 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/28 13:00:18 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,6 +233,7 @@ char	*get_expanded_str(t_minishell *shell, const char *src_input)
 				return (free(expanded_str.buffer), NULL);
 		}
 	}
+	printf("🔍 get_expanded_str input = [%s], output = [%s]\n", src_input, expanded_str.buffer);
 	return (expanded_str.buffer);
 }
 

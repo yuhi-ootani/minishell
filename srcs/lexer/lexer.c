@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 14:32:39 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/24 15:47:35 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/27 15:39:03 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,39 @@ void	skip_whitespace(const char *input, size_t *i)
 		(*i)++;
 }
 
+bool	check_unclosed_quotes(t_minishell *shell)
+{
+	char	*input;
+	int		i;
+	char	current_quote;
+
+	input = shell->input;
+	i = 0;
+	while (input[i])
+	{
+		if (input[i] == '\'' || input[i] == '"')
+		{
+			current_quote = input[i];
+			i++;
+			while (input[i] && input[i] != current_quote)
+				i++;
+			if (input[i] != current_quote)
+			{
+				ft_fprintf(STDERR_FILENO,
+					"minishell: unexpected EOF while looking for matching `%c'\n",
+					current_quote);
+				ft_fprintf(STDERR_FILENO,
+					"minishell: syntax error: unexpected end of file\n");
+				shell->exit_status = 2;
+				return (true);
+			}
+		}
+		if (input[i])
+			i++;
+	}
+	return (false);
+}
+
 t_token	*tokenizer(t_minishell *shell)
 {
 	size_t	i;
@@ -117,6 +150,8 @@ t_token	*tokenizer(t_minishell *shell)
 	input = shell->input;
 	i = 0;
 	tokens = NULL;
+	if (check_unclosed_quotes(shell))
+		return (NULL);
 	while (input[i] && !malloc_fail)
 	{
 		skip_whitespace(input, &i);

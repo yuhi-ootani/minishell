@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:14:15 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/25 09:55:29 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/28 16:47:14 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,16 @@ int	parse_n_option(t_command *cmd, int *n_option)
 
 	i = 1;
 	*n_option = 0;
-	while (cmd->args[i] && cmd->args[i][0] == '-')
+	while (cmd->args[i])
 	{
+		if (cmd->args[i][0] != '-')
+			break ;
 		j = 1;
+		if (!cmd->args[i][j])
+			break ;
 		while (cmd->args[i][j] && cmd->args[i][j] == 'n')
 			j++;
-		if (cmd->args[i][j] == '\0')
+		if (j > 1 && cmd->args[i][j] == '\0')
 		{
 			*n_option = 1;
 			i++;

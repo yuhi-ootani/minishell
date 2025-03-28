@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 15:07:23 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/28 11:44:17 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/28 16:51:03 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,17 @@ t_command	*create_command_node(t_minishell *shell)
 		return (NULL);
 	}
 	new_command->args = NULL;
+	// t_redirection
 	new_command->infiles = NULL;
 	new_command->infile_count = 0;
 	new_command->outfiles = NULL;
 	new_command->outfile_count = 0;
+	// new_command->input_file = NULL;
+	// new_command->is_heredoc = false;
+	// new_command->heredoc_files = NULL;
+	// new_command->heredoc_count = 0;
+	// new_command->out_file = NULL;
+	// new_command->is_append = false;
 	new_command->next = NULL;
 	return (new_command);
 }
@@ -96,6 +103,7 @@ t_redirection	*add_redirection_file(t_minishell *shell, t_token *token,
 
 bool	set_redirection(t_minishell *shell, t_command *cmd, t_token *tokens)
 {
+	// t_redirection
 	if (tokens->type == TOKEN_REDIR_IN || tokens->type == TOKEN_HEREDOC)
 	{
 		cmd->infiles = add_redirection_file(shell, tokens, cmd->infiles,
