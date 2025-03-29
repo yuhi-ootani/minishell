@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/29 10:54:37 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/29 13:49:19 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,8 @@ bool							is_redirection_type(t_token_type type);
 // ▐▛▀▚▖▐▛▀▀▘▐▌  █  █  ▐▛▀▚▖▐▛▀▀▘▐▌     █    █  ▐▌ ▐▌▐▌ ▝▜▌
 // ▐▌ ▐▌▐▙▄▄▖▐▙▄▄▀▗▄█▄▖▐▌ ▐▌▐▙▄▄▖▝▚▄▄▖  █  ▗▄█▄▖▝▚▄▞▘▐▌  ▐▌
 
-void							handle_redirection(t_command *cmd);
+void							handle_redirection(t_minishell *shell,
+									t_command *cmd);
 
 //  ▗▄▄▖▗▄▄▄▖ ▗▄▄▖▗▖  ▗▖ ▗▄▖ ▗▖
 // ▐▌     █  ▐▌   ▐▛▚▖▐▌▐▌ ▐▌▐▌
@@ -188,6 +189,10 @@ char							*get_expanded_str(t_minishell *shell,
 char							*get_env_value(t_minishell *shell,
 									const char *name);
 char							**expander(t_minishell *shell, char *arg);
+char							*remove_quotes(t_minishell *shell,
+									const char *input);
+char							*remove_quotes(t_minishell *shell,
+									const char *input);
 
 // ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▄▖ ▗▄▄▖
 // ▐▌    ▝▚▞▘ ▐▌   ▐▌   ▐▌ ▐▌  █ ▐▌ ▐▌▐▌ ▐▌

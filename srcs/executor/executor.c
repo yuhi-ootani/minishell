@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/29 10:55:34 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/29 13:49:13 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ static void	execute_child_process(t_minishell *shell, t_exec *exec_info,
 		close(exec_info->pipe_fds[0]);
 		close(exec_info->pipe_fds[1]);
 	}
-	handle_redirection(cmd);
+	handle_redirection(shell, cmd);
 	if (exec_info->builtin_id != NOT_BUILDIN)
 	{
 		exec_info->builtins[exec_info->builtin_id](shell);
@@ -121,7 +121,7 @@ static void	execute_child_process(t_minishell *shell, t_exec *exec_info,
 
 static void	run_single_builtin_in_parent(t_minishell *shell, t_exec *exec_info)
 {
-	handle_redirection(shell->commands);
+	handle_redirection(shell, shell->commands);
 	exec_info->builtins[exec_info->builtin_id](shell);
 	if (exec_info->builtin_id == FT_EXIT)
 		exit(shell->exit_status);
@@ -244,7 +244,7 @@ void	command_executor(t_minishell *shell)
 	init_exec_info(&exec_info);
 	if (!shell->commands->args)
 	{
-		handle_redirection(shell->commands);
+		handle_redirection(shell, shell->commands);
 		return ;
 	}
 	exec_info.builtin_id = is_builtin(shell->commands->args[0]);
@@ -272,6 +272,11 @@ void	command_executor(t_minishell *shell)
 // 	i = 0;
 // 	static int (*builtin_funcs[])(t_command *) = {ft_echo, ft_cd, ft_pwd,
 // 		ft_export, ft_unset, ft_env, ft_exit};
+// 	int pipefd[2];
+// 	int in_fd = STDIN_FILENO;
+// // 	// pid_t pid;
+// 	int status;
+
 // 	in_fd = STDIN_FILENO;
 // 	// pid_t pid;
 // 	while (cmd)
