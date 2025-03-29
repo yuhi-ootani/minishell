@@ -6,11 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 11:09:19 by knemcova          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/03/28 13:00:18 by knemcova         ###   ########.fr       */
-=======
-/*   Updated: 2025/03/28 12:46:24 by oyuhi            ###   ########.fr       */
->>>>>>> yuhi
+/*   Updated: 2025/03/28 17:30:39 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,7 +233,6 @@ char	*get_expanded_str(t_minishell *shell, const char *src_input)
 				return (free(expanded_str.buffer), NULL);
 		}
 	}
-	printf("🔍 get_expanded_str input = [%s], output = [%s]\n", src_input, expanded_str.buffer);
 	return (expanded_str.buffer);
 }
 

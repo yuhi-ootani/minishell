@@ -6,11 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/03/28 16:53:44 by knemcova         ###   ########.fr       */
-=======
-/*   Updated: 2025/03/28 14:35:58 by oyuhi            ###   ########.fr       */
->>>>>>> yuhi
+/*   Updated: 2025/03/28 17:29:47 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +124,7 @@ void	build_commands_struct(t_minishell *shell)
 	tokens = tokenizer(shell);
 	if (!tokens)
 		return ;
-	print_tokens(tokens);
+	// print_tokens(tokens);
 	shell->commands = parser(shell, tokens);
 	free_tokens(tokens);
 	if (!shell->commands)
@@ -136,7 +132,7 @@ void	build_commands_struct(t_minishell *shell)
 		return ;
 	}
 	expand_all_cmd_args(shell);
-	print_commands(shell->commands);
+	// print_commands(shell->commands);
 }
 
 void	exit_ctrl_D(t_minishell *shell)

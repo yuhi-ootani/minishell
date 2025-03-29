@@ -6,17 +6,13 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/03/28 16:41:38 by knemcova         ###   ########.fr       */
-=======
-/*   Updated: 2025/03/28 16:04:45 by oyuhi            ###   ########.fr       */
->>>>>>> yuhi
+/*   Updated: 2025/03/29 10:55:34 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-char	*search_command_in_path(const char *command)
+char	*search_command_in_path(t_minishell *shell, const char *command)
 {
 	char	*path_env;
 	char	**splited_paths;
@@ -24,7 +20,7 @@ char	*search_command_in_path(const char *command)
 	char	*tmp;
 	char	*full_command_path;
 
-	path_env = getenv("PATH");
+	path_env = get_env_value(shell, "PATH");
 	if (!path_env)
 		return (NULL);
 	splited_paths = ft_split(path_env, ":");
@@ -51,7 +47,7 @@ void	execute_external_command(t_minishell *shell, t_command *cmd)
 	if (ft_strchr(cmd->args[0], '/') == NULL)
 	// I think it needs modified
 	{
-		command_path = search_command_in_path(cmd->args[0]);
+		command_path = search_command_in_path(shell, cmd->args[0]);
 		if (!command_path)
 		{
 			ft_fprintf(2, "%s: command not found\n", cmd->args[0]);
@@ -276,16 +272,8 @@ void	command_executor(t_minishell *shell)
 // 	i = 0;
 // 	static int (*builtin_funcs[])(t_command *) = {ft_echo, ft_cd, ft_pwd,
 // 		ft_export, ft_unset, ft_env, ft_exit};
-<<<<<<< HEAD
-// 	int pipefd[2];
-// 	int in_fd = STDIN_FILENO;
-// // 	// pid_t pid;
-// 	int status;
-
-=======
 // 	in_fd = STDIN_FILENO;
 // 	// pid_t pid;
->>>>>>> yuhi
 // 	while (cmd)
 // 	{
 // 		if (cmd->next)

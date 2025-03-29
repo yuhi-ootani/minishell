@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/28 14:30:42 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/29 10:54:37 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,6 +185,8 @@ typedef struct s_expanded_str
 bool							expand_all_cmd_args(t_minishell *shell);
 char							*get_expanded_str(t_minishell *shell,
 									const char *src_input);
+char							*get_env_value(t_minishell *shell,
+									const char *name);
 char							**expander(t_minishell *shell, char *arg);
 
 // ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▄▖ ▗▄▄▖
