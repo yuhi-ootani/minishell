@@ -3,14 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   word_spliting.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 18:00:40 by knemcova          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/03/28 16:48:05 by knemcova         ###   ########.fr       */
-=======
-/*   Updated: 2025/03/28 14:35:49 by oyuhi            ###   ########.fr       */
->>>>>>> yuhi
+/*   Updated: 2025/03/29 12:02:06 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +51,7 @@ char	*remove_quotes(t_minishell *shell, const char *input)
 	return (result);
 }
 
-static bool	quote_removal(t_minishell *shell, char **args)
+static bool	quote_removal_args(t_minishell *shell, char **args)
 {
 	char	*tmp;
 	size_t	i;
@@ -104,7 +100,7 @@ char	**expander(t_minishell *shell, char *arg)
 	free(expanded_str);
 	if (!result)
 		return (NULL);
-	if (!quote_removal(shell, result))
+	if (!quote_removal_args(shell, result))
 	{
 		ft_array_free(result);
 		return (NULL);
