@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/29 10:54:37 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/29 14:08:55 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,6 +258,7 @@ void							free_shell(t_minishell *shell);
 int								get_exit_status(int err);
 void							free_tokens(t_token *tokens);
 void							free_copied_env(t_env *env);
+void							free_command(t_command *cmd);
 void							free_commands(t_command *head);
 
 #endif

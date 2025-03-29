@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 14:32:39 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/27 15:39:03 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/29 13:53:13 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,9 @@ t_token	*create_token(t_minishell *shell, t_token_type type, const char *value)
 	token->type = type;
 	token->next = NULL;
 	return (token);
-}
+}  
+
+//used in 2 functions
 
 bool	add_token(t_token **head, t_token *new_node)
 {
@@ -58,7 +60,9 @@ bool	add_token(t_token **head, t_token *new_node)
 		temp->next = new_node;
 	}
 	return (EXIT_SUCCESS);
-}
+} 
+
+// used in two functions
 
 bool	add_redirection_token(t_minishell *shell, size_t *i, t_token **tokens)
 {

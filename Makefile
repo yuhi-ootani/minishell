@@ -6,7 +6,7 @@
 #    By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 11:52:00 by otaniyuhi         #+#    #+#              #
-#    Updated: 2025/03/28 12:18:05 by knemcova         ###   ########.fr        #
+#    Updated: 2025/03/29 14:07:46 by knemcova         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,12 +26,12 @@ PROMPT_DIR = srcs/prompt
 LEXER_DIR = srcs/lexer
 PARSER_DIR = srcs/parser
 EXPAND_DIR = srcs/expand
-#  EXECUTOR_DIR = srcs/executor
 SIGNALS_DIR = srcs/signals
 BUILTINS_DIR = srcs/builtins
 UTILS_DIR = srcs/utils
 MANAGE_ENV_DIR = srcs/manage_env
 EXECUTOR_DIR = srcs/executor
+FREE_DIR = srcs/free
 	   
 SRCS = $(MAIN_DIR)/main.c $(MAIN_DIR)/main_init.c  \
 	   $(PROMPT_DIR)/prompt.c \
@@ -41,7 +41,8 @@ SRCS = $(MAIN_DIR)/main.c $(MAIN_DIR)/main_init.c  \
        $(SIGNALS_DIR)/signals.c \
 	   $(BUILTINS_DIR)/ft_cd.c $(BUILTINS_DIR)/ft_echo.c $(BUILTINS_DIR)/ft_env.c $(BUILTINS_DIR)/ft_exit.c $(BUILTINS_DIR)/ft_export.c $(BUILTINS_DIR)/ft_export_sort_print.c $(BUILTINS_DIR)/ft_unset.c $(BUILTINS_DIR)/ft_pwd.c \
 	   $(UTILS_DIR)/utils.c $(UTILS_DIR)/debug_utils.c \
-	   $(EXECUTOR_DIR)/executor.c $(EXECUTOR_DIR)/redirection.c $(EXECUTOR_DIR)/build_envp_array.c  \
+	   $(EXECUTOR_DIR)/executor.c $(EXECUTOR_DIR)/redirection.c $(EXECUTOR_DIR)/build_envp_array.c \
+	   $(FREE_DIR)/free.c \
 
 
 OBJS = $(SRCS:.c=.o)
