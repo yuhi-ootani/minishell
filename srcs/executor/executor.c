@@ -6,68 +6,30 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/29 13:53:25 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/29 15:06:35 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-char	*search_command_in_path(t_minishell *shell, const char *command)
+static bool	run_single_builtin_in_parent(t_minishell *shell, t_exec *exec_info)
 {
-	char	*path_env;
-	char	**splited_paths;
-	int		i;
-	char	*tmp;
-	char	*full_command_path;
-
-	path_env = get_env_value(shell, "PATH");
-	if (!path_env)
-		return (NULL);
-	splited_paths = ft_split(path_env, ":");
-	i = 0;
-	while (splited_paths && splited_paths[i])
+	if (!handle_redirection(shell, shell->commands))
 	{
-		tmp = ft_strjoin(splited_paths[i], "/");
-		full_command_path = ft_strjoin(tmp, command);
-		free(tmp);
-		if (access(full_command_path, F_OK | X_OK) == 0)
-			return (ft_array_free(splited_paths), full_command_path);
-		free(full_command_path);
-		i++;
+		shell->exit_status = EXIT_FAILURE;
+		return (false);
 	}
-	ft_array_free(splited_paths);
-	return (NULL);
+	exec_info->builtins[exec_info->builtin_id](shell);
+	return (true);
+	// MAY NOT BE NEEDED
+	// if (exec_info->builtin_id == FT_EXIT)
+	// 	exit(shell->exit_status);
 }
 
-void	execute_external_command(t_minishell *shell, t_command *cmd)
+bool	is_single_builtin_command(t_minishell *shell, t_exec *exec_info)
 {
-	char	*command_path;
-	char	**envp_array;
-
-	if (ft_strchr(cmd->args[0], '/') == NULL)
-	// I think it needs modified
-	{
-		command_path = search_command_in_path(shell, cmd->args[0]);
-		if (!command_path)
-		{
-			ft_fprintf(2, "%s: command not found\n", cmd->args[0]);
-			(shell->exit_status) = 127; // changed
-			exit(127);
-		}
-	}
-	else
-		command_path = ft_strdup(cmd->args[0]);
-	envp_array = build_envp_array(shell->env);
-	if (!envp_array)
-		exit(EXIT_FAILURE); // todo
-	// printf("%s\n", envp[2]);
-	if (execve(command_path, cmd->args, envp_array) == -1)
-	{
-		// free envp
-		ft_fprintf(2, "%s: command not found\n", cmd->args[0]);
-		free(command_path);
-		exit(EXIT_FAILURE);
-	}
+	return (shell->commands->next == NULL
+		&& exec_info->builtin_id != NOT_BUILDIN);
 }
 
 t_builtin_id	is_builtin(char *command_str)
@@ -90,49 +52,6 @@ t_builtin_id	is_builtin(char *command_str)
 		return (NOT_BUILDIN);
 }
 
-static void	execute_child_process(t_minishell *shell, t_exec *exec_info,
-		t_command *cmd)
-{
-	// 	size_t	infile_count;
-	// 	infile_count = shell->commands->infile_count;
-	// if (infile_count > 0 && shell->commands->infiles[infile_count
-	// 	- 1].type == TOKEN_HEREDOC && exec_info->input_fd != STDIN_FILENO)
-	if (exec_info->input_fd != STDIN_FILENO
-		&& shell->commands->infile_count == 0)
-	{
-		dup2(exec_info->input_fd, STDIN_FILENO);
-		close(exec_info->input_fd);
-	}
-	if (cmd->next)
-	{
-		dup2(exec_info->pipe_fds[1], STDOUT_FILENO);
-		close(exec_info->pipe_fds[0]);
-		close(exec_info->pipe_fds[1]);
-	}
-	handle_redirection(shell, cmd);
-	if (exec_info->builtin_id != NOT_BUILDIN)
-	{
-		exec_info->builtins[exec_info->builtin_id](shell);
-		exit(EXIT_SUCCESS);
-	}
-	else
-		execute_external_command(shell, cmd);
-}
-
-static void	run_single_builtin_in_parent(t_minishell *shell, t_exec *exec_info)
-{
-	handle_redirection(shell, shell->commands);
-	exec_info->builtins[exec_info->builtin_id](shell);
-	if (exec_info->builtin_id == FT_EXIT)
-		exit(shell->exit_status);
-}
-
-bool	is_single_builtin_command(t_minishell *shell, t_exec *exec_info)
-{
-	return (shell->commands->next == NULL
-		&& exec_info->builtin_id != NOT_BUILDIN);
-}
-
 static void	init_exec_info(t_exec *exec_info)
 {
 	exec_info->input_fd = STDIN_FILENO;
@@ -146,116 +65,27 @@ static void	init_exec_info(t_exec *exec_info)
 	exec_info->builtins[FT_EXIT] = ft_exit;
 }
 
-static void	setup_pipe_if_needed(t_exec *exec_info, t_command *cmd)
-{
-	if (cmd->next)
-	{
-		if (pipe(exec_info->pipe_fds) < 0)
-		{
-			perror("pipe");
-			return ;
-		}
-	}
-}
-
-static void	close_and_update_input(t_exec *exec_info, t_command *cmd)
-{
-	if (exec_info->input_fd != STDIN_FILENO)
-		close(exec_info->input_fd);
-	if (cmd->next)
-	{
-		close(exec_info->pipe_fds[1]);
-		exec_info->input_fd = exec_info->pipe_fds[0];
-	}
-}
-
-static void	wait_for_all_children(pid_t *pids, int count, t_minishell *shell)
-{
-	int	j;
-
-	j = 0;
-	while (j < count)
-	{
-		waitpid(pids[j], &shell->exit_status, 0);
-		if (WIFEXITED(shell->exit_status))
-			shell->exit_status = WEXITSTATUS(shell->exit_status);
-		else if (WIFSIGNALED(shell->exit_status))
-		{
-			printf("\n");
-			shell->exit_status = 128 + WTERMSIG(shell->exit_status);
-		}
-		else
-			shell->exit_status = 1;
-		j++;
-	}
-}
-
-// // WEFEXITED turns true if the code was ended by exit return
-// // WEXITSTATUS holds the number exit give
-// // WIFSIGNALED turns true if the code was ended by a signl
-// // WTERMSIG holds the number of exit of the singal
-
-static void	create_child_process(t_minishell *shell, t_exec *exec_info,
-		t_command *cmd, pid_t *pid)
-{
-	*pid = fork();
-	if (*pid == 0)
-	{
-		setup_signals_child();
-		execute_child_process(shell, exec_info, cmd);
-	}
-	else if (*pid < 0)
-	{
-		perror("fork");
-		exit(EXIT_FAILURE);
-	}
-}
-
-void	run_forked_commands(t_minishell *shell, t_exec *exec_info)
-{
-	int					i;
-	pid_t				pids[1000];
-	t_command			*current;
-	struct sigaction	previous_int;
-
-	i = 0;
-	current = shell->commands;
-	while (current)
-	{
-		exec_info->builtin_id = is_builtin(current->args[0]);
-		setup_pipe_if_needed(exec_info, current);
-		create_child_process(shell, exec_info, current, &pids[i]);
-		close_and_update_input(exec_info, current);
-		current = current->next;
-		i++;
-	}
-	sigaction(SIGINT, NULL, &previous_int);
-	signal(SIGINT, SIG_IGN);
-	wait_for_all_children(pids, i, shell);
-	sigaction(SIGINT, &previous_int, NULL);
-}
-
-void	command_executor(t_minishell *shell)
+bool	command_executor(t_minishell *shell)
 {
 	t_exec	exec_info;
 
 	if (!shell->commands) // Added check
-		return ;
+		return (false);   // Added check
 	init_exec_info(&exec_info);
-	if (!shell->commands->args)
+	if (!shell->commands->args || !shell->commands->args[0])
 	{
-		handle_redirection(shell, shell->commands);
-		return ;
+		return (handle_redirection(shell, shell->commands));
 	}
 	exec_info.builtin_id = is_builtin(shell->commands->args[0]);
 	if (is_single_builtin_command(shell, &exec_info))
 	{
-		run_single_builtin_in_parent(shell, &exec_info);
+		return (run_single_builtin_in_parent(shell, &exec_info));
 	}
 	else
 	{
 		run_forked_commands(shell, &exec_info);
 	}
+	return (true);
 }
 
 // #define MAX_COMMANDS 1024

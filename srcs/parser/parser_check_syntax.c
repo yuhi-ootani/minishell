@@ -66,6 +66,7 @@ bool	is_syntax_error(t_minishell *shell, t_token *tokens)
 			return (true);
 		if (is_redirection_syntax_error(shell, current_token))
 			return (true);
+		
 		prev_token = current_token;
 		current_token = current_token->next;
 	}

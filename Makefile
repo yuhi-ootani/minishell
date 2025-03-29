@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+         #
+#    By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 11:52:00 by otaniyuhi         #+#    #+#              #
-#    Updated: 2025/03/28 12:18:05 by knemcova         ###   ########.fr        #
+#    Updated: 2025/03/29 15:46:06 by oyuhi            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,7 +41,7 @@ SRCS = $(MAIN_DIR)/main.c $(MAIN_DIR)/main_init.c  \
        $(SIGNALS_DIR)/signals.c \
 	   $(BUILTINS_DIR)/ft_cd.c $(BUILTINS_DIR)/ft_echo.c $(BUILTINS_DIR)/ft_env.c $(BUILTINS_DIR)/ft_exit.c $(BUILTINS_DIR)/ft_export.c $(BUILTINS_DIR)/ft_export_sort_print.c $(BUILTINS_DIR)/ft_unset.c $(BUILTINS_DIR)/ft_pwd.c \
 	   $(UTILS_DIR)/utils.c $(UTILS_DIR)/debug_utils.c \
-	   $(EXECUTOR_DIR)/executor.c $(EXECUTOR_DIR)/redirection.c $(EXECUTOR_DIR)/build_envp_array.c  \
+	   $(EXECUTOR_DIR)/executor.c $(EXECUTOR_DIR)/redirection.c $(EXECUTOR_DIR)/build_envp_array.c $(EXECUTOR_DIR)/run_forked_commands.c $(EXECUTOR_DIR)/child_process.c \
 
 
 OBJS = $(SRCS:.c=.o)

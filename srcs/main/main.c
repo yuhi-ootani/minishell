@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/29 13:49:06 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/29 15:13:23 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ void	build_commands_struct(t_minishell *shell)
 	tokens = tokenizer(shell);
 	if (!tokens)
 		return ;
-	// print_tokens(tokens);
+	print_tokens(tokens);
 	shell->commands = parser(shell, tokens);
 	free_tokens(tokens);
 	if (!shell->commands)
@@ -132,7 +132,7 @@ void	build_commands_struct(t_minishell *shell)
 		return ;
 	}
 	expand_all_cmd_args(shell);
-	// print_commands(shell->commands);
+	print_commands(shell->commands);
 }
 
 void	exit_ctrl_D(t_minishell *shell)

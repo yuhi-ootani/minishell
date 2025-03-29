@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/29 13:49:19 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/29 18:11:03 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ bool							is_redirection_type(t_token_type type);
 // ▐▛▀▚▖▐▛▀▀▘▐▌  █  █  ▐▛▀▚▖▐▛▀▀▘▐▌     █    █  ▐▌ ▐▌▐▌ ▝▜▌
 // ▐▌ ▐▌▐▙▄▄▖▐▙▄▄▀▗▄█▄▖▐▌ ▐▌▐▙▄▄▖▝▚▄▄▖  █  ▗▄█▄▖▝▚▄▞▘▐▌  ▐▌
 
-void							handle_redirection(t_minishell *shell,
+bool							handle_redirection(t_minishell *shell,
 									t_command *cmd);
 
 //  ▗▄▄▖▗▄▄▄▖ ▗▄▄▖▗▖  ▗▖ ▗▄▖ ▗▖
@@ -222,8 +222,13 @@ typedef struct s_exec
 }								t_exec;
 
 // prototype
-void							command_executor(t_minishell *shell);
+bool							command_executor(t_minishell *shell);
 char							**build_envp_array(t_env *env);
+void							run_forked_commands(t_minishell *shell,
+									t_exec *exec_info);
+t_builtin_id					is_builtin(char *command_str);
+void							execute_child_process(t_minishell *shell,
+									t_exec *exec_info, t_command *cmd);
 
 // ▗▄▄▖ ▗▖ ▗▖▗▄▄▄▖▗▖ ▗▄▄▄▖▗▄▄▄▖▗▖  ▗▖ ▗▄▄▖
 // ▐▌ ▐▌▐▌ ▐▌  █  ▐▌   █    █  ▐▛▚▖▐▌▐▌

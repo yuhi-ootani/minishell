@@ -188,21 +188,21 @@ bool	output_redirection(t_minishell *shell, t_command *cmd)
 	return (true);
 }
 
-// fix to return bool later.
-void	handle_redirection(t_minishell *shell, t_command *cmd)
+bool	handle_redirection(t_minishell *shell, t_command *cmd)
 {
 	if (cmd->infile_count > 0)
 	{
 		if (!handle_heredoc(shell, cmd))
-			return ;
+			return (false);
 		if (!input_redirection(shell, cmd))
-			return ;
+			return (false);
 	}
 	if (cmd->outfile_count > 0)
 	{
 		if (!output_redirection(shell, cmd))
-			return ;
+			return (false);
 	}
+	return (true);
 }
 // int	main(int argc, char **argv, char **envp)
 // {
