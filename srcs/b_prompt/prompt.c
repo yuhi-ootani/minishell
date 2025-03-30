@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:32:43 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/24 09:57:15 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/30 14:23:21 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,10 +49,8 @@ char	*prompt(t_minishell *shell)
 		return (NULL);
 	input = readline(prompt_str);
 	free(prompt_str);
-	// Check for interruption (Ctrl+D)
 	if (!input && g_signal)
 		return (NULL);
-	// Even if input is non-NULL, if g_signal is set, ignore input.
 	if (g_signal)
 		shell->exit_status = 130;
 	if (input && *input)

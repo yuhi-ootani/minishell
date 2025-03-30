@@ -6,13 +6,13 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 18:00:40 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/29 13:14:01 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/29 16:35:03 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-static void	remove_quotes_and_copy(char *dst, const char *src)
+ void	remove_quotes_and_copy(char *dst, const char *src)
 {
 	bool	in_single;
 	bool	in_double;
@@ -37,21 +37,7 @@ static void	remove_quotes_and_copy(char *dst, const char *src)
 	dst[i] = '\0';
 }
 
-char	*remove_quotes(t_minishell *shell, const char *input)
-{
-	char	*result;
-
-	result = (char *)ft_calloc(sizeof(char), ft_strlen(input) + 1);
-	if (!result)
-	{
-		shell->exit_status = EXIT_FAILURE;
-		return (NULL);
-	}
-	remove_quotes_and_copy(result, input);
-	return (result);
-}
-
-static bool	quote_removal(t_minishell *shell, char **args)
+static bool	quote_removal_args(t_minishell *shell, char **args)
 {
 	char	*tmp;
 	size_t	i;
@@ -100,7 +86,7 @@ char	**expander(t_minishell *shell, char *arg)
 	free(expanded_str);
 	if (!result)
 		return (NULL);
-	if (!quote_removal(shell, result))
+	if (!quote_removal_args(shell, result))
 	{
 		ft_array_free(result);
 		return (NULL);

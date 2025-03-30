@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/29 10:55:34 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/30 12:13:26 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ t_builtin_id	is_builtin(char *command_str)
 	else if (ft_strcmp(command_str, "exit") == 0)
 		return (FT_EXIT);
 	else
-		return (NOT_BUILDIN);
+		return (NOT_BUILTIN);
 }
 
 static void	execute_child_process(t_minishell *shell, t_exec *exec_info,
@@ -109,8 +109,8 @@ static void	execute_child_process(t_minishell *shell, t_exec *exec_info,
 		close(exec_info->pipe_fds[0]);
 		close(exec_info->pipe_fds[1]);
 	}
-	handle_redirection(cmd);
-	if (exec_info->builtin_id != NOT_BUILDIN)
+	handle_redirection(shell, cmd);
+	if (exec_info->builtin_id != NOT_BUILTIN)
 	{
 		exec_info->builtins[exec_info->builtin_id](shell);
 		exit(EXIT_SUCCESS);
@@ -121,7 +121,7 @@ static void	execute_child_process(t_minishell *shell, t_exec *exec_info,
 
 static void	run_single_builtin_in_parent(t_minishell *shell, t_exec *exec_info)
 {
-	handle_redirection(shell->commands);
+	handle_redirection(shell, shell->commands);
 	exec_info->builtins[exec_info->builtin_id](shell);
 	if (exec_info->builtin_id == FT_EXIT)
 		exit(shell->exit_status);
@@ -130,13 +130,13 @@ static void	run_single_builtin_in_parent(t_minishell *shell, t_exec *exec_info)
 bool	is_single_builtin_command(t_minishell *shell, t_exec *exec_info)
 {
 	return (shell->commands->next == NULL
-		&& exec_info->builtin_id != NOT_BUILDIN);
+		&& exec_info->builtin_id != NOT_BUILTIN);
 }
 
 static void	init_exec_info(t_exec *exec_info)
 {
 	exec_info->input_fd = STDIN_FILENO;
-	exec_info->builtin_id = NOT_BUILDIN;
+	exec_info->builtin_id = NOT_BUILTIN;
 	exec_info->builtins[FT_ECHO] = ft_echo;
 	exec_info->builtins[FT_CD] = ft_cd;
 	exec_info->builtins[FT_PWD] = ft_pwd;
@@ -244,7 +244,7 @@ void	command_executor(t_minishell *shell)
 	init_exec_info(&exec_info);
 	if (!shell->commands->args)
 	{
-		handle_redirection(shell->commands);
+		handle_redirection(shell, shell->commands);
 		return ;
 	}
 	exec_info.builtin_id = is_builtin(shell->commands->args[0]);
@@ -267,11 +267,16 @@ void	command_executor(t_minishell *shell)
 // 	int				pipefd[2];
 // 	int				in_fd;
 // 	int				status;
-// 	t_builtin_id	buildin_index;
+// 	t_builtin_id	builtin_index;
 
 // 	i = 0;
 // 	static int (*builtin_funcs[])(t_command *) = {ft_echo, ft_cd, ft_pwd,
 // 		ft_export, ft_unset, ft_env, ft_exit};
+// 	int pipefd[2];
+// 	int in_fd = STDIN_FILENO;
+// // 	// pid_t pid;
+// 	int status;
+
 // 	in_fd = STDIN_FILENO;
 // 	// pid_t pid;
 // 	while (cmd)
@@ -299,9 +304,9 @@ void	command_executor(t_minishell *shell)
 // 				close(pipefd[1]);
 // 			}
 // 			handle_redirection(cmd);
-// 			buildin_index = is_builtin(cmd->args[0]);
-// 			if (buildin_index != NOT_BUILDIN)
-// 				builtin_funcs[buildin_index](cmd); // Execute the function
+// 			builtin_index = is_builtin(cmd->args[0]);
+// 			if (builtin_index != NOT_BUILTIN)
+// 				builtin_funcs[builtin_index](cmd); // Execute the function
 // 			else
 // 				execute_external_command(cmd, envp);
 // 		}

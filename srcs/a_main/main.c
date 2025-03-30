@@ -6,13 +6,13 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/29 13:41:25 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/30 14:33:36 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int	get_exit_status(int err) // Fix: Use a proper function parameter
+int	get_exit_status(int err)
 {
 	if (err == ENOENT)
 		return (127);
@@ -21,6 +21,8 @@ int	get_exit_status(int err) // Fix: Use a proper function parameter
 	else
 		return (1);
 }
+
+// Fix: Use a proper function parameter
 
 void	reset_shell_for_next_input(t_minishell *shell, bool interactive_mode)
 {

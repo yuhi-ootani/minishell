@@ -6,7 +6,7 @@
 #    By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 11:52:00 by otaniyuhi         #+#    #+#              #
-#    Updated: 2025/03/29 14:07:46 by knemcova         ###   ########.fr        #
+#    Updated: 2025/03/30 15:28:27 by knemcova         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,22 +21,22 @@ LIBFT_REPO = https://github.com/yuhi-ootani/lifbt_all.git
 
 LIBFT_DIR = libft
 INC_DIR = includes
-MAIN_DIR = srcs/main
-PROMPT_DIR = srcs/prompt
-LEXER_DIR = srcs/lexer
-PARSER_DIR = srcs/parser
-EXPAND_DIR = srcs/expand
+MAIN_DIR = srcs/a_main
+PROMPT_DIR = srcs/b_prompt
+TOKENIZATION_DIR = srcs/c_tokenization
+PARSER_DIR = srcs/d_parser
+EXPAND_DIR = srcs/e_expand
 SIGNALS_DIR = srcs/signals
-BUILTINS_DIR = srcs/builtins
+BUILTINS_DIR = srcs/g_builtins
 UTILS_DIR = srcs/utils
 MANAGE_ENV_DIR = srcs/manage_env
-EXECUTOR_DIR = srcs/executor
-FREE_DIR = srcs/free
+EXECUTOR_DIR = srcs/f_executor
+FREE_DIR = srcs/h_free
 	   
 SRCS = $(MAIN_DIR)/main.c $(MAIN_DIR)/main_init.c  \
 	   $(PROMPT_DIR)/prompt.c \
-	   $(LEXER_DIR)/lexer.c $(LEXER_DIR)/token_word.c \
-	   $(PARSER_DIR)/parser.c $(PARSER_DIR)/parser_check_syntax.c \
+	   $(TOKENIZATION_DIR)/tokenization.c $(TOKENIZATION_DIR)/token_word.c $(TOKENIZATION_DIR)/token_utils.c \
+	   $(PARSER_DIR)/parser.c $(PARSER_DIR)/check_syntax.c $(PARSER_DIR)/create_command.c $(PARSER_DIR)/set_command_data.c \
 	   $(EXPAND_DIR)/expand.c $(EXPAND_DIR)/word_spliting.c \
        $(SIGNALS_DIR)/signals.c \
 	   $(BUILTINS_DIR)/ft_cd.c $(BUILTINS_DIR)/ft_echo.c $(BUILTINS_DIR)/ft_env.c $(BUILTINS_DIR)/ft_exit.c $(BUILTINS_DIR)/ft_export.c $(BUILTINS_DIR)/ft_export_sort_print.c $(BUILTINS_DIR)/ft_unset.c $(BUILTINS_DIR)/ft_pwd.c \

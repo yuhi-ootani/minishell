@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:44:02 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/25 09:54:54 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/29 16:27:17 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int	ft_atoi_long(const char *str, bool *error)
 			break ;
 		i++;
 	}
-	return ((int)(num * neg));
+	return ((long long)(num * neg));
 }
 
 int	more_than_two_arguments(t_minishell *shell)
@@ -68,7 +68,7 @@ int	more_than_two_arguments(t_minishell *shell)
 	return (0);
 }
 
-void	check_number(t_minishell *shell)
+long long	validate_and_exit_if_invalid(t_minishell *shell)
 {
 	t_command	*cmd;
 	char		*arg;
@@ -92,9 +92,7 @@ void	check_number(t_minishell *shell)
 		free_shell(shell);
 		exit(shell->exit_status);
 	}
-	shell->exit_status = exit_code % 256;
-	free_shell(shell);
-	exit(shell->exit_status);
+	return (exit_code);
 }
 
 void	ft_exit(t_minishell *shell)
@@ -111,11 +109,8 @@ void	ft_exit(t_minishell *shell)
 		exit_code = shell->exit_status;
 	}
 	else
-	{
-		check_number(shell);
-		exit_code = (ft_atoi_long(cmd->args[1], &(bool){false}) % 256);
-		shell->exit_status = exit_code;
-	}
+		exit_code = validate_and_exit_if_invalid(shell);
+	shell->exit_status = exit_code % 256;
 	free_shell(shell);
 	exit(exit_code);
 }

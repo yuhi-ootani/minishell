@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 13:37:45 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/29 13:41:22 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/29 15:07:41 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,5 +87,33 @@ void	free_tokens(t_token *tokens)
 		tokens = tokens->next;
 		free(tmp->value);
 		free(tmp);
+	}
+}
+
+void	free_env(t_env *env)
+{
+	t_env	*temp;
+
+	while (env)
+	{
+		temp = env->next;
+		free(env->name);
+		free(env->value);
+		free(env);
+		env = temp;
+	}
+}
+
+void	free_copied_env(t_env *env)
+{
+	t_env	*tmp;
+
+	while (env)
+	{
+		tmp = env->next;
+		free(env->name);
+		free(env->value);
+		free(env);
+		env = tmp;
 	}
 }
