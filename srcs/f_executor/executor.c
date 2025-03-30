@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/29 15:06:35 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/30 15:40:41 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,13 +49,13 @@ t_builtin_id	is_builtin(char *command_str)
 	else if (ft_strcmp(command_str, "exit") == 0)
 		return (FT_EXIT);
 	else
-		return (NOT_BUILDIN);
+		return (NOT_BUILTIN);
 }
 
 static void	init_exec_info(t_exec *exec_info)
 {
 	exec_info->input_fd = STDIN_FILENO;
-	exec_info->builtin_id = NOT_BUILDIN;
+	exec_info->builtin_id = NOT_BUILTIN;
 	exec_info->builtins[FT_ECHO] = ft_echo;
 	exec_info->builtins[FT_CD] = ft_cd;
 	exec_info->builtins[FT_PWD] = ft_pwd;
@@ -97,7 +97,7 @@ bool	command_executor(t_minishell *shell)
 // 	int				pipefd[2];
 // 	int				in_fd;
 // 	int				status;
-// 	t_builtin_id	buildin_index;
+// 	t_builtin_id	builtin_index;
 
 // 	i = 0;
 // 	static int (*builtin_funcs[])(t_command *) = {ft_echo, ft_cd, ft_pwd,
@@ -134,9 +134,9 @@ bool	command_executor(t_minishell *shell)
 // 				close(pipefd[1]);
 // 			}
 // 			handle_redirection(cmd);
-// 			buildin_index = is_builtin(cmd->args[0]);
-// 			if (buildin_index != NOT_BUILDIN)
-// 				builtin_funcs[buildin_index](cmd); // Execute the function
+// 			builtin_index = is_builtin(cmd->args[0]);
+// 			if (builtin_index != NOT_BUILTIN)
+// 				builtin_funcs[builtin_index](cmd); // Execute the function
 // 			else
 // 				execute_external_command(cmd, envp);
 // 		}

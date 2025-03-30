@@ -6,38 +6,11 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 11:09:19 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/29 14:19:09 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/30 15:39:52 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-char	*get_env_value(t_minishell *shell, const char *name)
-{
-	char	*copied_value;
-	t_env	*env;
-
-	env = shell->env;
-	if (!env || !name)
-		return (NULL);
-	while (env)
-	{
-		if (ft_strcmp(env->name, name) == 0)
-		{
-			if (env->value == NULL)
-				return (NULL);
-			copied_value = ft_strdup(env->value);
-			if (!copied_value)
-			{
-				shell->exit_status = EXIT_FAILURE;
-				return (NULL);
-			}
-			return (copied_value);
-		}
-		env = env->next;
-	}
-	return (NULL);
-}
 
 char	*get_env_name(t_minishell *shell, const char *input)
 {
@@ -235,6 +208,8 @@ char	*get_expanded_str(t_minishell *shell, const char *src_input)
 	}
 	return (expanded_str.buffer);
 }
+
+//used in 2 functions
 
 // static int	append_to_buffer(t_expanded_str *expanded_str, const char *src,
 // 		size_t src_len)

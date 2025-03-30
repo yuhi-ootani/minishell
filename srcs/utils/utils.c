@@ -6,54 +6,25 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 10:17:05 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/26 18:20:34 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/29 15:24:59 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int	ft_isspace(int c)
+char	*remove_quotes(t_minishell *shell, const char *input)
 {
-	if (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\v'
-		|| c == '\f')
-		return (c);
-	return (0);
-}
-int	ft_isnumber(char *str)
-{
-	int	i;
+	char	*result;
 
-	i = 0;
-	if (str[i] == '-' || str[i] == '+')
-		i++;
-	while (str[i])
+	result = (char *)ft_calloc(sizeof(char), ft_strlen(input) + 1);
+	if (!result)
 	{
-		if (!ft_isdigit(str[i]))
-			return (0);
-		i++;
+		shell->exit_status = EXIT_FAILURE;
+		return (NULL);
 	}
-	return (1);
+	remove_quotes_and_copy(result, input);
+	return (result);
 }
-
-void	ft_putendl(char *s)
-{
-	int	i;
-
-	i = 0;
-	if (s == NULL)
-		return ;
-	while (s[i] != '\0')
-	{
-		write(1, &s[i], 1);
-		i++;
-	}
-	write(1, "\n", 1);
-}
-
-// ▗▄▄▄▖▗▖  ▗▖▗▖  ▗▖
-// ▐▌   ▐▛▚▖▐▌▐▌  ▐▌
-// ▐▛▀▀▘▐▌ ▝▜▌▐▌  ▐▌
-// ▐▙▄▄▖▐▌  ▐▌ ▝▚▞▘
 
 size_t	count_env_util(t_env *env)
 {
@@ -100,20 +71,6 @@ t_env	*create_new_env_util(const char *new_name, const char *new_value,
 	return (new_env);
 }
 
-void	free_env(t_env *env)
-{
-	t_env	*temp;
-
-	while (env)
-	{
-		temp = env->next;
-		free(env->name);
-		free(env->value);
-		free(env);
-		env = temp;
-	}
-}
-
 void	env_add_back_util(t_env **copied_env, t_env *new_env)
 {
 	t_env	*tmp;
@@ -129,16 +86,29 @@ void	env_add_back_util(t_env **copied_env, t_env *new_env)
 	tmp->next = new_env;
 }
 
-void	free_copied_env(t_env *env)
+char	*get_env_value(t_minishell *shell, const char *name)
 {
-	t_env	*tmp;
+	char	*copied_value;
+	t_env	*env;
 
+	env = shell->env;
+	if (!env || !name)
+		return (NULL);
 	while (env)
 	{
-		tmp = env->next;
-		free(env->name);
-		free(env->value);
-		free(env);
-		env = tmp;
+		if (ft_strcmp(env->name, name) == 0)
+		{
+			if (env->value == NULL)
+				return (NULL);
+			copied_value = ft_strdup(env->value);
+			if (!copied_value)
+			{
+				shell->exit_status = EXIT_FAILURE;
+				return (NULL);
+			}
+			return (copied_value);
+		}
+		env = env->next;
 	}
+	return (NULL);
 }

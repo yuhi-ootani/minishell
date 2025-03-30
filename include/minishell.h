@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/30 14:05:31 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/30 15:38:42 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 # include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>    //PATH_MAX
-# include <string.h>    //strcmp🚨
+# include <string.h>    //strcmp
 # include <sys/types.h> //pid_t
 # include <sys/wait.h>  //waitpid
 # include <termios.h>
@@ -52,7 +52,10 @@ void							init_shell_struct(t_minishell *shell,
 void							free_shell(t_minishell *shell);
 bool							decide_input_fd(t_minishell *shell, int argc,
 									char **argv);
-
+void							remove_quotes_and_copy(char *dst,
+									const char *src);
+char							*remove_quotes(t_minishell *shell,
+									const char *input);
 // RubiFont
 // ▗▄▄▖ ▗▄▄▖  ▗▄▖ ▗▖  ▗▖▗▄▄▄▖
 // ▐▌ ▐▌▐▌ ▐▌▐▌ ▐▌▐▛▚▞▜▌  █
@@ -118,6 +121,12 @@ typedef struct s_command
 t_command						*parser(t_minishell *shell, t_token *tokens);
 bool							is_syntax_error(t_minishell *shell,
 									t_token *tokens);
+t_command						*convert_token_into_cmd(t_minishell *shell,
+									t_token *tokens);
+bool							add_argument(t_minishell *shell, t_command *cmd,
+									char *new_arg);
+bool							set_redirection(t_minishell *shell,
+									t_command *cmd, t_token *tokens);
 bool							is_redirection_type(t_token_type type);
 
 // ▗▄▄▖ ▗▄▄▄▖▗▄▄▄ ▗▄▄▄▖▗▄▄▖ ▗▄▄▄▖ ▗▄▄▖▗▄▄▄▖▗▄▄▄▖ ▗▄▖ ▗▖  ▗▖
@@ -150,9 +159,6 @@ void							setup_signals_heredoc(void);
 // ▐▌ ▐▌  █    █  ▐▌    ▝▀▚▖
 // ▝▚▄▞▘  █  ▗▄█▄▖▐▙▄▄▖▗▄▄▞▘
 
-int								ft_isspace(int c);
-int								ft_isnumber(char *str);
-void							ft_putendl(char *s);
 size_t							count_env_util(t_env *env);
 t_env							*create_new_env_util(const char *new_name,
 									const char *new_value, t_env *new_next);
@@ -195,17 +201,13 @@ char							*get_expanded_str(t_minishell *shell,
 char							*get_env_value(t_minishell *shell,
 									const char *name);
 char							**expander(t_minishell *shell, char *arg);
-char							*remove_quotes(t_minishell *shell,
-									const char *input);
-char							*remove_quotes(t_minishell *shell,
-									const char *input);
 
 // ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▄▖ ▗▄▄▖
 // ▐▌    ▝▚▞▘ ▐▌   ▐▌   ▐▌ ▐▌  █ ▐▌ ▐▌▐▌ ▐▌
 // ▐▛▀▀▘  ▐▌  ▐▛▀▀▘▐▌   ▐▌ ▐▌  █ ▐▌ ▐▌▐▛▀▚▖
 // ▐▙▄▄▖▗▞▘▝▚▖▐▙▄▄▖▝▚▄▄▖▝▚▄▞▘  █ ▝▚▄▞▘▐▌ ▐▌
 
-typedef enum e_buildin_index
+typedef enum e_builtin_index
 {
 	FT_ECHO,
 	FT_CD,
@@ -214,7 +216,7 @@ typedef enum e_buildin_index
 	FT_UNSET,
 	FT_ENV,
 	FT_EXIT,
-	NOT_BUILDIN,
+	NOT_BUILTIN,
 }								t_builtin_id;
 
 # define NUM_BUILTINS 7
@@ -276,6 +278,7 @@ void							free_shell(t_minishell *shell);
 int								get_exit_status(int err);
 void							free_tokens(t_token *tokens);
 void							free_copied_env(t_env *env);
+void							free_command(t_command *cmd);
 void							free_commands(t_command *head);
 
 #endif

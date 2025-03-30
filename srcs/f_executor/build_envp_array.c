@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 17:12:38 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/30 14:02:58 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/30 15:40:01 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,3 +36,4 @@ char	**build_envp_array(t_minishell *shell)
 	envp_array[count] = NULL;
 	return (envp_array);
 }
+//can move?
