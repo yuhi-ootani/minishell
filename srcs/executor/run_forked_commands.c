@@ -50,7 +50,7 @@ static void	create_child_process(t_minishell *shell, t_exec *exec_info,
 	else if (*pid < 0)
 	{
 		perror("fork");
-		exit(EXIT_FAILURE);
+		exit(EXIT_FAILURE); // todo
 	}
 }
 
@@ -79,8 +79,6 @@ void	run_forked_commands(t_minishell *shell, t_exec *exec_info)
 	current = shell->commands;
 	while (current)
 	{
-		if (current->args && current->args[0])
-			exec_info->builtin_id = is_builtin(current->args[0]);
 		if (!setup_pipe_if_needed(shell, exec_info, current))
 			return ;
 		create_child_process(shell, exec_info, current, &pids[i]);

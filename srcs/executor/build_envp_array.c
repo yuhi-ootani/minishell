@@ -3,33 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   build_envp_array.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 17:12:38 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/25 13:41:09 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/30 14:02:58 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-char	**build_envp_array(t_env *env)
+char	**build_envp_array(t_minishell *shell)
 {
 	size_t	count;
 	char	**envp_array;
 	t_env	*tmp;
 
 	count = 0;
-	count = count_env_util(env);
+	count = count_env_util(shell->env);
 	envp_array = (char **)malloc(sizeof(char *) * (count + 1));
 	if (!envp_array)
-		return (NULL);
+		cleanup_and_exit_failure(shell, NULL);
 	count = 0;
-	tmp = env;
+	tmp = shell->env;
 	while (tmp)
 	{
 		envp_array[count] = ft_strjoin_three(tmp->name, "=", tmp->value);
 		if (!envp_array[count])
-			return (NULL); // to do
+			cleanup_and_exit_failure(shell, NULL);
 		count++;
 		tmp = tmp->next;
 	}

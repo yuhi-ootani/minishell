@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/29 15:13:23 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/30 10:58:57 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,13 +80,25 @@ void	free_tokens(t_token *tokens)
 
 void	free_shell(t_minishell *shell)
 {
-	close(shell->original_stdout);
-	close(shell->original_stdin);
-	free_copied_env(shell->env);
+	if (shell->original_stdin != -1)
+		close(shell->original_stdin);
+	if (shell->original_stdout != -1)
+		close(shell->original_stdout);
+	if (shell->env)
+	{
+		free_copied_env(shell->env);
+		shell->env = NULL;
+	}
 	if (shell->input)
+	{
 		free(shell->input);
+		shell->input = NULL;
+	}
 	if (shell->commands)
+	{
 		free_commands(shell->commands);
+		shell->commands = NULL;
+	}
 }
 
 int	get_exit_status(int err) // Fix: Use a proper function parameter
