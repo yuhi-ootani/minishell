@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:44:02 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/29 16:27:17 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/30 21:44:47 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int	more_than_two_arguments(t_minishell *shell)
 	cmd = shell->commands;
 	if (cmd->args[1] && cmd->args[2])
 	{
-		ft_fprintf(2, "exit: too many arguments\n");
+		ft_fprintf(STDERR_FILENO, "exit: too many arguments\n");
 		shell->exit_status = 2;
 		return (1);
 	}
@@ -82,7 +82,7 @@ long long	validate_and_exit_if_invalid(t_minishell *shell)
 		ft_fprintf(2, "exit: %s: numeric argument required\n", arg);
 		shell->exit_status = 2;
 		free_shell(shell);
-		exit(shell->exit_status);
+		exit(EXIT_FAILURE);
 	}
 	exit_code = ft_atoi_long(arg, &error);
 	if (error)
@@ -90,12 +90,12 @@ long long	validate_and_exit_if_invalid(t_minishell *shell)
 		ft_fprintf(2, "exit: %s: numeric argument required\n", arg);
 		shell->exit_status = 2;
 		free_shell(shell);
-		exit(shell->exit_status);
+		exit(EXIT_FAILURE);
 	}
 	return (exit_code);
 }
 
-void	ft_exit(t_minishell *shell)
+int	ft_exit(t_minishell *shell)
 {
 	int			exit_code;
 	t_command	*cmd;
@@ -103,7 +103,7 @@ void	ft_exit(t_minishell *shell)
 	cmd = shell->commands;
 	printf("exit\n");
 	if (more_than_two_arguments(shell))
-		return ;
+		return (EXIT_FAILURE);
 	if (!cmd->args[1])
 	{
 		exit_code = shell->exit_status;
@@ -113,4 +113,5 @@ void	ft_exit(t_minishell *shell)
 	shell->exit_status = exit_code % 256;
 	free_shell(shell);
 	exit(exit_code);
+	return (EXIT_SUCCESS);
 }

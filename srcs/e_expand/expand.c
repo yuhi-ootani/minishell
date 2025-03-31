@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 11:09:19 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/30 15:39:52 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/30 19:33:38 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,11 @@ bool	append_env_value(t_minishell *shell, t_expanded_str *expanded_str,
 		return (false);
 	name_len = ft_strlen(name);
 	*i += name_len;
-	value = get_env_value(shell, name);
+	if (!get_env_value(shell, name, &value))
+	{
+		free(name);
+		return (false);
+	}
 	free(name);
 	if (value)
 	{
@@ -209,7 +213,7 @@ char	*get_expanded_str(t_minishell *shell, const char *src_input)
 	return (expanded_str.buffer);
 }
 
-//used in 2 functions
+// used in 2 functions
 
 // static int	append_to_buffer(t_expanded_str *expanded_str, const char *src,
 // 		size_t src_len)

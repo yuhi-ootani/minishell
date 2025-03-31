@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/30 15:38:42 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/31 11:16:19 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,7 @@ void							init_shell_struct(t_minishell *shell,
 void							free_shell(t_minishell *shell);
 bool							decide_input_fd(t_minishell *shell, int argc,
 									char **argv);
-void							remove_quotes_and_copy(char *dst,
-									const char *src);
-char							*remove_quotes(t_minishell *shell,
-									const char *input);
+
 // RubiFont
 // ▗▄▄▖ ▗▄▄▖  ▗▄▖ ▗▖  ▗▖▗▄▄▄▖
 // ▐▌ ▐▌▐▌ ▐▌▐▌ ▐▌▐▛▚▞▜▌  █
@@ -165,6 +162,8 @@ t_env							*create_new_env_util(const char *new_name,
 void							env_add_back_util(t_env **copied_env,
 									t_env *new_env);
 void							free_env(t_env *env);
+char							*strdup_except_quotes_util(const char *input);
+bool							get_env_value(t_minishell *shell		const char *name, char **result);
 
 // ▗▄▄▄▖      ▗▖  ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖   ▗▖
 //   █        ▐▛▚▞▜▌  █  ▐▛▚▖▐▌  █  ▐▌   ▐▌ ▐▌▐▌   ▐▌   ▐▌
@@ -198,8 +197,7 @@ typedef struct s_expanded_str
 bool							expand_all_cmd_args(t_minishell *shell);
 char							*get_expanded_str(t_minishell *shell,
 									const char *src_input);
-char							*get_env_value(t_minishell *shell,
-									const char *name);
+
 char							**expander(t_minishell *shell, char *arg);
 
 // ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▄▖ ▗▄▄▖
@@ -226,7 +224,7 @@ typedef struct s_exec
 	int							input_fd;
 	int							pipe_fds[2];
 	t_builtin_id				builtin_id;
-	void						(*builtins[NUM_BUILTINS])(t_minishell *);
+	int							(*builtins[NUM_BUILTINS])(t_minishell *);
 }								t_exec;
 
 // prototype
@@ -246,14 +244,14 @@ void							cleanup_and_exit_failure(t_minishell *shell,
 // ▐▙▄▞▘▝▚▄▞▘▗▄█▄▖▐▙▄▄▖█  ▗▄█▄▖▐▌  ▐▌▗▄▄▞▘
 
 // Builtin functions (implement separately)
-void							ft_echo(t_minishell *shell);
-void							ft_cd(t_minishell *shell);
-void							ft_pwd(t_minishell *shell);
-void							ft_export(t_minishell *shell);
-void							sort_and_print_env(t_env **copied_env);
-void							ft_unset(t_minishell *shell);
-void							ft_env(t_minishell *shell);
-void							ft_exit(t_minishell *shell);
+int								ft_echo(t_minishell *shell);
+int								ft_cd(t_minishell *shell);
+int								ft_pwd(t_minishell *shell);
+int								ft_export(t_minishell *shell);
+int								sort_and_print_env(t_env **copied_env);
+int								ft_unset(t_minishell *shell);
+int								ft_env(t_minishell *shell);
+int								ft_exit(t_minishell *shell);
 
 typedef enum e_exit_status
 {

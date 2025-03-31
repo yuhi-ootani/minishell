@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/30 15:40:41 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/30 20:18:59 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static bool	run_single_builtin_in_parent(t_minishell *shell, t_exec *exec_info)
 		shell->exit_status = EXIT_FAILURE;
 		return (false);
 	}
-	exec_info->builtins[exec_info->builtin_id](shell);
+	shell->exit_status = exec_info->builtins[exec_info->builtin_id](shell);
 	return (true);
 	// MAY NOT BE NEEDED
 	// if (exec_info->builtin_id == FT_EXIT)
@@ -29,7 +29,7 @@ static bool	run_single_builtin_in_parent(t_minishell *shell, t_exec *exec_info)
 bool	is_single_builtin_command(t_minishell *shell, t_exec *exec_info)
 {
 	return (shell->commands->next == NULL
-		&& exec_info->builtin_id != NOT_BUILDIN);
+		&& exec_info->builtin_id != NOT_BUILTIN);
 }
 
 t_builtin_id	is_builtin(char *command_str)

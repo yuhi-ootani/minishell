@@ -6,13 +6,13 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 10:16:32 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/24 17:27:32 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/30 20:19:24 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void	ft_cd(t_minishell *shell)
+char	*get_dest_path(t_minishell *shell)
 {
 	char		*path;
 	t_command	*cmd;
@@ -20,18 +20,42 @@ void	ft_cd(t_minishell *shell)
 	cmd = shell->commands;
 	if (!cmd->args[1])
 	{
-		path = getenv("HOME");
-		if (!path || *path == '\0')
+		if (!get_env_value(shell, "HOME", &path))
+			return (NULL);
+		if (!path)
 		{
-			ft_fprintf(2, "cd: HOME not set\n");
-			return ; // to do;
+			ft_fprintf(STDERR_FILENO, "cd: HOME not set\n");
+			return (NULL);
 		}
 	}
 	else
-		path = cmd->args[1];
+	{
+		path = ft_strdup(cmd->args[1]);
+		if (!path)
+			return (NULL);
+	}
+	return (path);
+}
+
+int	ft_cd(t_minishell *shell)
+{
+	char	*path;
+
+	path = get_dest_path(shell);
+	if (!path)
+		return (EXIT_FAILURE);
+	else if (!path[0])
+	{
+		free(path);
+		return (EXIT_SUCCESS);
+	}
 	if (chdir(path) != 0)
 	{
-		ft_fprintf(2, "cd: %s: %s\n", path, strerror(errno));
-		return ; // to do;
+		ft_fprintf(STDERR_FILENO, "MINISHELL: cd: %s: %s\n", path,
+			strerror(errno));
+		free(path);
+		return (EXIT_FAILURE);
 	}
+	free(path);
+	return (EXIT_SUCCESS);
 }

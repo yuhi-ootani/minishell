@@ -22,16 +22,16 @@ static void	wait_for_all_children(pid_t *pids, int count, t_minishell *shell)
 	}
 }
 
-static void	close_and_update_input(t_exec *exec_info, t_command *cmd)
-{
-	if (exec_info->input_fd != STDIN_FILENO)
-		close(exec_info->input_fd);
-	if (cmd->next)
-	{
-		close(exec_info->pipe_fds[1]);
-		exec_info->input_fd = exec_info->pipe_fds[0];
-	}
-}
+// static void	close_and_update_input(t_exec *exec_info, t_command *cmd)
+// {
+// 	if (exec_info->input_fd != STDIN_FILENO)
+// 		close(exec_info->input_fd);
+// 	if (cmd->next)
+// 	{
+// 		close(exec_info->pipe_fds[1]);
+// 		exec_info->input_fd = exec_info->pipe_fds[0];
+// 	}
+// }
 
 // // WEFEXITED turns true if the code was ended by exit return
 // // WEXITSTATUS holds the number exit give
@@ -82,7 +82,7 @@ void	run_forked_commands(t_minishell *shell, t_exec *exec_info)
 		if (!setup_pipe_if_needed(shell, exec_info, current))
 			return ;
 		create_child_process(shell, exec_info, current, &pids[i]);
-		close_and_update_input(exec_info, current);
+		// close_and_update_input(exec_info, current);
 		current = current->next;
 		i++;
 	}

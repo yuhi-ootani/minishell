@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:45:23 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/24 17:28:44 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/30 18:38:33 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,7 +149,7 @@ static void	set_new_env_variables(char *arg, t_env **copied_env)
 //  ▝▀▚▖  █ ▐▛▀▜▌▐▛▀▚▖ █
 // ▗▄▄▞▘  █ ▐▌ ▐▌▐▌ ▐▌ █
 
-void	ft_export(t_minishell *shell)
+int	ft_export(t_minishell *shell)
 {
 	size_t		i;
 	t_command	*cmd;
@@ -166,7 +166,7 @@ void	ft_export(t_minishell *shell)
 	}
 	else
 		sort_and_print_env(&shell->env);
-	return ;
+	return EXIT_SUCCESS;
 }
 
 // int	main(void)

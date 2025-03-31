@@ -29,7 +29,8 @@ char	**get_splited_PATH(t_minishell *shell, const char *cmd_str)
 	char	*env_PATH;
 	char	**splited_PATH;
 
-	env_PATH = get_env_value(shell, "PATH");
+	if (!get_env_value(shell, "PATH", &env_PATH))
+		return (NULL);
 	if (!env_PATH)
 	{
 		ft_fprintf(STDERR_FILENO, "MINISHELL: %s: No such file or directory\n",
@@ -115,26 +116,9 @@ void	execute_external_command(t_minishell *shell, t_command *cmd)
 	}
 }
 
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-void	setup_pipe_infile(t_minishell *shell, t_exec *exec_info)
+void	setup_pipe_infile(t_minishell *shell, t_exec *exec_info,
+		t_command *current_cmd)
 {
-	printf("%ld         fdadsfasdfasdfasd\n", shell->commands->infile_count);
 	if (exec_info->input_fd != STDIN_FILENO)
 	{
 		if (shell->commands->infile_count == 0)
@@ -145,6 +129,8 @@ void	setup_pipe_infile(t_minishell *shell, t_exec *exec_info)
 		close(exec_info->input_fd);
 		exec_info->input_fd = -1;
 	}
+	handle_heredoc(shell, current_cmd);
+	input_redirection(shell, current_cmd);
 }
 
 void	setup_pipe_outfile(t_minishell *shell, t_exec *exec_info,
@@ -154,14 +140,16 @@ void	setup_pipe_outfile(t_minishell *shell, t_exec *exec_info,
 	{
 		if (shell->commands->outfile_count == 0)
 		{
-			if (!dup2(exec_info->pipe_fds[1], STDOUT_FILENO))
+			if (dup2(exec_info->pipe_fds[1], STDOUT_FILENO) == -1)
 				cleanup_and_exit_failure(shell, exec_info);
 		}
-		close(exec_info->pipe_fds[0]);
-		exec_info->pipe_fds[0] = -1;
+		exec_info->input_fd = exec_info->pipe_fds[0];
+		// close(exec_info->pipe_fds[0]);
+		// exec_info->pipe_fds[0] = -1;
 		close(exec_info->pipe_fds[1]);
 		exec_info->pipe_fds[1] = -1;
 	}
+	output_redirection(shell, current_cmd);
 }
 
 void	close_unsed_fds(t_minishell *shell)
@@ -175,19 +163,21 @@ void	close_unsed_fds(t_minishell *shell)
 void	execute_child_process(t_minishell *shell, t_exec *exec_info,
 		t_command *current_cmd)
 {
+	int	exit_status;
+
+	exit_status = 0;
 	close_unsed_fds(shell);
-	setup_pipe_infile(shell, exec_info);
+	setup_pipe_infile(shell, exec_info, current_cmd);
 	setup_pipe_outfile(shell, exec_info, current_cmd);
-	if (!handle_redirection(shell, current_cmd))
-		cleanup_and_exit_failure(shell, NULL);
+	// if (!handle_redirection(shell, current_cmd))
+	// 	cleanup_and_exit_failure(shell, NULL);
 	if (current_cmd->args && current_cmd->args[0])
 		exec_info->builtin_id = is_builtin(current_cmd->args[0]);
-	if (exec_info->builtin_id != NOT_BUILDIN)
+	if (exec_info->builtin_id != NOT_BUILTIN)
 	{
-		exec_info->builtins[exec_info->builtin_id](shell);
+		exit_status = exec_info->builtins[exec_info->builtin_id](shell);
 		free_shell(shell);
-		// todo when the buitin command fails
-		exit(EXIT_SUCCESS);
+		exit(exit_status);
 	}
 	else
 		execute_external_command(shell, current_cmd);

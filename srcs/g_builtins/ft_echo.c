@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 15:14:15 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/28 16:47:14 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/03/30 20:25:44 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,20 +39,31 @@ int	parse_n_option(t_command *cmd, int *n_option)
 	return (i);
 }
 
-void	print_echo_output(t_command *cmd, int start_index, int n_option)
+bool	print_echo_output(t_command *cmd, int start_index, int n_option)
 {
 	while (cmd->args[start_index])
 	{
-		ft_putstr_fd(cmd->args[start_index], 1);
 		if (cmd->args[start_index + 1])
-			write(1, " ", 1);
+		{
+			if (ft_fprintf(STDOUT_FILENO, "%s ", cmd->args[start_index]) == -1)
+				return (false);
+		}
+		else
+		{
+			if (ft_fprintf(STDOUT_FILENO, "%s", cmd->args[start_index]) == -1)
+				return (false);
+		}
 		start_index++;
 	}
 	if (!n_option)
-		write(1, "\n", 1);
+	{
+		if (ft_fprintf(STDOUT_FILENO, "\n") == -1)
+			return (false);
+	}
+	return (true);
 }
 
-void	ft_echo(t_minishell *shell)
+int	ft_echo(t_minishell *shell)
 {
 	int			n_option;
 	int			start_index;
@@ -60,5 +71,7 @@ void	ft_echo(t_minishell *shell)
 
 	cmd = shell->commands;
 	start_index = parse_n_option(cmd, &n_option);
-	print_echo_output(cmd, start_index, n_option);
+	if (!print_echo_output(cmd, start_index, n_option))
+		return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
 }
