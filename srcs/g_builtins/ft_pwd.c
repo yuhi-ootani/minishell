@@ -1,26 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_env.c                                           :+:      :+:    :+:   */
+/*   ft_pwd.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/01 15:42:21 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/18 19:21:10 by knemcova         ###   ########.fr       */
+/*   Created: 2025/03/01 15:41:23 by knemcova          #+#    #+#             */
+/*   Updated: 2025/03/30 21:45:12 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void	ft_env(t_minishell *shell)
+int	ft_pwd(t_minishell *shell)
 {
-	t_env	*tmp_env;
+	char	cwd[PATH_MAX];
 
-	tmp_env = shell->env;
-	while (tmp_env)
+	(void)shell;
+	if (getcwd(cwd, sizeof(cwd)) != NULL)
 	{
-		if (tmp_env->value)
-			printf("%s=%s\n", tmp_env->name, tmp_env->value);
-		tmp_env = tmp_env->next;
+		if (ft_fprintf(STDOUT_FILENO, "%s\n", cwd) == -1)
+			return (EXIT_FAILURE);
 	}
+	else
+		return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
 }

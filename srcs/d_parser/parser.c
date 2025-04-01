@@ -1,38 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   build_envp_array.c                                 :+:      :+:    :+:   */
+/*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/24 17:12:38 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/25 13:41:09 by knemcova         ###   ########.fr       */
+/*   Created: 2025/03/30 15:15:42 by knemcova          #+#    #+#             */
+/*   Updated: 2025/03/30 15:16:22 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-char	**build_envp_array(t_env *env)
+t_command	*parser(t_minishell *shell, t_token *tokens)
 {
-	size_t	count;
-	char	**envp_array;
-	t_env	*tmp;
-
-	count = 0;
-	count = count_env_util(env);
-	envp_array = (char **)malloc(sizeof(char *) * (count + 1));
-	if (!envp_array)
+	if (is_syntax_error(shell, tokens))
 		return (NULL);
-	count = 0;
-	tmp = env;
-	while (tmp)
-	{
-		envp_array[count] = ft_strjoin_three(tmp->name, "=", tmp->value);
-		if (!envp_array[count])
-			return (NULL); // to do
-		count++;
-		tmp = tmp->next;
-	}
-	envp_array[count] = NULL;
-	return (envp_array);
+	return (convert_token_into_cmd(shell, tokens));
 }

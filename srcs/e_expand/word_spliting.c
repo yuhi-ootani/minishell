@@ -6,50 +6,11 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 18:00:40 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/29 13:49:03 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/03/30 19:08:10 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-static void	remove_quotes_and_copy(char *dst, const char *src)
-{
-	bool	in_single;
-	bool	in_double;
-	size_t	i;
-
-	i = 0;
-	in_single = false;
-	in_double = false;
-	while (*src)
-	{
-		if (*src == '\'' && !in_double)
-			in_single = !in_single;
-		else if (*src == '"' && !in_single)
-			in_double = !in_double;
-		else
-		{
-			dst[i] = *src;
-			i++;
-		}
-		src++;
-	}
-	dst[i] = '\0';
-}
-
-char	*remove_quotes(t_minishell *shell, const char *input)
-{
-	char	*result;
-
-	result = (char *)ft_calloc(sizeof(char), ft_strlen(input) + 1);
-	if (!result)
-	{
-		shell->exit_status = EXIT_FAILURE;
-		return (NULL);
-	}
-	remove_quotes_and_copy(result, input);
-	return (result);
-}
 
 static bool	quote_removal_args(t_minishell *shell, char **args)
 {
@@ -59,14 +20,14 @@ static bool	quote_removal_args(t_minishell *shell, char **args)
 	i = 0;
 	while (args && args[i])
 	{
-		tmp = remove_quotes(shell, args[i]);
-		if (tmp)
+		tmp = strdup_except_quotes_util(args[i]);
+		if (!tmp)
 		{
-			free(args[i]);
-			args[i] = tmp;
-		}
-		else
+			shell->exit_status = EXIT_FAILURE;
 			return (false);
+		}
+		free(args[i]);
+		args[i] = tmp;
 		i++;
 	}
 	return (true);
@@ -207,7 +168,7 @@ bool	expand_all_cmd_args(t_minishell *shell)
 // 		j = 0;
 // 		while (splited_args[j])
 // 		{
-// 			tmp = remove_quotes(splited_args[j]);
+// 			tmp = strdup_except_quotes_util(splited_args[j]);
 // 			if (tmp)
 // 			{
 // 				free(splited_args[j]);
