@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 13:41:58 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/24 11:51:16 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/01 17:40:10 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ volatile sig_atomic_t	g_signal = 0;
 // 		rl_redisplay();
 // 	}
 // }
-
 
 // void	setup_signals_parent(void)
 // {
@@ -53,7 +52,6 @@ volatile sig_atomic_t	g_signal = 0;
 // 	sigaction(SIGINT, &sa, NULL);
 // 	signal(SIGQUIT, SIG_IGN);
 // }
-
 
 void	sig_handler_parent(int sig)
 {

@@ -28,7 +28,7 @@ bool	printf_line_to_pipe(t_minishell *shell, int fd, char *line)
 	return (true);
 }
 
-bool	readline_till_EOF(t_minishell *shell, t_command *cmd, int *pipefd,
+bool	readline_till_eof(t_minishell *shell, t_command *cmd, int *pipefd,
 		size_t i)
 {
 	char	*line;
@@ -97,7 +97,7 @@ bool	handle_heredoc(t_minishell *shell, t_command *cmd)
 	{
 		if (cmd->infiles[i].type == TOKEN_HEREDOC)
 		{
-			if (!readline_till_EOF(shell, cmd, pipefd, i))
+			if (!readline_till_eof(shell, cmd, pipefd, i))
 			{
 				close(pipefd[0]);
 				close(pipefd[1]);

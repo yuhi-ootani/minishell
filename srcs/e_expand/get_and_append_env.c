@@ -1,142 +1,102 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   word_spliting.c                                    :+:      :+:    :+:   */
+/*   get_and_append_env.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 18:00:40 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/29 16:35:03 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/01 17:34:48 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
- void	remove_quotes_and_copy(char *dst, const char *src)
+char	*get_env_name(t_minishell *shell, const char *input)
 {
-	bool	in_single;
-	bool	in_double;
-	size_t	i;
+	size_t	len;
+	char	*name;
 
-	i = 0;
-	in_single = false;
-	in_double = false;
-	while (*src)
-	{
-		if (*src == '\'' && !in_double)
-			in_single = !in_single;
-		else if (*src == '"' && !in_single)
-			in_double = !in_double;
-		else
-		{
-			dst[i] = *src;
-			i++;
-		}
-		src++;
-	}
-	dst[i] = '\0';
-}
-
-static bool	quote_removal_args(t_minishell *shell, char **args)
-{
-	char	*tmp;
-	size_t	i;
-
-	i = 0;
-	while (args && args[i])
-	{
-		tmp = remove_quotes(shell, args[i]);
-		if (tmp)
-		{
-			free(args[i]);
-			args[i] = tmp;
-		}
-		else
-			return (false);
-		i++;
-	}
-	return (true);
-}
-
-char	**word_splitting(t_minishell *shell, char *str)
-{
-	char	**splited_args;
-
-	if (str[0] != '"' && str[ft_strlen(str) - 1] != '"')
-		splited_args = ft_split(str, DELIMITERS);
+	if (!input)
+		return (NULL);
+	if (ft_isalpha(input[0]) || input[0] == '_')
+		len = 1;
 	else
-		splited_args = ft_split(str, "");
-	if (!splited_args)
+		return (NULL);
+	while (ft_isalnum(input[len]) || input[len] == '_')
+		len++;
+	name = (char *)ft_calloc((len + 1), sizeof(char));
+	if (!name)
 	{
 		shell->exit_status = EXIT_FAILURE;
 		return (NULL);
 	}
-	return (splited_args);
+	if (len > 0)
+		ft_strncpy(name, input, len);
+	name[len] = '\0';
+	return (name);
 }
 
-char	**expander(t_minishell *shell, char *arg)
+bool	append_to_buffer(t_minishell *shell, t_expanded_str *expanded_str,
+		const char *src, size_t src_len)
 {
-	char	*expanded_str;
-	char	**result;
+	char	*new_buffer;
+	size_t	old_size;
+	size_t	new_size;
 
-	expanded_str = get_expanded_str(shell, arg);
-	if (!expanded_str)
-		return (NULL);
-	result = word_splitting(shell, expanded_str);
-	free(expanded_str);
-	if (!result)
-		return (NULL);
-	if (!quote_removal_args(shell, result))
+	if (expanded_str->index + src_len >= expanded_str->size)
 	{
-		ft_array_free(result);
-		return (NULL);
-	}
-	return (result);
-}
-
-char	**create_expanded_args(t_minishell *shell, t_command *cmd)
-{
-	size_t	i;
-	char	**result;
-	char	**expanded;
-	char	**joined_array;
-
-	result = NULL;
-	i = 0;
-	while (cmd->args && cmd->args[i])
-	{
-		expanded = expander(shell, cmd->args[i]);
-		if (!expanded)
-			return (NULL);
-		joined_array = ft_array_join(result, expanded);
-		ft_array_free(expanded);
-		ft_array_free(result);
-		result = joined_array;
-		if (!result)
-			return (NULL);
-		i++;
-	}
-	return (result);
-}
-
-bool	expand_all_cmd_args(t_minishell *shell)
-{
-	t_command	*current;
-	char		**new_args;
-
-	current = shell->commands;
-	while (current)
-	{
-		if (current->args && current->args[0])
+		old_size = expanded_str->size;
+		new_size = expanded_str->index + src_len + 1;
+		new_buffer = ft_realloc(expanded_str->buffer, old_size, new_size);
+		if (!new_buffer)
 		{
-			new_args = create_expanded_args(shell, current);
-			if (!new_args)
-				return (false);
-			ft_array_free(current->args);
-			current->args = new_args;
+			shell->exit_status = EXIT_FAILURE;
+			return (false);
 		}
-		current = current->next;
+		expanded_str->buffer = new_buffer;
+		expanded_str->size = new_size;
 	}
+	ft_memcpy(expanded_str->buffer + expanded_str->index, src, src_len);
+	expanded_str->index += src_len;
+	expanded_str->buffer[expanded_str->index] = '\0';
+	return (true);
+}
+
+bool	append_exit_status(t_minishell *shell, t_expanded_str *expanded_str)
+{
+	char	*exit_status;
+
+	exit_status = ft_itoa(shell->exit_status);
+	if (!exit_status)
+	{
+		shell->exit_status = EXIT_FAILURE;
+		return (false);
+	}
+	if (!append_to_buffer(shell, expanded_str, exit_status,
+			ft_strlen(exit_status)))
+	{
+		free(exit_status);
+		return (false);
+	}
+	free(exit_status);
+	return (true);
+}
+
+bool	append_one_char(t_minishell *shell, t_expanded_str *s_expanded_str,
+		const char *src_input, size_t *i)
+{
+	if (src_input[*i] == '\'' && !s_expanded_str->in_double_quote)
+	{
+		s_expanded_str->in_single_quote = !s_expanded_str->in_single_quote;
+	}
+	else if (src_input[*i] == '"' && !s_expanded_str->in_single_quote)
+	{
+		s_expanded_str->in_double_quote = !s_expanded_str->in_double_quote;
+	}
+	if (!append_to_buffer(shell, s_expanded_str, &src_input[*i], 1))
+		return (false);
+	(*i)++;
 	return (true);
 }
 
@@ -210,7 +170,7 @@ bool	expand_all_cmd_args(t_minishell *shell)
 // 	return (result);
 // }
 
-// void	expand_commands(t_minishell *shell)
+// void	expand_cmds(t_minishell *shell)
 // {
 // 	t_command	*current;
 // 	char		**new_args;

@@ -6,19 +6,19 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/30 12:13:26 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/01 15:18:36 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-char	*search_command_in_path(t_minishell *shell, const char *command)
+char	*search_cmd_in_path(t_minishell *shell, const char *cmd)
 {
 	char	*path_env;
 	char	**splited_paths;
 	int		i;
 	char	*tmp;
-	char	*full_command_path;
+	char	*full_cmd_path;
 
 	path_env = get_env_value(shell, "PATH");
 	if (!path_env)
@@ -28,27 +28,27 @@ char	*search_command_in_path(t_minishell *shell, const char *command)
 	while (splited_paths && splited_paths[i])
 	{
 		tmp = ft_strjoin(splited_paths[i], "/");
-		full_command_path = ft_strjoin(tmp, command);
+		full_cmd_path = ft_strjoin(tmp, cmd);
 		free(tmp);
-		if (access(full_command_path, F_OK | X_OK) == 0)
-			return (ft_array_free(splited_paths), full_command_path);
-		free(full_command_path);
+		if (access(full_cmd_path, F_OK | X_OK) == 0)
+			return (ft_array_free(splited_paths), full_cmd_path);
+		free(full_cmd_path);
 		i++;
 	}
 	ft_array_free(splited_paths);
 	return (NULL);
 }
 
-void	execute_external_command(t_minishell *shell, t_command *cmd)
+void	execute_external_cmd(t_minishell *shell, t_command *cmd)
 {
-	char	*command_path;
+	char	*cmd_path;
 	char	**envp_array;
 
 	if (ft_strchr(cmd->args[0], '/') == NULL)
 	// I think it needs modified
 	{
-		command_path = search_command_in_path(shell, cmd->args[0]);
-		if (!command_path)
+		cmd_path = search_cmd_in_path(shell, cmd->args[0]);
+		if (!cmd_path)
 		{
 			ft_fprintf(2, "%s: command not found\n", cmd->args[0]);
 			(shell->exit_status) = 127; // changed
@@ -56,35 +56,35 @@ void	execute_external_command(t_minishell *shell, t_command *cmd)
 		}
 	}
 	else
-		command_path = ft_strdup(cmd->args[0]);
+		cmd_path = ft_strdup(cmd->args[0]);
 	envp_array = build_envp_array(shell->env);
 	if (!envp_array)
 		exit(EXIT_FAILURE); // todo
 	// printf("%s\n", envp[2]);
-	if (execve(command_path, cmd->args, envp_array) == -1)
+	if (execve(cmd_path, cmd->args, envp_array) == -1)
 	{
 		// free envp
 		ft_fprintf(2, "%s: command not found\n", cmd->args[0]);
-		free(command_path);
+		free(cmd_path);
 		exit(EXIT_FAILURE);
 	}
 }
 
-t_builtin_id	is_builtin(char *command_str)
+t_builtin_id	is_builtin(char *cmd_str)
 {
-	if (ft_strcmp(command_str, "echo") == 0)
+	if (ft_strcmp(cmd_str, "echo") == 0)
 		return (FT_ECHO);
-	else if (ft_strcmp(command_str, "cd") == 0)
+	else if (ft_strcmp(cmd_str, "cd") == 0)
 		return (FT_CD);
-	else if (ft_strcmp(command_str, "pwd") == 0)
+	else if (ft_strcmp(cmd_str, "pwd") == 0)
 		return (FT_PWD);
-	else if (ft_strcmp(command_str, "export") == 0)
+	else if (ft_strcmp(cmd_str, "export") == 0)
 		return (FT_EXPORT);
-	else if (ft_strcmp(command_str, "unset") == 0)
+	else if (ft_strcmp(cmd_str, "unset") == 0)
 		return (FT_UNSET);
-	else if (ft_strcmp(command_str, "env") == 0)
+	else if (ft_strcmp(cmd_str, "env") == 0)
 		return (FT_ENV);
-	else if (ft_strcmp(command_str, "exit") == 0)
+	else if (ft_strcmp(cmd_str, "exit") == 0)
 		return (FT_EXIT);
 	else
 		return (NOT_BUILTIN);
@@ -116,18 +116,18 @@ static void	execute_child_process(t_minishell *shell, t_exec *exec_info,
 		exit(EXIT_SUCCESS);
 	}
 	else
-		execute_external_command(shell, cmd);
+		execute_external_cmd(shell, cmd);
 }
 
 static void	run_single_builtin_in_parent(t_minishell *shell, t_exec *exec_info)
 {
 	handle_redirection(shell, shell->commands);
 	exec_info->builtins[exec_info->builtin_id](shell);
-	if (exec_info->builtin_id == FT_EXIT)
-		exit(shell->exit_status);
+	// if (exec_info->builtin_id == FT_EXIT)
+	// 	exit(shell->exit_status);
 }
 
-bool	is_single_builtin_command(t_minishell *shell, t_exec *exec_info)
+bool	is_single_builtin_cmd(t_minishell *shell, t_exec *exec_info)
 {
 	return (shell->commands->next == NULL
 		&& exec_info->builtin_id != NOT_BUILTIN);
@@ -211,7 +211,7 @@ static void	create_child_process(t_minishell *shell, t_exec *exec_info,
 	}
 }
 
-void	run_forked_commands(t_minishell *shell, t_exec *exec_info)
+void	run_forked_cmds(t_minishell *shell, t_exec *exec_info)
 {
 	int					i;
 	pid_t				pids[1000];
@@ -235,7 +235,7 @@ void	run_forked_commands(t_minishell *shell, t_exec *exec_info)
 	sigaction(SIGINT, &previous_int, NULL);
 }
 
-void	command_executor(t_minishell *shell)
+void	cmd_executor(t_minishell *shell)
 {
 	t_exec	exec_info;
 
@@ -248,19 +248,19 @@ void	command_executor(t_minishell *shell)
 		return ;
 	}
 	exec_info.builtin_id = is_builtin(shell->commands->args[0]);
-	if (is_single_builtin_command(shell, &exec_info))
+	if (is_single_builtin_cmd(shell, &exec_info))
 	{
 		run_single_builtin_in_parent(shell, &exec_info);
 	}
 	else
 	{
-		run_forked_commands(shell, &exec_info);
+		run_forked_cmds(shell, &exec_info);
 	}
 }
 
 // #define MAX_COMMANDS 1024
 
-// void	single_command_executor(t_command *cmd, char **envp)
+// void	single_cmd_executor(t_command *cmd, char **envp)
 // {
 // 	pid_t			pids[MAX_COMMANDS];
 // 	size_t			i;
@@ -308,7 +308,7 @@ void	command_executor(t_minishell *shell)
 // 			if (builtin_index != NOT_BUILTIN)
 // 				builtin_funcs[builtin_index](cmd); // Execute the function
 // 			else
-// 				execute_external_command(cmd, envp);
+// 				execute_external_cmd(cmd, envp);
 // 		}
 // 		else if (pids[i] < 0)
 // 		{
@@ -333,7 +333,7 @@ void	command_executor(t_minishell *shell)
 
 // /*yuyu code with my signals, long version */
 
-// void	run_forked_commands(t_minishell *shell, t_exec *exec_info)
+// void	run_forked_cmds(t_minishell *shell, t_exec *exec_info)
 // {
 // 	int					i;
 // 	struct sigaction	old_int;

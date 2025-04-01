@@ -6,65 +6,11 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 13:37:45 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/29 15:07:41 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/01 17:03:56 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-void	free_command(t_command *cmd)
-{
-	size_t	i;
-
-	i = 0;
-	if (cmd->args)
-	{
-		while (cmd->args[i])
-		{
-			free(cmd->args[i]);
-			i++;
-		}
-		free(cmd->args);
-	}
-	// t_redirection
-	i = 0;
-	if (cmd->infiles)
-	{
-		while (i < cmd->infile_count)
-		{
-			free(cmd->infiles[i].filename);
-			i++;
-		}
-		free(cmd->infiles);
-	}
-	i = 0;
-	if (cmd->outfiles)
-	{
-		while (i < cmd->outfile_count)
-		{
-			free(cmd->outfiles[i].filename);
-			i++;
-		}
-		free(cmd->outfiles);
-	}
-	// if (cmd->input_file)
-	// 	free(cmd->input_file);
-	// if (cmd->out_file)
-	// 	free(cmd->out_file);
-	free(cmd);
-}
-
-void	free_commands(t_command *head)
-{
-	t_command	*tmp;
-
-	while (head)
-	{
-		tmp = head;
-		head = head->next;
-		free_command(tmp);
-	}
-}
 
 void	free_shell(t_minishell *shell)
 {
@@ -74,7 +20,7 @@ void	free_shell(t_minishell *shell)
 	if (shell->input)
 		free(shell->input);
 	if (shell->commands)
-		free_commands(shell->commands);
+		free_all_cmds(shell->commands);
 }
 
 void	free_tokens(t_token *tokens)
@@ -103,6 +49,8 @@ void	free_env(t_env *env)
 		env = temp;
 	}
 }
+
+//free_env is not used anywhere
 
 void	free_copied_env(t_env *env)
 {

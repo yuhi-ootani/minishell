@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/30 14:33:36 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/01 19:06:56 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	reset_shell_for_next_input(t_minishell *shell, bool interactive_mode)
 	}
 	if (shell->commands)
 	{
-		free_commands(shell->commands);
+		free_all_cmds(shell->commands);
 		shell->commands = NULL;
 	}
 	if (interactive_mode)
@@ -42,7 +42,7 @@ void	reset_shell_for_next_input(t_minishell *shell, bool interactive_mode)
 	dup2(shell->original_stdout, STDOUT_FILENO);
 }
 
-void	build_commands_struct(t_minishell *shell)
+void	build_cmds_struct(t_minishell *shell)
 {
 	t_token	*tokens;
 
@@ -57,10 +57,10 @@ void	build_commands_struct(t_minishell *shell)
 		return ;
 	}
 	expand_all_cmd_args(shell);
-	// print_commands(shell->commands);
+	// print_cmds(shell->commands);
 }
 
-void	exit_ctrl_D(t_minishell *shell)
+void	exit_ctrl_d(t_minishell *shell)
 {
 	free_shell(shell);
 	printf("exit\n");
@@ -81,13 +81,13 @@ int	main(int argc, char **argv, char **envp)
 			g_signal = 0;
 		shell.input = get_input(&shell, interactive_mode);
 		if (!shell.input)
-			exit_ctrl_D(&shell);
+			exit_ctrl_d(&shell);
 		else
 		{
 			if (shell.input && shell.input[0] && shell.input[0] != '\n')
-				build_commands_struct(&shell);
+				build_cmds_struct(&shell);
 			if (shell.commands)
-				command_executor(&shell);
+				cmd_executor(&shell);
 		}
 		reset_shell_for_next_input(&shell, interactive_mode);
 	}

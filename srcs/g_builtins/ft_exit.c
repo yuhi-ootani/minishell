@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:44:02 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/29 16:27:17 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/01 19:26:51 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,49 +68,48 @@ int	more_than_two_arguments(t_minishell *shell)
 	return (0);
 }
 
-long long	validate_and_exit_if_invalid(t_minishell *shell)
+void	handle_exit_status(t_minishell *shell, t_command *cmd,
+		long long exit_code, bool error)
 {
-	t_command	*cmd;
-	char		*arg;
-	bool		error;
-	long long	exit_code;
-
-	cmd = shell->commands;
-	arg = cmd->args[1];
-	if (!ft_isnumber(arg))
-	{
-		ft_fprintf(2, "exit: %s: numeric argument required\n", arg);
-		shell->exit_status = 2;
-		free_shell(shell);
-		exit(shell->exit_status);
-	}
-	exit_code = ft_atoi_long(arg, &error);
 	if (error)
 	{
-		ft_fprintf(2, "exit: %s: numeric argument required\n", arg);
+		ft_fprintf(2, "exit: %s: numeric argument required\n", cmd->args[1]);
 		shell->exit_status = 2;
 		free_shell(shell);
-		exit(shell->exit_status);
+		exit(2);
 	}
-	return (exit_code);
+	if (cmd->args[2])
+	{
+		ft_fprintf(2, "exit: too many arguments\n");
+		shell->exit_status = 1;
+		return ;
+	}
+	shell->exit_status = exit_code % 256;
+	free_shell(shell);
+	exit(shell->exit_status);
 }
 
 void	ft_exit(t_minishell *shell)
 {
-	int			exit_code;
 	t_command	*cmd;
+	long long	exit_code;
+	bool		error;
 
 	cmd = shell->commands;
 	printf("exit\n");
-	if (more_than_two_arguments(shell))
-		return ;
-	if (!cmd->args[1])
+	if (cmd->args[1] && !ft_isnumber(cmd->args[1]))
 	{
-		exit_code = shell->exit_status;
+		ft_fprintf(2, "exit: %s: numeric argument required\n", cmd->args[1]);
+		shell->exit_status = 2;
+		free_shell(shell);
+		exit(2);
 	}
-	else
-		exit_code = validate_and_exit_if_invalid(shell);
-	shell->exit_status = exit_code % 256;
+	if (cmd->args[1])
+	{
+		exit_code = ft_atoi_long(cmd->args[1], &error);
+		handle_exit_status(shell, cmd, exit_code, error);
+		return ;
+	}
 	free_shell(shell);
-	exit(exit_code);
+	exit(shell->exit_status);
 }

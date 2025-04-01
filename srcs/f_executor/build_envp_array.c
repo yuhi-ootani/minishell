@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 17:12:38 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/29 14:36:19 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/01 17:46:34 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,11 @@ char	**build_envp_array(t_env *env)
 	{
 		envp_array[count] = ft_strjoin_three(tmp->name, "=", tmp->value);
 		if (!envp_array[count])
-			return (NULL); // to do
+			return (NULL);
 		count++;
 		tmp = tmp->next;
 	}
 	envp_array[count] = NULL;
 	return (envp_array);
 }
-//can move?
+// can move?

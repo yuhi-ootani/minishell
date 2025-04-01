@@ -6,7 +6,7 @@
 #    By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 11:52:00 by otaniyuhi         #+#    #+#              #
-#    Updated: 2025/03/30 15:28:27 by knemcova         ###   ########.fr        #
+#    Updated: 2025/04/01 17:26:11 by knemcova         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,12 +37,12 @@ SRCS = $(MAIN_DIR)/main.c $(MAIN_DIR)/main_init.c  \
 	   $(PROMPT_DIR)/prompt.c \
 	   $(TOKENIZATION_DIR)/tokenization.c $(TOKENIZATION_DIR)/token_word.c $(TOKENIZATION_DIR)/token_utils.c \
 	   $(PARSER_DIR)/parser.c $(PARSER_DIR)/check_syntax.c $(PARSER_DIR)/create_command.c $(PARSER_DIR)/set_command_data.c \
-	   $(EXPAND_DIR)/expand.c $(EXPAND_DIR)/word_spliting.c \
+	   $(EXPAND_DIR)/expand.c $(EXPAND_DIR)/get_and_append_env.c $(EXPAND_DIR)/handle_dollar.c $(EXPAND_DIR)/quote_and_split.c \
        $(SIGNALS_DIR)/signals.c \
 	   $(BUILTINS_DIR)/ft_cd.c $(BUILTINS_DIR)/ft_echo.c $(BUILTINS_DIR)/ft_env.c $(BUILTINS_DIR)/ft_exit.c $(BUILTINS_DIR)/ft_export.c $(BUILTINS_DIR)/ft_export_sort_print.c $(BUILTINS_DIR)/ft_unset.c $(BUILTINS_DIR)/ft_pwd.c \
 	   $(UTILS_DIR)/utils.c $(UTILS_DIR)/debug_utils.c \
 	   $(EXECUTOR_DIR)/executor.c $(EXECUTOR_DIR)/redirection.c $(EXECUTOR_DIR)/build_envp_array.c \
-	   $(FREE_DIR)/free.c \
+	   $(FREE_DIR)/free.c $(FREE_DIR)/free_command.c \
 
 
 OBJS = $(SRCS:.c=.o)

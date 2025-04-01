@@ -1,34 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser_create_command.c                            :+:      :+:    :+:   */
+/*   create_command.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 15:07:23 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/30 15:15:51 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/01 11:54:11 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-t_command	*create_command_node(t_minishell *shell)
+t_command	*create_cmd_node(t_minishell *shell)
 {
-	t_command	*new_command;
+	t_command	*new_cmd;
 
-	new_command = (t_command *)malloc(sizeof(t_command));
-	if (!new_command)
+	new_cmd = (t_command *)malloc(sizeof(t_command));
+	if (!new_cmd)
 	{
 		shell->exit_status = EXIT_FAILURE;
 		return (NULL);
 	}
-	new_command->args = NULL;
-	new_command->infiles = NULL;
-	new_command->infile_count = 0;
-	new_command->outfiles = NULL;
-	new_command->outfile_count = 0;
-	new_command->next = NULL;
-	return (new_command);
+	new_cmd->args = NULL;
+	new_cmd->infiles = NULL;
+	new_cmd->infile_count = 0;
+	new_cmd->outfiles = NULL;
+	new_cmd->outfile_count = 0;
+	new_cmd->next = NULL;
+	return (new_cmd);
 }
 
 bool	add_token_content_to_cmd(t_minishell *shell, t_token *tokens,
@@ -64,25 +64,25 @@ t_token	*move_to_next_token(t_token *tokens)
 t_command	*convert_token_into_cmd(t_minishell *shell, t_token *tokens)
 {
 	t_command	*head_cmd;
-	t_command	*current_command;
+	t_command	*current_cmd;
 
-	head_cmd = create_command_node(shell);
+	head_cmd = create_cmd_node(shell);
 	if (!head_cmd)
 		return (NULL);
-	current_command = head_cmd;
+	current_cmd = head_cmd;
 	while (tokens && tokens->type != TOKEN_EOF)
 	{
 		if (tokens->type == TOKEN_PIPE)
 		{
-			current_command->next = create_command_node(shell);
-			if (!current_command->next)
-				return (free_commands(head_cmd), NULL);
-			current_command = current_command->next;
+			current_cmd->next = create_cmd_node(shell);
+			if (!current_cmd->next)
+				return (free_all_cmds(head_cmd), NULL);
+			current_cmd = current_cmd->next;
 		}
 		else
 		{
-			if (!add_token_content_to_cmd(shell, tokens, current_command))
-				return (free_commands(head_cmd), NULL);
+			if (!add_token_content_to_cmd(shell, tokens, current_cmd))
+				return (free_all_cmds(head_cmd), NULL);
 		}
 		tokens = move_to_next_token(tokens);
 	}

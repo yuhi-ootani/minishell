@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/30 15:23:00 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/01 11:33:36 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@
 # define DELIMITERS " \t\n"
 
 typedef struct s_minishell		t_minishell;
-
+// RubiFont
 // ▗▖  ▗▖ ▗▄▖ ▗▄▄▄▖▗▖  ▗▖
 // ▐▛▚▞▜▌▐▌ ▐▌  █  ▐▛▚▖▐▌
 // ▐▌  ▐▌▐▛▀▜▌  █  ▐▌ ▝▜▌
@@ -46,23 +46,17 @@ typedef struct s_env
 	struct s_env				*next;
 }								t_env;
 
-/* prototype */
+/* main.c */
 void							init_shell_struct(t_minishell *shell,
 									char **envp);
-void							free_shell(t_minishell *shell);
+/*main_init.c*/
 bool							decide_input_fd(t_minishell *shell, int argc,
 									char **argv);
-void							remove_quotes_and_copy(char *dst,
-									const char *src);
-char							*remove_quotes(t_minishell *shell,
-									const char *input);
-// RubiFont
 // ▗▄▄▖ ▗▄▄▖  ▗▄▖ ▗▖  ▗▖▗▄▄▄▖
 // ▐▌ ▐▌▐▌ ▐▌▐▌ ▐▌▐▛▚▞▜▌  █
 // ▐▛▀▘ ▐▛▀▚▖▐▌ ▐▌▐▌  ▐▌  █
 // ▐▌   ▐▌ ▐▌▝▚▄▞▘▐▌  ▐▌  █
 
-/* prototype */
 char							*get_input(t_minishell *shell,
 									bool interactive_mode);
 
@@ -89,12 +83,14 @@ typedef struct s_token
 	struct s_token				*next;
 }								t_token;
 
-/* prototype */
-bool							add_word_token(t_minishell *shell, size_t *i,
-									t_token **tokens);
+/*token_utils.c*/
 t_token							*create_token(t_minishell *shell,
 									t_token_type type, const char *value);
 bool							add_token(t_token **head, t_token *new_node);
+/*token_word.c*/
+bool							add_word_token(t_minishell *shell, size_t *i,
+									t_token **tokens);
+/* tokenization.c */
 t_token							*tokenizer(t_minishell *shell);
 
 // ▗▄▄▖  ▗▄▖ ▗▄▄▖  ▗▄▄▖▗▄▄▄▖▗▄▄▖
@@ -117,17 +113,20 @@ typedef struct s_command
 	size_t						outfile_count;
 	struct s_command			*next;
 }								t_command;
-
-t_command						*parser(t_minishell *shell, t_token *tokens);
+/*check_syntax.c*/
 bool							is_syntax_error(t_minishell *shell,
 									t_token *tokens);
+/*create_command.c*/
 t_command						*convert_token_into_cmd(t_minishell *shell,
 									t_token *tokens);
-bool							add_argument(t_minishell *shell, t_command *cmd,
-									char *new_arg);
+/*parser.c*/
+t_command						*parser(t_minishell *shell, t_token *tokens);
+/*set_command_data.c*/
+bool							is_redirection_type(t_token_type type);
 bool							set_redirection(t_minishell *shell,
 									t_command *cmd, t_token *tokens);
-bool							is_redirection_type(t_token_type type);
+bool							add_argument(t_minishell *shell, t_command *cmd,
+									char *new_arg);
 
 // ▗▄▄▖ ▗▄▄▄▖▗▄▄▄ ▗▄▄▄▖▗▄▄▖ ▗▄▄▄▖ ▗▄▄▖▗▄▄▄▖▗▄▄▄▖ ▗▄▖ ▗▖  ▗▖
 // ▐▌ ▐▌▐▌   ▐▌  █  █  ▐▌ ▐▌▐▌   ▐▌     █    █  ▐▌ ▐▌▐▛▚▖▐▌
@@ -153,12 +152,15 @@ void							setup_signals_heredoc(void);
 // ▐▌ ▐▌  █    █  ▐▌    ▝▀▚▖
 // ▝▚▄▞▘  █  ▗▄█▄▖▐▙▄▄▖▗▄▄▞▘
 
+char							*remove_quotes(t_minishell *shell,
+									const char *input);
 size_t							count_env_util(t_env *env);
 t_env							*create_new_env_util(const char *new_name,
 									const char *new_value, t_env *new_next);
 void							env_add_back_util(t_env **copied_env,
 									t_env *new_env);
-void							free_env(t_env *env);
+char							*get_env_value(t_minishell *shell,
+									const char *name);
 
 // ▗▄▄▄▖      ▗▖  ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖   ▗▖
 //   █        ▐▛▚▞▜▌  █  ▐▛▚▖▐▌  █  ▐▌   ▐▌ ▐▌▐▌   ▐▌   ▐▌
@@ -189,12 +191,33 @@ typedef struct s_expanded_str
 	bool						in_double_quote;
 }								t_expanded_str;
 
+/*expand.c*/
 bool							expand_all_cmd_args(t_minishell *shell);
 char							*get_expanded_str(t_minishell *shell,
 									const char *src_input);
-char							*get_env_value(t_minishell *shell,
-									const char *name);
 char							**expander(t_minishell *shell, char *arg);
+/*get_and_append_env.c*/
+char							*get_env_name(t_minishell *shell,
+									const char *input);
+bool							append_to_buffer(t_minishell *shell,
+									t_expanded_str *expanded_str,
+									const char *src, size_t src_len);
+bool							append_exit_status(t_minishell *shell,
+									t_expanded_str *expanded_str);
+bool							append_one_char(t_minishell *shell,
+									t_expanded_str *s_expanded_str,
+									const char *src_input, size_t *i);
+/*handle_dollar.c*/
+bool							handle_dollar(t_minishell *shell,
+									t_expanded_str *expanded_str,
+									const char *src_input, size_t *i);
+/*quote_and_split.c*/
+bool							is_quote_or_delimiter_char(char c);
+void							remove_quotes_and_copy(char *dst,
+									const char *src);
+bool							quote_removal_args(t_minishell *shell,
+									char **args);
+char							**word_splitting(t_minishell *shell, char *str);
 
 // ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▄▖ ▗▄▄▖
 // ▐▌    ▝▚▞▘ ▐▌   ▐▌   ▐▌ ▐▌  █ ▐▌ ▐▌▐▌ ▐▌
@@ -224,7 +247,7 @@ typedef struct s_exec
 }								t_exec;
 
 // prototype
-void							command_executor(t_minishell *shell);
+void							cmd_executor(t_minishell *shell);
 char							**build_envp_array(t_env *env);
 
 // ▗▄▄▖ ▗▖ ▗▖▗▄▄▄▖▗▖ ▗▄▄▄▖▗▄▄▄▖▗▖  ▗▖ ▗▄▄▖
@@ -232,7 +255,6 @@ char							**build_envp_array(t_env *env);
 // ▐▛▀▚▖▐▌ ▐▌  █  ▐▌   █    █  ▐▌ ▝▜▌ ▝▀▚▖
 // ▐▙▄▞▘▝▚▄▞▘▗▄█▄▖▐▙▄▄▖█  ▗▄█▄▖▐▌  ▐▌▗▄▄▞▘
 
-// Builtin functions (implement separately)
 void							ft_echo(t_minishell *shell);
 void							ft_cd(t_minishell *shell);
 void							ft_pwd(t_minishell *shell);
@@ -252,7 +274,7 @@ typedef enum e_exit_status
 // ▐▌  █▐▛▀▀▘▐▛▀▚▖▐▌ ▐▌▐▌▝▜▌    ▐▌ ▐▌  █    █  ▐▌    ▝▀▚▖
 // ▐▙▄▄▀▐▙▄▄▖▐▙▄▞▘▝▚▄▞▘▝▚▄▞▘    ▝▚▄▞▘  █  ▗▄█▄▖▐▙▄▄▖▗▄▄▞▘
 
-void							print_commands(t_command *head);
+void							print_cmds(t_command *head);
 void							print_tokens(t_token *tokens);
 size_t							ft_array_count_str(char **array);
 
@@ -261,11 +283,11 @@ size_t							ft_array_count_str(char **array);
 // ▐▛▀▀▘▐▛▀▚▖▐▛▀▀▘▐▛▀▀▘
 // ▐▌   ▐▌ ▐▌▐▙▄▄▖▐▙▄▄▖
 
+void							free_cmd(t_command *cmd);
+void							free_all_cmds(t_command *head);
 void							free_shell(t_minishell *shell);
 int								get_exit_status(int err);
 void							free_tokens(t_token *tokens);
 void							free_copied_env(t_env *env);
-void							free_command(t_command *cmd);
-void							free_commands(t_command *head);
 
 #endif
