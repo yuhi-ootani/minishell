@@ -6,30 +6,21 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/30 20:18:59 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/01 20:24:02 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-static bool	run_single_builtin_in_parent(t_minishell *shell, t_exec *exec_info)
+static void	run_single_builtin_in_parent(t_minishell *shell, t_exec *exec_info)
 {
 	if (!handle_redirection(shell, shell->commands))
 	{
 		shell->exit_status = EXIT_FAILURE;
-		return (false);
+		return ;
 	}
 	shell->exit_status = exec_info->builtins[exec_info->builtin_id](shell);
-	return (true);
-	// MAY NOT BE NEEDED
-	// if (exec_info->builtin_id == FT_EXIT)
-	// 	exit(shell->exit_status);
-}
-
-bool	is_single_builtin_command(t_minishell *shell, t_exec *exec_info)
-{
-	return (shell->commands->next == NULL
-		&& exec_info->builtin_id != NOT_BUILTIN);
+	return ;
 }
 
 t_builtin_id	is_builtin(char *command_str)
@@ -65,27 +56,38 @@ static void	init_exec_info(t_exec *exec_info)
 	exec_info->builtins[FT_EXIT] = ft_exit;
 }
 
-bool	command_executor(t_minishell *shell)
+bool	is_executed_in_parent(t_minishell *shell, t_exec *exec_info)
+{
+	if (!shell->commands->next)
+	{
+		if (!shell->commands->args || !shell->commands->args[0][0])
+			return (true);
+		else
+			exec_info->builtin_id = is_builtin(shell->commands->args[0]);
+		if (exec_info->builtin_id != NOT_BUILTIN)
+			return (true);
+	}
+	return (false);
+}
+
+void	command_executor(t_minishell *shell)
 {
 	t_exec	exec_info;
 
-	if (!shell->commands) // Added check
-		return (false);   // Added check
 	init_exec_info(&exec_info);
-	if (!shell->commands->args || !shell->commands->args[0])
+	if (!handle_heredoc(shell))
+		return ;
+	if (is_executed_in_parent(shell, &exec_info))
 	{
-		return (handle_redirection(shell, shell->commands));
-	}
-	exec_info.builtin_id = is_builtin(shell->commands->args[0]);
-	if (is_single_builtin_command(shell, &exec_info))
-	{
-		return (run_single_builtin_in_parent(shell, &exec_info));
+		if (!handle_redirection(shell, shell->commands))
+			return (clean_heredoc_tmpfile(shell));
+		if (exec_info.builtin_id != NOT_BUILTIN)
+			run_single_builtin_in_parent(shell, &exec_info);
 	}
 	else
-	{
-		run_forked_commands(shell, &exec_info);
-	}
-	return (true);
+		run_commands_in_child(shell, &exec_info);
+	clean_heredoc_tmpfile(shell);
+	return ;
 }
 
 // #define MAX_COMMANDS 1024

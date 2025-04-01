@@ -55,7 +55,7 @@ static void	print_sorted_env(t_env **sorted_env, size_t count)
 	}
 }
 
-void	sort_and_print_env(t_env **copied_env)
+bool	sort_and_print_env(t_env **copied_env)
 {
 	size_t	count;
 	t_env	**sorted_env;
@@ -65,10 +65,11 @@ void	sort_and_print_env(t_env **copied_env)
 	if (!sorted_env)
 	{
 		perror("malloc");
-		return ;
+		return (false);
 	}
 	copy_env_pointer(sorted_env, *copied_env);
 	bubble_sort_env(sorted_env, count);
 	print_sorted_env(sorted_env, count);
 	free(sorted_env);
+	return (true);
 }

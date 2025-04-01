@@ -38,7 +38,9 @@ static void	wait_for_all_children(pid_t *pids, int count, t_minishell *shell)
 // // WIFSIGNALED turns true if the code was ended by a signl
 // // WTERMSIG holds the number of exit of the singal
 
-static void	create_child_process(t_minishell *shell, t_exec *exec_info,
+// todo
+
+static bool	create_child_process(t_minishell *shell, t_exec *exec_info,
 		t_command *cmd, pid_t *pid)
 {
 	*pid = fork();
@@ -49,9 +51,10 @@ static void	create_child_process(t_minishell *shell, t_exec *exec_info,
 	}
 	else if (*pid < 0)
 	{
-		perror("fork");
-		exit(EXIT_FAILURE); // todo
+		shell->exit_status = 0;
+		return (false);
 	}
+	return (true);
 }
 
 bool	setup_pipe_if_needed(t_minishell *shell, t_exec *exec_info,
@@ -68,26 +71,45 @@ bool	setup_pipe_if_needed(t_minishell *shell, t_exec *exec_info,
 	return (true);
 }
 
-void	run_forked_commands(t_minishell *shell, t_exec *exec_info)
+size_t	count_commands(t_minishell *shell)
+{
+	t_command	*cmd;
+	size_t		i;
+
+	i = 0;
+	cmd = shell->commands;
+	while (cmd)
+	{
+		i++;
+		cmd = cmd->next;
+	}
+	return (i);
+}
+
+void	run_commands_in_child(t_minishell *shell, t_exec *exec_info)
 {
 	int					i;
-	pid_t				pids[1000];
+	pid_t				*pids;
 	t_command			*current;
 	struct sigaction	previous_int;
 
 	i = 0;
 	current = shell->commands;
+	pids = malloc(sizeof(pid_t) * count_commands(shell));
+	if (!pids)
+		return (set_exit_status_failure(shell));
 	while (current)
 	{
 		if (!setup_pipe_if_needed(shell, exec_info, current))
 			return ;
-		create_child_process(shell, exec_info, current, &pids[i]);
-		// close_and_update_input(exec_info, current);
+		if (!create_child_process(shell, exec_info, current, &pids[i]))
+			return ;
 		current = current->next;
 		i++;
 	}
 	sigaction(SIGINT, NULL, &previous_int);
 	signal(SIGINT, SIG_IGN);
 	wait_for_all_children(pids, i, shell);
+	free(pids);
 	sigaction(SIGINT, &previous_int, NULL);
 }

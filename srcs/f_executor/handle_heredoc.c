@@ -24,7 +24,7 @@ bool	fprintf_to_tmpfile(t_minishell *shell, char *line, int fd)
 	return (true);
 }
 
-bool	readline_till_eof(t_minishell *shell, char *eof_name, int fd)
+bool	readline_till_eof(t_minishell *shell, const char *eof_name, int fd)
 {
 	char	*line;
 
@@ -35,11 +35,8 @@ bool	readline_till_eof(t_minishell *shell, char *eof_name, int fd)
 			return (false);
 		if (ft_strcmp(line, eof_name) == 0)
 			break ;
-		if (fd != -1)
-		{
-			if (!fprintf_to_tmpfile(shell, line, fd))
-				return (free(line), false);
-		}
+		if (!fprintf_to_tmpfile(shell, line, fd))
+			return (free(line), false);
 		free(line);
 	}
 	free(line);
@@ -72,15 +69,14 @@ char	*create_tmpfile_path(t_minishell *shell)
 
 bool	start_heredoc_process(t_minishell *shell, t_command *cmd, size_t i)
 {
-	int			fd;
-	size_t		i;
-	char		*line;
-	const char	*eof_name = cmd->infiles[i].filename;
+	int		fd;
+	char	*eof_name;
 
+	eof_name = cmd->infiles[i].filename;
 	cmd->infiles[i].filename = create_tmpfile_path(shell);
-	if (cmd->infiles[i].filename)
+	if (!cmd->infiles[i].filename)
 		return (set_exit_status_failure(shell), false);
-	fd = open(cmd->infiles[i].filename, O_RDWR | O_CREAT | O_EXCL, 0600);
+	fd = open(cmd->infiles[i].filename, O_RDWR | O_CREAT | O_TRUNC, 0644);
 	if (fd == -1)
 		return (set_exit_status_failure(shell), false);
 	if (!readline_till_eof(shell, eof_name, fd))
@@ -97,9 +93,9 @@ bool	handle_heredoc(t_minishell *shell)
 
 	current_cmd = shell->commands;
 	setup_signals_heredoc();
-	i = 0;
 	while (current_cmd)
 	{
+		i = 0;
 		while (i < current_cmd->infile_count)
 		{
 			if (current_cmd->infiles[i].type == TOKEN_HEREDOC)
@@ -113,6 +109,28 @@ bool	handle_heredoc(t_minishell *shell)
 	}
 	return (true);
 }
+
+void	clean_heredoc_tmpfile(t_minishell *shell)
+{
+	size_t		i;
+	t_command	*cmd;
+
+	i = 0;
+	cmd = shell->commands;
+	while (cmd)
+	{
+		while (i < cmd->infile_count)
+		{
+			if (cmd->infiles[i].type == TOKEN_HEREDOC)
+			{
+				unlink(cmd->infiles[i].filename);
+			}
+			i++;
+		}
+		cmd = cmd->next;
+	}
+}
+
 
 // ▗▄▄▖▗▄▄▄▖▗▄▄▖ ▗▄▄▄▖    ▗▖  ▗▖▗▄▄▄▖▗▄▄▖  ▗▄▄▖▗▄▄▄▖ ▗▄▖ ▗▖  ▗▖
 // ▐▌ ▐▌ █  ▐▌ ▐▌▐▌       ▐▌  ▐▌▐▌   ▐▌ ▐▌▐▌     █  ▐▌ ▐▌▐▛▚▖▐▌

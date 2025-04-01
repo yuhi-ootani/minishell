@@ -2,7 +2,6 @@
 
 #include "../../include/minishell.h"
 
-
 t_token_type	last_infile_type(t_command *cmd)
 {
 	if (cmd->infile_count == 0)
@@ -12,28 +11,25 @@ t_token_type	last_infile_type(t_command *cmd)
 
 bool	input_redirection(t_minishell *shell, t_command *cmd)
 {
-	int		infile_fd;
 	size_t	i;
 	char	*filename;
+	int		infile_fd;
 
 	i = 0;
 	while (i < cmd->infile_count)
 	{
-		if (cmd->infiles[i].type == TOKEN_REDIR_IN)
+		filename = cmd->infiles[i].filename;
+		infile_fd = open(filename, O_RDONLY);
+		if (infile_fd < 0)
 		{
-			filename = cmd->infiles[i].filename;
-			infile_fd = open(filename, O_RDONLY);
-			if (infile_fd < 0)
-			{
-				fprintf(stderr, "MINISHELL: %s: %s\n", filename,
-					strerror(errno));
-				shell->exit_status = EXIT_FAILURE;
-				return (false);
-			}
-			if (cmd->infile_count == i + 1)
-				dup2(infile_fd, STDIN_FILENO);
-			close(infile_fd);
+			ft_fprintf(STDERR_FILENO, "MINISHELL: %s: %s\n", filename,
+				strerror(errno));
+			shell->exit_status = EXIT_FAILURE;
+			return (false);
 		}
+		if (cmd->infile_count == i + 1)
+			dup2(infile_fd, STDIN_FILENO); // error check
+		close(infile_fd);
 		i++;
 	}
 	return (true);
@@ -91,8 +87,6 @@ bool	handle_redirection(t_minishell *shell, t_command *cmd)
 {
 	if (cmd->infile_count > 0)
 	{
-		if (!handle_heredoc(shell, cmd))
-			return (false);
 		if (!input_redirection(shell, cmd))
 			return (false);
 	}

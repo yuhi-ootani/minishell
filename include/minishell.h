@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/31 11:16:19 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/01 17:56:18 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,8 +137,8 @@ bool							input_redirection(t_minishell *shell,
 									t_command *cmd);
 bool							output_redirection(t_minishell *shell,
 									t_command *cmd);
-bool							handle_heredoc(t_minishell *shell,
-									t_command *cmd);
+bool							handle_heredoc(t_minishell *shell);
+void							clean_heredoc_tmpfile(t_minishell *shell);
 
 //  ▗▄▄▖▗▄▄▄▖ ▗▄▄▖▗▖  ▗▖ ▗▄▖ ▗▖
 // ▐▌     █  ▐▌   ▐▛▚▖▐▌▐▌ ▐▌▐▌
@@ -163,7 +163,9 @@ void							env_add_back_util(t_env **copied_env,
 									t_env *new_env);
 void							free_env(t_env *env);
 char							*strdup_except_quotes_util(const char *input);
-bool							get_env_value(t_minishell *shell		const char *name, char **result);
+bool							get_env_value(t_minishell *shell,
+									const char *name, char **result);
+void							set_exit_status_failure(t_minishell *shell);
 
 // ▗▄▄▄▖      ▗▖  ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖   ▗▖
 //   █        ▐▛▚▞▜▌  █  ▐▛▚▖▐▌  █  ▐▌   ▐▌ ▐▌▐▌   ▐▌   ▐▌
@@ -228,9 +230,9 @@ typedef struct s_exec
 }								t_exec;
 
 // prototype
-bool							command_executor(t_minishell *shell);
+void							command_executor(t_minishell *shell);
 char							**build_envp_array(t_minishell *shell);
-void							run_forked_commands(t_minishell *shell,
+void							run_commands_in_child(t_minishell *shell,
 									t_exec *exec_info);
 t_builtin_id					is_builtin(char *command_str);
 void							execute_child_process(t_minishell *shell,
@@ -248,7 +250,7 @@ int								ft_echo(t_minishell *shell);
 int								ft_cd(t_minishell *shell);
 int								ft_pwd(t_minishell *shell);
 int								ft_export(t_minishell *shell);
-int								sort_and_print_env(t_env **copied_env);
+bool							sort_and_print_env(t_env **copied_env);
 int								ft_unset(t_minishell *shell);
 int								ft_env(t_minishell *shell);
 int								ft_exit(t_minishell *shell);
