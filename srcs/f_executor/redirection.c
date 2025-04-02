@@ -85,16 +85,21 @@ bool	output_redirection(t_minishell *shell, t_command *cmd)
 
 bool	handle_redirection(t_minishell *shell, t_command *cmd)
 {
+	int	error;
+
+	error = 0;
 	if (cmd->infile_count > 0)
 	{
 		if (!input_redirection(shell, cmd))
-			return (false);
+			error++;
 	}
 	if (cmd->outfile_count > 0)
 	{
 		if (!output_redirection(shell, cmd))
-			return (false);
+			error++;
 	}
+	if (error > 0)
+		return (false);
 	return (true);
 }
 // int	main(int argc, char **argv, char **envp)

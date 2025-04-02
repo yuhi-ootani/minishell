@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:44:02 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/30 21:44:47 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/02 14:24:13 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	ft_atoi_long(const char *str, bool *error)
 	return ((long long)(num * neg));
 }
 
-int	more_than_two_arguments(t_minishell *shell)
+bool	more_than_two_arguments(t_minishell *shell)
 {
 	t_command	*cmd;
 
@@ -63,9 +63,9 @@ int	more_than_two_arguments(t_minishell *shell)
 	{
 		ft_fprintf(STDERR_FILENO, "exit: too many arguments\n");
 		shell->exit_status = 2;
-		return (1);
+		return (true);
 	}
-	return (0);
+	return (false);
 }
 
 long long	validate_and_exit_if_invalid(t_minishell *shell)
@@ -101,7 +101,6 @@ int	ft_exit(t_minishell *shell)
 	t_command	*cmd;
 
 	cmd = shell->commands;
-	printf("exit\n");
 	if (more_than_two_arguments(shell))
 		return (EXIT_FAILURE);
 	if (!cmd->args[1])
@@ -112,6 +111,7 @@ int	ft_exit(t_minishell *shell)
 		exit_code = validate_and_exit_if_invalid(shell);
 	shell->exit_status = exit_code % 256;
 	free_shell(shell);
+	printf("exit\n");
 	exit(exit_code);
 	return (EXIT_SUCCESS);
 }

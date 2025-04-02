@@ -40,37 +40,6 @@ static void	wait_for_all_children(pid_t *pids, int count, t_minishell *shell)
 
 // todo
 
-static bool	create_child_process(t_minishell *shell, t_exec *exec_info,
-		t_command *cmd, pid_t *pid)
-{
-	*pid = fork();
-	if (*pid == 0)
-	{
-		setup_signals_child();
-		execute_child_process(shell, exec_info, cmd);
-	}
-	else if (*pid < 0)
-	{
-		shell->exit_status = 0;
-		return (false);
-	}
-	return (true);
-}
-
-bool	setup_pipe_if_needed(t_minishell *shell, t_exec *exec_info,
-		t_command *cmd)
-{
-	if (cmd->next)
-	{
-		if (pipe(exec_info->pipe_fds) < 0)
-		{
-			shell->exit_status = EXIT_FAILURE;
-			return (false);
-		}
-	}
-	return (true);
-}
-
 size_t	count_commands(t_minishell *shell)
 {
 	t_command	*cmd;
@@ -86,25 +55,45 @@ size_t	count_commands(t_minishell *shell)
 	return (i);
 }
 
+bool	setup_child_process(t_minishell *shell, t_exec *exec_info,
+		t_command *cmd, pid_t *pid)
+{
+	if (cmd->next)
+	{
+		if (pipe(exec_info->pipe_fds) < 0)
+		{
+			shell->exit_status = EXIT_FAILURE;
+			return (false);
+		}
+	}
+	*pid = fork();
+	if (*pid < 0)
+	{
+		shell->exit_status = EXIT_FAILURE;
+		return (false);
+	}
+	return (true);
+}
+
 void	run_commands_in_child(t_minishell *shell, t_exec *exec_info)
 {
 	int					i;
 	pid_t				*pids;
-	t_command			*current;
+	t_command			*current_cmd;
 	struct sigaction	previous_int;
 
 	i = 0;
-	current = shell->commands;
+	current_cmd = shell->commands;
 	pids = malloc(sizeof(pid_t) * count_commands(shell));
 	if (!pids)
 		return (set_exit_status_failure(shell));
-	while (current)
+	while (current_cmd)
 	{
-		if (!setup_pipe_if_needed(shell, exec_info, current))
+		if (!setup_child_process(shell, exec_info, current_cmd, &pids[i]))
 			return ;
-		if (!create_child_process(shell, exec_info, current, &pids[i]))
-			return ;
-		current = current->next;
+		if (pids[i] == 0)
+			execute_child_process(shell, exec_info, current_cmd);
+		current_cmd = current_cmd->next;
 		i++;
 	}
 	sigaction(SIGINT, NULL, &previous_int);

@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/04/01 17:56:18 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/02 13:58:12 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -250,7 +250,7 @@ int								ft_echo(t_minishell *shell);
 int								ft_cd(t_minishell *shell);
 int								ft_pwd(t_minishell *shell);
 int								ft_export(t_minishell *shell);
-bool							sort_and_print_env(t_env **copied_env);
+int								sort_and_print_env(t_env **copied_env);
 int								ft_unset(t_minishell *shell);
 int								ft_env(t_minishell *shell);
 int								ft_exit(t_minishell *shell);

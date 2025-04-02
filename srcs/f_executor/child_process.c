@@ -116,7 +116,7 @@ void	execute_external_command(t_minishell *shell, t_command *cmd)
 	}
 }
 
-void	setup_infile(t_minishell *shell, t_exec *exec_info,
+bool	setup_infile(t_minishell *shell, t_exec *exec_info,
 		t_command *current_cmd)
 {
 	if (exec_info->input_fd != STDIN_FILENO)
@@ -130,10 +130,11 @@ void	setup_infile(t_minishell *shell, t_exec *exec_info,
 		exec_info->input_fd = -1;
 	}
 	if (!input_redirection(shell, current_cmd))
-		cleanup_and_exit_failure(shell, exec_info);
+		return (false);
+	return (true);
 }
 
-void	setup_outfile(t_minishell *shell, t_exec *exec_info,
+bool	setup_outfile(t_minishell *shell, t_exec *exec_info,
 		t_command *current_cmd)
 {
 	if (current_cmd->next)
@@ -144,13 +145,12 @@ void	setup_outfile(t_minishell *shell, t_exec *exec_info,
 				cleanup_and_exit_failure(shell, exec_info);
 		}
 		exec_info->input_fd = exec_info->pipe_fds[0];
-		// close(exec_info->pipe_fds[0]);
-		// exec_info->pipe_fds[0] = -1;
 		close(exec_info->pipe_fds[1]);
 		exec_info->pipe_fds[1] = -1;
 	}
 	if (!output_redirection(shell, current_cmd))
-		cleanup_and_exit_failure(shell, exec_info);
+		return (false);
+	return (true);
 }
 
 void	close_unsed_fds(t_minishell *shell)
@@ -167,15 +167,17 @@ void	execute_child_process(t_minishell *shell, t_exec *exec_info,
 	int	exit_status;
 
 	exit_status = 0;
+	setup_signals_child();
 	close_unsed_fds(shell);
-	setup_infile(shell, exec_info, current_cmd);
-	setup_outfile(shell, exec_info, current_cmd);
+	if (!setup_infile(shell, exec_info, current_cmd) || !setup_outfile(shell,
+			exec_info, current_cmd))
+		cleanup_and_exit_failure(shell, exec_info);
 	if (!current_cmd->args || !current_cmd->args[0][0])
 	{
 		free_shell(shell);
 		exit(EXIT_SUCCESS);
 	}
-	if (current_cmd->args && current_cmd->args[0])
+	if (current_cmd->args[0])
 		exec_info->builtin_id = is_builtin(current_cmd->args[0]);
 	if (exec_info->builtin_id != NOT_BUILTIN)
 	{
