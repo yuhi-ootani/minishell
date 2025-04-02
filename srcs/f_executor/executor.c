@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/04/01 20:24:02 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/02 16:11:51 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ t_builtin_id	is_builtin(char *command_str)
 static void	init_exec_info(t_exec *exec_info)
 {
 	exec_info->input_fd = STDIN_FILENO;
+	exec_info->pipe_fds[0] = -1;
+	exec_info->pipe_fds[1] = -1;
 	exec_info->builtin_id = NOT_BUILTIN;
 	exec_info->builtins[FT_ECHO] = ft_echo;
 	exec_info->builtins[FT_CD] = ft_cd;
@@ -54,6 +56,7 @@ static void	init_exec_info(t_exec *exec_info)
 	exec_info->builtins[FT_UNSET] = ft_unset;
 	exec_info->builtins[FT_ENV] = ft_env;
 	exec_info->builtins[FT_EXIT] = ft_exit;
+	exec_info->pid_array = NULL;
 }
 
 bool	is_executed_in_parent(t_minishell *shell, t_exec *exec_info)

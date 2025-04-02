@@ -15,12 +15,12 @@ bool	fprintf_to_tmpfile(t_minishell *shell, char *line, int fd)
 		line = tmp;
 		tmp = strdup_except_quotes_util(line);
 		if (!tmp)
-			return (set_exit_status_failure(shell), false);
+			return (set_exit_failure(shell), false);
 		free(line);
 		line = tmp;
 	}
 	if (ft_fprintf(fd, "%s\n", line) == -1)
-		return (set_exit_status_failure(shell), false);
+		return (set_exit_failure(shell), false);
 	return (true);
 }
 
@@ -75,10 +75,10 @@ bool	start_heredoc_process(t_minishell *shell, t_command *cmd, size_t i)
 	eof_name = cmd->infiles[i].filename;
 	cmd->infiles[i].filename = create_tmpfile_path(shell);
 	if (!cmd->infiles[i].filename)
-		return (set_exit_status_failure(shell), false);
+		return (set_exit_failure(shell), false);
 	fd = open(cmd->infiles[i].filename, O_RDWR | O_CREAT | O_TRUNC, 0644);
 	if (fd == -1)
-		return (set_exit_status_failure(shell), false);
+		return (set_exit_failure(shell), false);
 	if (!readline_till_eof(shell, eof_name, fd))
 		return (close(fd), free(eof_name), false);
 	close(fd);

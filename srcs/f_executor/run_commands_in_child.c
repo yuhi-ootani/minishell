@@ -22,17 +22,6 @@ static void	wait_for_all_children(pid_t *pids, int count, t_minishell *shell)
 	}
 }
 
-// static void	close_and_update_input(t_exec *exec_info, t_command *cmd)
-// {
-// 	if (exec_info->input_fd != STDIN_FILENO)
-// 		close(exec_info->input_fd);
-// 	if (cmd->next)
-// 	{
-// 		close(exec_info->pipe_fds[1]);
-// 		exec_info->input_fd = exec_info->pipe_fds[0];
-// 	}
-// }
-
 // // WEFEXITED turns true if the code was ended by exit return
 // // WEXITSTATUS holds the number exit give
 // // WIFSIGNALED turns true if the code was ended by a signl
@@ -75,30 +64,42 @@ bool	setup_child_process(t_minishell *shell, t_exec *exec_info,
 	return (true);
 }
 
+static void	close_and_update_input(t_exec *exec_info, t_command *cmd)
+{
+	if (exec_info->input_fd != STDIN_FILENO)
+		close(exec_info->input_fd);
+	if (cmd->next)
+	{
+		close(exec_info->pipe_fds[1]);
+		exec_info->input_fd = exec_info->pipe_fds[0];
+	}
+}
+
 void	run_commands_in_child(t_minishell *shell, t_exec *exec_info)
 {
 	int					i;
-	pid_t				*pids;
 	t_command			*current_cmd;
 	struct sigaction	previous_int;
 
 	i = 0;
 	current_cmd = shell->commands;
-	pids = malloc(sizeof(pid_t) * count_commands(shell));
-	if (!pids)
-		return (set_exit_status_failure(shell));
+	exec_info->pid_array = malloc(sizeof(pid_t) * count_commands(shell));
+	if (!exec_info->pid_array)
+		return (set_exit_failure(shell));
 	while (current_cmd)
 	{
-		if (!setup_child_process(shell, exec_info, current_cmd, &pids[i]))
-			return ;
-		if (pids[i] == 0)
+		if (!setup_child_process(shell, exec_info, current_cmd,
+				&exec_info->pid_array[i]))
+			break ;
+		if (exec_info->pid_array[i] == 0)
 			execute_child_process(shell, exec_info, current_cmd);
+		close_and_update_input(exec_info, current_cmd);
 		current_cmd = current_cmd->next;
 		i++;
 	}
 	sigaction(SIGINT, NULL, &previous_int);
 	signal(SIGINT, SIG_IGN);
-	wait_for_all_children(pids, i, shell);
-	free(pids);
+	wait_for_all_children(exec_info->pid_array, i, shell);
+	free(exec_info->pid_array);
 	sigaction(SIGINT, &previous_int, NULL);
 }

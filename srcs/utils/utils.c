@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 10:17:05 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/01 17:21:16 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/02 20:30:55 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,7 @@ bool	get_env_value(t_minishell *shell, const char *name, char **result)
 	return (true);
 }
 
-void	set_exit_status_failure(t_minishell *shell)
+void	set_exit_failure(t_minishell *shell)
 {
 	shell->exit_status = EXIT_FAILURE;
 }

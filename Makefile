@@ -6,7 +6,7 @@
 #    By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 11:52:00 by otaniyuhi         #+#    #+#              #
-#    Updated: 2025/04/01 17:26:07 by oyuhi            ###   ########.fr        #
+#    Updated: 2025/04/02 22:42:42 by oyuhi            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,7 +39,7 @@ SRCS = $(MAIN_DIR)/main.c $(MAIN_DIR)/main_init.c  \
 	   $(PARSER_DIR)/parser.c $(PARSER_DIR)/check_syntax.c $(PARSER_DIR)/create_command.c $(PARSER_DIR)/set_command_data.c \
 	   $(EXPAND_DIR)/expand.c $(EXPAND_DIR)/word_spliting.c \
        $(SIGNALS_DIR)/signals.c \
-	   $(BUILTINS_DIR)/ft_cd.c $(BUILTINS_DIR)/ft_echo.c $(BUILTINS_DIR)/ft_env.c $(BUILTINS_DIR)/ft_exit.c $(BUILTINS_DIR)/ft_export.c $(BUILTINS_DIR)/ft_export_sort_print.c $(BUILTINS_DIR)/ft_unset.c $(BUILTINS_DIR)/ft_pwd.c \
+	   $(BUILTINS_DIR)/ft_cd.c $(BUILTINS_DIR)/ft_echo.c $(BUILTINS_DIR)/ft_env.c $(BUILTINS_DIR)/ft_exit.c $(BUILTINS_DIR)/ft_export_main.c $(BUILTINS_DIR)/ft_export_sort_print.c $(BUILTINS_DIR)/ft_export_set_env.c $(BUILTINS_DIR)/ft_unset.c $(BUILTINS_DIR)/ft_pwd.c \
 	   $(UTILS_DIR)/utils.c $(UTILS_DIR)/debug_utils.c \
 	   $(EXECUTOR_DIR)/executor.c $(EXECUTOR_DIR)/redirection.c $(EXECUTOR_DIR)/build_envp_array.c $(EXECUTOR_DIR)/child_process.c  $(EXECUTOR_DIR)/run_commands_in_child.c $(EXECUTOR_DIR)/handle_heredoc.c \
 	   $(FREE_DIR)/free.c \

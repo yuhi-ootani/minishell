@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:44:32 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/30 20:42:23 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/02 22:08:33 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,23 +29,24 @@ static void	remove_target_env(t_env **copied_env, t_env *prev_env,
 
 int	ft_unset(t_minishell *shell)
 {
-	size_t		i;
-	char		*var_name;
-	t_env		*prev_env;
-	t_env		*tmp_env;
-	t_command	*cmd;
+	size_t	i;
+	char	*var_name;
+	t_env	*prev_env;
+	t_env	*tmp_env;
 
 	i = 1;
-	cmd = shell->commands;
-	while (cmd->args[i])
+	while (shell->commands->args[i])
 	{
-		var_name = cmd->args[i];
+		var_name = shell->commands->args[i];
 		prev_env = NULL;
 		tmp_env = shell->env;
 		while (tmp_env)
 		{
 			if (ft_strcmp(tmp_env->name, var_name) == 0)
+			{
 				remove_target_env(&shell->env, prev_env, tmp_env);
+				break ;
+			}
 			prev_env = tmp_env;
 			tmp_env = tmp_env->next;
 		}

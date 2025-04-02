@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 13:37:45 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/30 15:39:05 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/02 21:24:30 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,10 @@ void	free_commands(t_command *head)
 
 void	free_shell(t_minishell *shell)
 {
-	close(shell->original_stdout);
-	close(shell->original_stdin);
+	if (shell->original_stdout > -1)
+		close(shell->original_stdout);
+	if (shell->original_stdin > -1)
+		close(shell->original_stdin);
 	free_copied_env(shell->env);
 	if (shell->input)
 		free(shell->input);

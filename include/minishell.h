@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/04/02 13:58:12 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/02 22:42:03 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,7 +165,7 @@ void							free_env(t_env *env);
 char							*strdup_except_quotes_util(const char *input);
 bool							get_env_value(t_minishell *shell,
 									const char *name, char **result);
-void							set_exit_status_failure(t_minishell *shell);
+void							set_exit_failure(t_minishell *shell);
 
 // ▗▄▄▄▖      ▗▖  ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖   ▗▖
 //   █        ▐▛▚▞▜▌  █  ▐▛▚▖▐▌  █  ▐▌   ▐▌ ▐▌▐▌   ▐▌   ▐▌
@@ -227,18 +227,20 @@ typedef struct s_exec
 	int							pipe_fds[2];
 	t_builtin_id				builtin_id;
 	int							(*builtins[NUM_BUILTINS])(t_minishell *);
+	pid_t						*pid_array;
 }								t_exec;
 
 // prototype
 void							command_executor(t_minishell *shell);
-char							**build_envp_array(t_minishell *shell);
+char							**build_envp_array(t_minishell *shell,
+									t_exec *exec_info);
 void							run_commands_in_child(t_minishell *shell,
 									t_exec *exec_info);
 t_builtin_id					is_builtin(char *command_str);
 void							execute_child_process(t_minishell *shell,
 									t_exec *exec_info, t_command *cmd);
-void							cleanup_and_exit_failure(t_minishell *shell,
-									t_exec *exec_info);
+void							cleanup_and_exit_child(t_minishell *shell,
+									t_exec *exec_info, int exit_status);
 
 // ▗▄▄▖ ▗▖ ▗▖▗▄▄▄▖▗▖ ▗▄▄▄▖▗▄▄▄▖▗▖  ▗▖ ▗▄▄▖
 // ▐▌ ▐▌▐▌ ▐▌  █  ▐▌   █    █  ▐▛▚▖▐▌▐▌
@@ -249,11 +251,14 @@ void							cleanup_and_exit_failure(t_minishell *shell,
 int								ft_echo(t_minishell *shell);
 int								ft_cd(t_minishell *shell);
 int								ft_pwd(t_minishell *shell);
-int								ft_export(t_minishell *shell);
-int								sort_and_print_env(t_env **copied_env);
 int								ft_unset(t_minishell *shell);
 int								ft_env(t_minishell *shell);
 int								ft_exit(t_minishell *shell);
+int								ft_export(t_minishell *shell);
+int								sort_and_print_env(t_env **copied_env);
+int								set_env_value(t_env *copied_env,
+									const char *new_name, const char *new_value,
+									bool append);
 
 typedef enum e_exit_status
 {

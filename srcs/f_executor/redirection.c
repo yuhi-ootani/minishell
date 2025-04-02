@@ -24,11 +24,13 @@ bool	input_redirection(t_minishell *shell, t_command *cmd)
 		{
 			ft_fprintf(STDERR_FILENO, "MINISHELL: %s: %s\n", filename,
 				strerror(errno));
-			shell->exit_status = EXIT_FAILURE;
-			return (false);
+			return (set_exit_failure(shell), close(infile_fd), false);
 		}
 		if (cmd->infile_count == i + 1)
-			dup2(infile_fd, STDIN_FILENO); // error check
+		{
+			if (dup2(infile_fd, STDIN_FILENO) == -1)
+				return (set_exit_failure(shell), close(infile_fd), false);
+		}
 		close(infile_fd);
 		i++;
 	}
@@ -72,11 +74,13 @@ bool	output_redirection(t_minishell *shell, t_command *cmd)
 		{
 			ft_fprintf(STDERR_FILENO, "MINISHELL: %s: %s\n", filename,
 				strerror(errno));
-			shell->exit_status = EXIT_FAILURE;
-			return (false);
+			return (set_exit_failure(shell), close(outfile_fd), false);
 		}
 		if (i + 1 == cmd->outfile_count)
-			dup2(outfile_fd, STDOUT_FILENO);
+		{
+			if (dup2(outfile_fd, STDOUT_FILENO) == -1)
+				return (set_exit_failure(shell), close(outfile_fd), false);
+		}
 		close(outfile_fd);
 		i++;
 	}
