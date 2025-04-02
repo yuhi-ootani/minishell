@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:44:02 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/01 19:26:51 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/02 13:37:04 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int	more_than_two_arguments(t_minishell *shell)
 	cmd = shell->commands;
 	if (cmd->args[1] && cmd->args[2])
 	{
-		ft_fprintf(2, "exit: too many arguments\n");
+		ft_fprintf(STDERR_FILENO, "exit: too many arguments\n");
 		shell->exit_status = 2;
 		return (1);
 	}
@@ -73,14 +73,15 @@ void	handle_exit_status(t_minishell *shell, t_command *cmd,
 {
 	if (error)
 	{
-		ft_fprintf(2, "exit: %s: numeric argument required\n", cmd->args[1]);
+		ft_fprintf(STDERR_FILENO, "exit: %s: numeric argument required\n",
+			cmd->args[1]);
 		shell->exit_status = 2;
 		free_shell(shell);
 		exit(2);
 	}
 	if (cmd->args[2])
 	{
-		ft_fprintf(2, "exit: too many arguments\n");
+		ft_fprintf(STDERR_FILENO, "exit: too many arguments\n");
 		shell->exit_status = 1;
 		return ;
 	}
@@ -99,7 +100,8 @@ void	ft_exit(t_minishell *shell)
 	printf("exit\n");
 	if (cmd->args[1] && !ft_isnumber(cmd->args[1]))
 	{
-		ft_fprintf(2, "exit: %s: numeric argument required\n", cmd->args[1]);
+		ft_fprintf(STDERR_FILENO, "exit: %s: numeric argument required\n",
+			cmd->args[1]);
 		shell->exit_status = 2;
 		free_shell(shell);
 		exit(2);

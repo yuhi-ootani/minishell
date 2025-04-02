@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/04/01 15:18:36 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/02 13:34:07 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	execute_external_cmd(t_minishell *shell, t_command *cmd)
 		cmd_path = search_cmd_in_path(shell, cmd->args[0]);
 		if (!cmd_path)
 		{
-			ft_fprintf(2, "%s: command not found\n", cmd->args[0]);
+			ft_fprintf(STDERR_FILENO, "%s: command not found\n", cmd->args[0]);
 			(shell->exit_status) = 127; // changed
 			exit(127);
 		}
@@ -64,7 +64,7 @@ void	execute_external_cmd(t_minishell *shell, t_command *cmd)
 	if (execve(cmd_path, cmd->args, envp_array) == -1)
 	{
 		// free envp
-		ft_fprintf(2, "%s: command not found\n", cmd->args[0]);
+		ft_fprintf(STDERR_FILENO, "%s: command not found\n", cmd->args[0]);
 		free(cmd_path);
 		exit(EXIT_FAILURE);
 	}

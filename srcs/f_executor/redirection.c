@@ -126,7 +126,7 @@ bool	input_redirection(t_minishell *shell, t_command *cmd)
 			infile_fd = open(filename, O_RDONLY);
 			if (infile_fd < 0)
 			{
-				fprintf(stderr, "MINISHELL: %s: %s\n", filename,
+				ft_fprintf(STDERR_FILENO, "MINISHELL: %s: %s\n", filename,
 					strerror(errno));
 				shell->exit_status = EXIT_FAILURE;
 				return (false);
