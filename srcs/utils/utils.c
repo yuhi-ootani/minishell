@@ -6,11 +6,25 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 10:17:05 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/03 10:36:09 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/03 14:27:21 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+char	*remove_quotes(t_minishell *shell, const char *input)
+{
+	char	*result;
+
+	result = (char *)ft_calloc(sizeof(char), ft_strlen(input) + 1);
+	if (!result)
+	{
+		shell->exit_status = EXIT_FAILURE;
+		return (NULL);
+	}
+	remove_quotes_and_copy(result, input);
+	return (result);
+}
 
 void	strcpy_except_quotes(char *dst, const char *src)
 {
@@ -47,16 +61,6 @@ char	*strdup_except_quotes_util(const char *input)
 	strcpy_except_quotes(result, input);
 	return (result);
 }
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 size_t	count_env_util(t_env *env)
 {

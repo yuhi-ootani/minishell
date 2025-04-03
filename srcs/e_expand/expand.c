@@ -3,170 +3,58 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 11:09:19 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/30 19:33:38 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/02 18:57:58 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-char	*get_env_name(t_minishell *shell, const char *input)
+char	**create_expanded_args(t_minishell *shell, t_command *cmd)
 {
-	size_t	len;
-	char	*name;
+	size_t	i;
+	char	**result;
+	char	**expanded;
+	char	**joined_array;
 
-	if (!input)
-		return (NULL);
-	if (ft_isalpha(input[0]) || input[0] == '_')
-		len = 1;
-	else
-		return (NULL);
-	while (ft_isalnum(input[len]) || input[len] == '_')
-		len++;
-	name = (char *)ft_calloc((len + 1), sizeof(char));
-	if (!name)
+	result = NULL;
+	i = 0;
+	while (cmd->args && cmd->args[i])
 	{
-		shell->exit_status = EXIT_FAILURE;
-		return (NULL);
+		expanded = expander(shell, cmd->args[i]);
+		if (!expanded)
+			return (NULL);
+		joined_array = ft_array_join(result, expanded);
+		ft_array_free(expanded);
+		ft_array_free(result);
+		result = joined_array;
+		if (!result)
+			return (NULL);
+		i++;
 	}
-	if (len > 0)
-		ft_strncpy(name, input, len);
-	name[len] = '\0';
-	return (name);
+	return (result);
 }
 
-static bool	append_to_buffer(t_minishell *shell, t_expanded_str *expanded_str,
-		const char *src, size_t src_len)
+bool	expand_all_cmd_args(t_minishell *shell)
 {
-	char	*new_buffer;
-	size_t	old_size;
-	size_t	new_size;
+	t_command	*current;
+	char		**new_args;
 
-	if (expanded_str->index + src_len >= expanded_str->size)
+	current = shell->commands;
+	while (current)
 	{
-		old_size = expanded_str->size;
-		new_size = expanded_str->index + src_len + 1;
-		new_buffer = ft_realloc(expanded_str->buffer, old_size, new_size);
-		if (!new_buffer)
+		if (current->args && current->args[0])
 		{
-			shell->exit_status = EXIT_FAILURE;
-			return (false);
+			new_args = create_expanded_args(shell, current);
+			if (!new_args)
+				return (false);
+			ft_array_free(current->args);
+			current->args = new_args;
 		}
-		expanded_str->buffer = new_buffer;
-		expanded_str->size = new_size;
+		current = current->next;
 	}
-	ft_memcpy(expanded_str->buffer + expanded_str->index, src, src_len);
-	expanded_str->index += src_len;
-	expanded_str->buffer[expanded_str->index] = '\0';
-	return (true);
-}
-
-bool	append_one_char(t_minishell *shell, t_expanded_str *s_expanded_str,
-		const char *src_input, size_t *i)
-{
-	if (src_input[*i] == '\'' && !s_expanded_str->in_double_quote)
-	{
-		s_expanded_str->in_single_quote = !s_expanded_str->in_single_quote;
-	}
-	else if (src_input[*i] == '"' && !s_expanded_str->in_single_quote)
-	{
-		s_expanded_str->in_double_quote = !s_expanded_str->in_double_quote;
-	}
-	if (!append_to_buffer(shell, s_expanded_str, &src_input[*i], 1))
-		return (false);
-	(*i)++;
-	return (true);
-}
-bool	append_env_value(t_minishell *shell, t_expanded_str *expanded_str,
-		const char *src_input, size_t *i)
-{
-	size_t	name_len;
-	char	*name;
-	char	*value;
-
-	name = get_env_name(shell, src_input + *i);
-	if (!name)
-		return (false);
-	name_len = ft_strlen(name);
-	*i += name_len;
-	if (!get_env_value(shell, name, &value))
-	{
-		free(name);
-		return (false);
-	}
-	free(name);
-	if (value)
-	{
-		if (!append_to_buffer(shell, expanded_str, value, ft_strlen(value)))
-		{
-			free(value);
-			return (false);
-		}
-		free(value);
-	}
-	return (true);
-}
-
-static bool	append_exit_status(t_minishell *shell, t_expanded_str *expanded_str)
-{
-	char	*exit_status;
-
-	exit_status = ft_itoa(shell->exit_status);
-	if (!exit_status)
-	{
-		shell->exit_status = EXIT_FAILURE;
-		return (false);
-	}
-	if (!append_to_buffer(shell, expanded_str, exit_status,
-			ft_strlen(exit_status)))
-	{
-		free(exit_status);
-		return (false);
-	}
-	free(exit_status);
-	return (true);
-}
-
-bool	is_printable_dollar(t_expanded_str *expanded_str, const char *src_input,
-		size_t i)
-{
-	if (src_input[i] == '\0')
-		return (true);
-	else if (expanded_str->in_single_quote)
-		return (true);
-	else if (!expanded_str->in_double_quote && src_input[i] != '\0')
-		return (false);
-	else if (expanded_str->in_double_quote && (ft_isalnum(src_input[i])
-			|| src_input[i] == '_' || src_input[i] == '?'))
-		return (false);
-	else
-		return (true);
-}
-
-bool	is_quote_or_delimiter_char(char c)
-{
-	return (c == '\'' || c == '"' || ft_strchr(DELIMITERS, c));
-}
-
-bool	handle_dollar(t_minishell *shell, t_expanded_str *expanded_str,
-		const char *src_input, size_t *i)
-{
-	if (is_printable_dollar(expanded_str, src_input, *i))
-		return (append_to_buffer(shell, expanded_str, "$", 1));
-	else if (src_input[*i] == '?')
-	{
-		(*i)++;
-		return (append_exit_status(shell, expanded_str));
-	}
-	else if (ft_isalpha(src_input[*i]) || src_input[*i] == '_')
-	{
-		return (append_env_value(shell, expanded_str, src_input, i));
-	}
-	else if (is_quote_or_delimiter_char(src_input[*i]))
-		return (true);
-	(*i)++;
 	return (true);
 }
 
@@ -213,7 +101,26 @@ char	*get_expanded_str(t_minishell *shell, const char *src_input)
 	return (expanded_str.buffer);
 }
 
-// used in 2 functions
+char	**expander(t_minishell *shell, char *arg)
+{
+	char	*expanded_str;
+	char	**result;
+
+	expanded_str = get_expanded_str(shell, arg);
+	if (!expanded_str)
+		return (NULL);
+	result = word_splitting(shell, expanded_str);
+	free(expanded_str);
+	if (!result)
+		return (NULL);
+	if (!quote_removal_args(shell, result))
+	{
+		ft_array_free(result);
+		return (NULL);
+	}
+	return (result);
+}
+//used in 2 functions
 
 // static int	append_to_buffer(t_expanded_str *expanded_str, const char *src,
 // 		size_t src_len)

@@ -106,6 +106,7 @@ bool	handle_redirection(t_minishell *shell, t_command *cmd)
 		return (false);
 	return (true);
 }
+
 // int	main(int argc, char **argv, char **envp)
 // {
 // 	const char *filename = "output.txt";

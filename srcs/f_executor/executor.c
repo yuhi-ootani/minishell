@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/04/02 16:11:51 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/03 14:26:55 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,21 +23,21 @@ static void	run_single_builtin_in_parent(t_minishell *shell, t_exec *exec_info)
 	return ;
 }
 
-t_builtin_id	is_builtin(char *command_str)
+t_builtin_id	is_builtin(char *cmd_str)
 {
-	if (ft_strcmp(command_str, "echo") == 0)
+	if (ft_strcmp(cmd_str, "echo") == 0)
 		return (FT_ECHO);
-	else if (ft_strcmp(command_str, "cd") == 0)
+	else if (ft_strcmp(cmd_str, "cd") == 0)
 		return (FT_CD);
-	else if (ft_strcmp(command_str, "pwd") == 0)
+	else if (ft_strcmp(cmd_str, "pwd") == 0)
 		return (FT_PWD);
-	else if (ft_strcmp(command_str, "export") == 0)
+	else if (ft_strcmp(cmd_str, "export") == 0)
 		return (FT_EXPORT);
-	else if (ft_strcmp(command_str, "unset") == 0)
+	else if (ft_strcmp(cmd_str, "unset") == 0)
 		return (FT_UNSET);
-	else if (ft_strcmp(command_str, "env") == 0)
+	else if (ft_strcmp(cmd_str, "env") == 0)
 		return (FT_ENV);
-	else if (ft_strcmp(command_str, "exit") == 0)
+	else if (ft_strcmp(cmd_str, "exit") == 0)
 		return (FT_EXIT);
 	else
 		return (NOT_BUILTIN);
@@ -73,7 +73,7 @@ bool	is_executed_in_parent(t_minishell *shell, t_exec *exec_info)
 	return (false);
 }
 
-void	command_executor(t_minishell *shell)
+void	cmd_executor(t_minishell *shell)
 {
 	t_exec	exec_info;
 
@@ -95,7 +95,7 @@ void	command_executor(t_minishell *shell)
 
 // #define MAX_COMMANDS 1024
 
-// void	single_command_executor(t_command *cmd, char **envp)
+// void	single_cmd_executor(t_command *cmd, char **envp)
 // {
 // 	pid_t			pids[MAX_COMMANDS];
 // 	size_t			i;
@@ -143,7 +143,7 @@ void	command_executor(t_minishell *shell)
 // 			if (builtin_index != NOT_BUILTIN)
 // 				builtin_funcs[builtin_index](cmd); // Execute the function
 // 			else
-// 				execute_external_command(cmd, envp);
+// 				execute_external_cmd(cmd, envp);
 // 		}
 // 		else if (pids[i] < 0)
 // 		{
@@ -168,7 +168,7 @@ void	command_executor(t_minishell *shell)
 
 // /*yuyu code with my signals, long version */
 
-// void	run_forked_commands(t_minishell *shell, t_exec *exec_info)
+// void	run_forked_cmds(t_minishell *shell, t_exec *exec_info)
 // {
 // 	int					i;
 // 	struct sigaction	old_int;

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lexer.c                                            :+:      :+:    :+:   */
+/*   tokenization.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 14:32:39 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/30 14:29:31 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/01 17:46:19 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ bool	add_pipe_token(t_minishell *shell, size_t *i, t_token **tokens)
 	return (add_token(tokens, create_token(shell, TOKEN_PIPE, "|")));
 }
 
-bool	add_EOF_token(t_minishell *shell, t_token **tokens)
+bool	add_eof_token(t_minishell *shell, t_token **tokens)
 {
 	return (add_token(tokens, create_token(shell, TOKEN_EOF, NULL)));
 }
@@ -57,7 +57,6 @@ void	skip_whitespace(const char *input, size_t *i)
 	while (input[*i] && isspace(input[*i]))
 		(*i)++;
 }
-
 
 t_token	*tokenizer(t_minishell *shell)
 {
@@ -81,7 +80,7 @@ t_token	*tokenizer(t_minishell *shell)
 			malloc_fail = add_word_token(shell, &i, &tokens);
 	}
 	if (!malloc_fail)
-		malloc_fail = add_EOF_token(shell, &tokens);
+		malloc_fail = add_eof_token(shell, &tokens);
 	if (malloc_fail)
 		return (free_tokens(tokens), NULL);
 	return (tokens);
