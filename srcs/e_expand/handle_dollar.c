@@ -3,29 +3,58 @@
 /*                                                        :::      ::::::::   */
 /*   handle_dollar.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 16:37:29 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/03 12:02:01 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/03 15:17:45 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-bool	is_printable_dollar(t_expanded_str *expanded_str, const char *src_input,
-		size_t i)
+bool	append_exit_status(t_minishell *shell, t_expanded_str *expanded_str)
 {
-	if (src_input[i] == '\0')
-		return (true);
-	else if (expanded_str->in_single_quote)
-		return (true);
-	else if (!expanded_str->in_double_quote && src_input[i] != '\0')
+	char	*exit_status;
+
+	exit_status = ft_itoa(shell->exit_status);
+	if (!exit_status)
+	{
+		shell->exit_status = EXIT_FAILURE;
 		return (false);
-	else if (expanded_str->in_double_quote && (ft_isalnum(src_input[i])
-			|| src_input[i] == '_' || src_input[i] == '?'))
+	}
+	if (!append_to_buffer(shell, expanded_str, exit_status,
+			ft_strlen(exit_status)))
+	{
+		free(exit_status);
 		return (false);
+	}
+	free(exit_status);
+	return (true);
+}
+
+char	*get_env_name(t_minishell *shell, const char *input)
+{
+	size_t	len;
+	char	*name;
+
+	if (!input)
+		return (NULL);
+	if (ft_isalpha(input[0]) || input[0] == '_')
+		len = 1;
 	else
-		return (true);
+		return (NULL);
+	while (ft_isalnum(input[len]) || input[len] == '_')
+		len++;
+	name = (char *)ft_calloc((len + 1), sizeof(char));
+	if (!name)
+	{
+		shell->exit_status = EXIT_FAILURE;
+		return (NULL);
+	}
+	if (len > 0)
+		ft_strncpy(name, input, len);
+	name[len] = '\0';
+	return (name);
 }
 
 bool	append_env_value(t_minishell *shell, t_expanded_str *expanded_str,
@@ -40,7 +69,7 @@ bool	append_env_value(t_minishell *shell, t_expanded_str *expanded_str,
 		return (false);
 	name_len = ft_strlen(name);
 	*i += name_len;
-	if (!get_env_value(shell, name, &value))
+	if (!get_env_value_util(shell, name, &value))
 	{
 		free(name);
 		return (false);
@@ -58,6 +87,22 @@ bool	append_env_value(t_minishell *shell, t_expanded_str *expanded_str,
 	return (true);
 }
 
+bool	is_printable_dollar(t_expanded_str *expanded_str, const char *src_input,
+		size_t i)
+{
+	if (src_input[i] == '\0')
+		return (true);
+	else if (expanded_str->in_single_quote)
+		return (true);
+	else if (!expanded_str->in_double_quote && src_input[i] != '\0')
+		return (false);
+	else if (expanded_str->in_double_quote && (ft_isalnum(src_input[i])
+			|| src_input[i] == '_' || src_input[i] == '?'))
+		return (false);
+	else
+		return (true);
+}
+
 bool	handle_dollar(t_minishell *shell, t_expanded_str *expanded_str,
 		const char *src_input, size_t *i)
 {
@@ -72,7 +117,8 @@ bool	handle_dollar(t_minishell *shell, t_expanded_str *expanded_str,
 	{
 		return (append_env_value(shell, expanded_str, src_input, i));
 	}
-	else if (is_quote_or_delimiter_char(src_input[*i]))
+	else if (src_input[*i] == '\'' || src_input[*i] == '"'
+		|| ft_strchr(DELIMITERS, src_input[*i]))
 		return (true);
 	(*i)++;
 	return (true);

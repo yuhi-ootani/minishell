@@ -3,14 +3,34 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 11:09:19 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/02 18:57:58 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/03 15:08:51 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+char	**expander(t_minishell *shell, char *arg)
+{
+	char	*expanded_str;
+	char	**result;
+
+	expanded_str = get_expanded_str(shell, arg);
+	if (!expanded_str)
+		return (NULL);
+	result = word_splitting(shell, expanded_str);
+	free(expanded_str);
+	if (!result)
+		return (NULL);
+	if (!quote_removal_args(shell, result))
+	{
+		ft_array_free(result);
+		return (NULL);
+	}
+	return (result);
+}
 
 char	**create_expanded_args(t_minishell *shell, t_command *cmd)
 {
@@ -58,69 +78,7 @@ bool	expand_all_cmd_args(t_minishell *shell)
 	return (true);
 }
 
-bool	init_expanded_str(t_minishell *shell, t_expanded_str *expanded_str,
-		const char *src_input)
-{
-	expanded_str->size = ft_strlen(src_input) + 1;
-	expanded_str->index = 0;
-	expanded_str->in_single_quote = false;
-	expanded_str->in_double_quote = false;
-	expanded_str->buffer = ft_calloc(sizeof(char), expanded_str->size);
-	if (!expanded_str->buffer)
-	{
-		shell->exit_status = EXIT_FAILURE;
-		return (false);
-	}
-	return (true);
-}
-
-char	*get_expanded_str(t_minishell *shell, const char *src_input)
-{
-	t_expanded_str	expanded_str;
-	size_t			i;
-
-	if (!src_input)
-		return (NULL);
-	if (!init_expanded_str(shell, &expanded_str, src_input))
-		return (NULL);
-	i = 0;
-	while (src_input[i])
-	{
-		if (src_input[i] == '$' && !expanded_str.in_single_quote)
-		{
-			i++;
-			if (!handle_dollar(shell, &expanded_str, src_input, &i))
-				return (free(expanded_str.buffer), NULL);
-		}
-		else
-		{
-			if (!append_one_char(shell, &expanded_str, src_input, &i))
-				return (free(expanded_str.buffer), NULL);
-		}
-	}
-	return (expanded_str.buffer);
-}
-
-char	**expander(t_minishell *shell, char *arg)
-{
-	char	*expanded_str;
-	char	**result;
-
-	expanded_str = get_expanded_str(shell, arg);
-	if (!expanded_str)
-		return (NULL);
-	result = word_splitting(shell, expanded_str);
-	free(expanded_str);
-	if (!result)
-		return (NULL);
-	if (!quote_removal_args(shell, result))
-	{
-		ft_array_free(result);
-		return (NULL);
-	}
-	return (result);
-}
-//used in 2 functions
+// used in 2 functions
 
 // static int	append_to_buffer(t_expanded_str *expanded_str, const char *src,
 // 		size_t src_len)

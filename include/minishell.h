@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/04/03 14:28:08 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/03 15:56:19 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,10 +165,12 @@ t_env							*create_new_env_util(const char *new_name,
 									const char *new_value, t_env *new_next);
 void							env_add_back_util(t_env **copied_env,
 									t_env *new_env);
-char							*strdup_except_quotes_util(const char *input);
-bool							get_env_value(t_minishell *shell,
+bool							get_env_value_util(t_minishell *shell,
 									const char *name, char **result);
 void							set_exit_failure(t_minishell *shell);
+char							**split_quoted_words_util(char const *s,
+									const char *delimiters);
+char							*remove_quotes_util(const char *input);
 
 // ▗▄▄▄▖      ▗▖  ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖   ▗▖
 //   █        ▐▛▚▞▜▌  █  ▐▛▚▖▐▌  █  ▐▌   ▐▌ ▐▌▐▌   ▐▌   ▐▌
@@ -199,30 +201,17 @@ typedef struct s_expanded_str
 	bool						in_double_quote;
 }								t_expanded_str;
 
-/*expand.c*/
 bool							expand_all_cmd_args(t_minishell *shell);
 char							*get_expanded_str(t_minishell *shell,
 									const char *src_input);
-char							**expander(t_minishell *shell, char *arg);
-/*get_and_append_env.c*/
 char							*get_env_name(t_minishell *shell,
 									const char *input);
 bool							append_to_buffer(t_minishell *shell,
 									t_expanded_str *expanded_str,
 									const char *src, size_t src_len);
-bool							append_exit_status(t_minishell *shell,
-									t_expanded_str *expanded_str);
-bool							append_one_char(t_minishell *shell,
-									t_expanded_str *s_expanded_str,
-									const char *src_input, size_t *i);
-/*handle_dollar.c*/
 bool							handle_dollar(t_minishell *shell,
 									t_expanded_str *expanded_str,
 									const char *src_input, size_t *i);
-/*quote_and_split.c*/
-bool							is_quote_or_delimiter_char(char c);
-void							remove_quotes_and_copy(char *dst,
-									const char *src);
 bool							quote_removal_args(t_minishell *shell,
 									char **args);
 char							**word_splitting(t_minishell *shell, char *str);

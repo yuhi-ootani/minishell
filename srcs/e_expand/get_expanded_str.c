@@ -6,36 +6,11 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 18:00:40 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/03 14:26:28 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/03 15:08:15 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-char	*get_env_name(t_minishell *shell, const char *input)
-{
-	size_t	len;
-	char	*name;
-
-	if (!input)
-		return (NULL);
-	if (ft_isalpha(input[0]) || input[0] == '_')
-		len = 1;
-	else
-		return (NULL);
-	while (ft_isalnum(input[len]) || input[len] == '_')
-		len++;
-	name = (char *)ft_calloc((len + 1), sizeof(char));
-	if (!name)
-	{
-		shell->exit_status = EXIT_FAILURE;
-		return (NULL);
-	}
-	if (len > 0)
-		ft_strncpy(name, input, len);
-	name[len] = '\0';
-	return (name);
-}
 
 bool	append_to_buffer(t_minishell *shell, t_expanded_str *expanded_str,
 		const char *src, size_t src_len)
@@ -64,26 +39,6 @@ bool	append_to_buffer(t_minishell *shell, t_expanded_str *expanded_str,
 	return (true);
 }
 
-bool	append_exit_status(t_minishell *shell, t_expanded_str *expanded_str)
-{
-	char	*exit_status;
-
-	exit_status = ft_itoa(shell->exit_status);
-	if (!exit_status)
-	{
-		shell->exit_status = EXIT_FAILURE;
-		return (false);
-	}
-	if (!append_to_buffer(shell, expanded_str, exit_status,
-			ft_strlen(exit_status)))
-	{
-		free(exit_status);
-		return (false);
-	}
-	free(exit_status);
-	return (true);
-}
-
 bool	append_one_char(t_minishell *shell, t_expanded_str *s_expanded_str,
 		const char *src_input, size_t *i)
 {
@@ -99,6 +54,49 @@ bool	append_one_char(t_minishell *shell, t_expanded_str *s_expanded_str,
 		return (false);
 	(*i)++;
 	return (true);
+}
+
+bool	init_expanded_str(t_minishell *shell, t_expanded_str *expanded_str,
+		const char *src_input)
+{
+	expanded_str->size = ft_strlen(src_input) + 1;
+	expanded_str->index = 0;
+	expanded_str->in_single_quote = false;
+	expanded_str->in_double_quote = false;
+	expanded_str->buffer = ft_calloc(sizeof(char), expanded_str->size);
+	if (!expanded_str->buffer)
+	{
+		shell->exit_status = EXIT_FAILURE;
+		return (false);
+	}
+	return (true);
+}
+
+char	*get_expanded_str(t_minishell *shell, const char *src_input)
+{
+	t_expanded_str	expanded_str;
+	size_t			i;
+
+	if (!src_input)
+		return (NULL);
+	if (!init_expanded_str(shell, &expanded_str, src_input))
+		return (NULL);
+	i = 0;
+	while (src_input[i])
+	{
+		if (src_input[i] == '$' && !expanded_str.in_single_quote)
+		{
+			i++;
+			if (!handle_dollar(shell, &expanded_str, src_input, &i))
+				return (free(expanded_str.buffer), NULL);
+		}
+		else
+		{
+			if (!append_one_char(shell, &expanded_str, src_input, &i))
+				return (free(expanded_str.buffer), NULL);
+		}
+	}
+	return (expanded_str.buffer);
 }
 
 // // Example usage

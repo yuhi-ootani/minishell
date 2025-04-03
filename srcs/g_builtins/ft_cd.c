@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 10:16:32 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/03 14:27:06 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/03 15:01:01 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ char	*get_dest_path(t_minishell *shell)
 	cmd = shell->commands;
 	if (!cmd->args[1])
 	{
-		if (!get_env_value(shell, "HOME", &path))
+		if (!get_env_value_util(shell, "HOME", &path))
 			return (NULL);
 		if (!path)
 		{
@@ -39,7 +39,7 @@ char	*get_dest_path(t_minishell *shell)
 
 int	ft_cd(t_minishell *shell)
 {
-	char *path;
+	char	*path;
 
 	if (shell->commands->args[2])
 		return (ft_fprintf(STDERR_FILENO,

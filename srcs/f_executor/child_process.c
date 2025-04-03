@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   child_process.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 11:11:54 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/03 11:18:38 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/03 15:01:01 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ char	**get_splited_PATH(t_minishell *shell, t_exec *exec_info,
 	char	*env_PATH;
 	char	**splited_PATH;
 
-	if (!get_env_value(shell, "PATH", &env_PATH))
+	if (!get_env_value_util(shell, "PATH", &env_PATH))
 		return (NULL);
 	if (!env_PATH)
 	{

@@ -13,7 +13,7 @@ bool	fprintf_to_tmpfile(t_minishell *shell, char *line, int fd)
 			return (false);
 		free(line);
 		line = tmp;
-		tmp = strdup_except_quotes_util(line);
+		tmp = remove_quotes_util(line);
 		if (!tmp)
 			return (set_exit_failure(shell), false);
 		free(line);
