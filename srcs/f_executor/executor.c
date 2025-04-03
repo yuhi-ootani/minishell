@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/04/03 10:50:51 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/03 19:55:26 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ void	cmd_executor(t_minishell *shell)
 	clean_heredoc_tmpfile(shell);
 	return ;
 }
+
 
 // #define MAX_COMMANDS 1024
 

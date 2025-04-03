@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:44:02 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/03 13:37:26 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/03 14:33:37 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ int	ft_exit(t_minishell *shell)
 	if (cmd->args[1])
 	{
 		exit_code = ft_atoi_long(cmd->args[1], &error);
-		return(handle_exit_status(shell, cmd, exit_code, error));
+		return (handle_exit_status(shell, cmd, exit_code, error));
 	}
 	free_shell(shell);
 	exit(shell->exit_status);

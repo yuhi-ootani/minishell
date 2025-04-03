@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:45:23 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/02 19:00:10 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/03 15:04:52 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,7 +182,7 @@ int	ft_export(t_minishell *shell)
 		{
 			if (is_invalid_arg(cmd->args[i]))
 			{
-				ft_fprintf(STDERR_FILENO, "MINISHELL: export: %s: not a valid idenifier\n",
+				ft_fprintf(2, "MINISHELL: export: %s: not a valid idenifier\n",
 					cmd->args[i]);
 				exit_status = EXIT_FAILURE;
 			}

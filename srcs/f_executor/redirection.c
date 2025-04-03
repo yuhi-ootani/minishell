@@ -1,4 +1,14 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   redirection.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/03 14:29:30 by knemcova          #+#    #+#             */
+/*   Updated: 2025/04/03 14:30:15 by knemcova         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
@@ -28,7 +38,7 @@ bool	input_redirection(t_minishell *shell, t_command *cmd)
 			return (false);
 		}
 		if (cmd->infile_count == i + 1)
-			dup2(infile_fd, STDIN_FILENO); // error check
+			dup2(infile_fd, STDIN_FILENO);
 		close(infile_fd);
 		i++;
 	}

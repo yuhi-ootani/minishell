@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/04/03 11:30:27 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/03 20:07:42 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,6 +152,7 @@ extern volatile sig_atomic_t	g_signal;
 void							setup_signals_child(void);
 void							setup_signals_parent(void);
 void							setup_signals_heredoc(void);
+void							sig_handler_heredoc(int sig);
 
 // ▗▖ ▗▖▗▄▄▄▖▗▄▄▄▖▗▖    ▗▄▄▖
 // ▐▌ ▐▌  █    █  ▐▌   ▐▌
@@ -161,6 +162,7 @@ void							setup_signals_heredoc(void);
 char							*remove_quotes(t_minishell *shell,
 									const char *input);
 size_t							count_env_util(t_env *env);
+void							set_exit_failure(t_minishell *shell);
 t_env							*create_new_env_util(const char *new_name,
 									const char *new_value, t_env *new_next);
 void							env_add_back_util(t_env **copied_env,
@@ -168,7 +170,6 @@ void							env_add_back_util(t_env **copied_env,
 char							*strdup_except_quotes_util(const char *input);
 bool							get_env_value(t_minishell *shell,
 									const char *name, char **result);
-void							set_exit_status_failure(t_minishell *shell);
 
 // ▗▄▄▄▖      ▗▖  ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖   ▗▖
 //   █        ▐▛▚▞▜▌  █  ▐▛▚▖▐▌  █  ▐▌   ▐▌ ▐▌▐▌   ▐▌   ▐▌
@@ -252,6 +253,7 @@ typedef struct s_exec
 	int							pipe_fds[2];
 	t_builtin_id				builtin_id;
 	int							(*builtins[NUM_BUILTINS])(t_minishell *);
+	pid_t						*pid_array;
 }								t_exec;
 
 // prototype
@@ -264,6 +266,7 @@ void							execute_child_process(t_minishell *shell,
 									t_exec *exec_info, t_command *cmd);
 void							cleanup_and_exit_failure(t_minishell *shell,
 									t_exec *exec_info);
+
 // ▗▄▄▖ ▗▖ ▗▖▗▄▄▄▖▗▖ ▗▄▄▄▖▗▄▄▄▖▗▖  ▗▖ ▗▄▄▖
 // ▐▌ ▐▌▐▌ ▐▌  █  ▐▌   █    █  ▐▛▚▖▐▌▐▌
 // ▐▛▀▚▖▐▌ ▐▌  █  ▐▌   █    █  ▐▌ ▝▜▌ ▝▀▚▖

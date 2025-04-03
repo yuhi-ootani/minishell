@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 13:41:58 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/01 19:40:45 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/03 21:00:37 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,4 +47,14 @@ void	setup_signals_heredoc(void)
 {
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_IGN);
+}
+
+void	sig_handler_heredoc(int sig)
+{
+	if (sig == SIGINT)
+	{
+		g_signal = 1;
+		close(STDIN_FILENO);
+		// write(STDOUT_FILENO, "\n", 1);
+	}
 }

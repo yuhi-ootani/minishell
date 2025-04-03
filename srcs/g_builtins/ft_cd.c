@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 10:16:32 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/03 11:05:05 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/03 14:31:31 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ char	*get_dest_path(t_minishell *shell)
 
 int	ft_cd(t_minishell *shell)
 {
-	char *path;
+	char	*path;
 
 	path = get_dest_path(shell);
 	if (!path)

@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 11:11:54 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/03 11:18:38 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/03 16:30:43 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,49 +35,49 @@ void	cleanup_and_exit_failure(t_minishell *shell, t_exec *exec_info)
 	exit(EXIT_FAILURE);
 }
 
-char	**get_splited_PATH(t_minishell *shell, const char *cmd_str)
+char	**get_splited_path(t_minishell *shell, const char *cmd_str)
 {
-	char	*env_PATH;
-	char	**splited_PATH;
+	char	*env_path;
+	char	**splited_path;
 
-	if (!get_env_value(shell, "PATH", &env_PATH))
+	if (!get_env_value(shell, "PATH", &env_path))
 		return (NULL);
-	if (!env_PATH)
+	if (!env_path)
 	{
 		ft_fprintf(STDERR_FILENO, "MINISHELL: %s: No such file or directory\n",
 			cmd_str);
 		free_shell(shell);
 		exit(127);
 	}
-	splited_PATH = ft_split(env_PATH, ":");
-	free(env_PATH);
-	return (splited_PATH);
+	splited_path = ft_split(env_path, ":");
+	free(env_path);
+	return (splited_path);
 }
 
 char	*search_command_in_path(t_minishell *shell, const char *command)
 {
-	char	**splited_PATH;
+	char	**splited_path;
 	int		i;
 	char	*full_command_path;
 
-	splited_PATH = get_splited_PATH(shell, command);
-	if (!splited_PATH)
+	splited_path = get_splited_path(shell, command);
+	if (!splited_path)
 		cleanup_and_exit_failure(shell, NULL);
 	i = 0;
-	while (splited_PATH && splited_PATH[i])
+	while (splited_path && splited_path[i])
 	{
-		full_command_path = ft_strjoin_three(splited_PATH[i], "/", command);
+		full_command_path = ft_strjoin_three(splited_path[i], "/", command);
 		if (!full_command_path)
 		{
-			ft_array_free(splited_PATH);
+			ft_array_free(splited_path);
 			cleanup_and_exit_failure(shell, NULL);
 		}
 		if (access(full_command_path, F_OK | X_OK) == 0)
-			return (ft_array_free(splited_PATH), full_command_path);
+			return (ft_array_free(splited_path), full_command_path);
 		free(full_command_path);
 		i++;
 	}
-	ft_array_free(splited_PATH);
+	ft_array_free(splited_path);
 	return (NULL);
 }
 
@@ -177,8 +177,8 @@ void	execute_child_process(t_minishell *shell, t_exec *exec_info,
 {
 	int	exit_status;
 
-	exit_status = 0;
 	setup_signals_child();
+	exit_status = 0;
 	close_unsed_fds(shell);
 	if (!setup_infile(shell, exec_info, current_cmd) || !setup_outfile(shell,
 			exec_info, current_cmd))
