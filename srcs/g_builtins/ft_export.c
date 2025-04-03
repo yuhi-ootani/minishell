@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:45:23 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/02 13:37:58 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/02 19:00:10 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,43 +17,55 @@
 //  ▝▀▚▖▐▛▀▀▘  █      ▐▌ ▝▜▌▐▛▀▀▘▐▌ ▐▌    ▐▛▀▀▘▐▌ ▝▜▌▐▌  ▐▌
 // ▗▄▄▞▘▐▙▄▄▖  █      ▐▌  ▐▌▐▙▄▄▖▐▙█▟▌    ▐▙▄▄▖▐▌  ▐▌ ▝▚▞▘
 
-static bool	update_env_value_if_exists(t_env **copied_env, const char *new_name,
-		const char *new_value, bool append)
+static t_env	*get_env_if_exist(t_env *copied_env, const char *new_name)
 {
-	t_env	*tmp;
-	char	*new_allocated_value;
+	t_env	*env;
 
-	tmp = *copied_env;
-	while (tmp)
+	env = copied_env;
+	while (env)
 	{
-		if (ft_strcmp(tmp->name, new_name) == 0)
+		if (ft_strcmp(env->name, new_name) == 0)
 		{
-			if (append && tmp->value)
-				new_allocated_value = ft_strjoin(tmp->value, new_value);
-			else
-				new_allocated_value = ft_strdup(new_value);
-			if (!new_allocated_value)
-				return (false); // handle malloc error
-			free(tmp->value);
-			tmp->value = new_allocated_value;
-			return (true);
+			return (env);
 		}
-		tmp = tmp->next;
+		env = env->next;
 	}
-	return (false);
+	return (NULL);
 }
 
-static void	set_env_value(t_env **copied_env, const char *new_name,
+int	update_env_value(t_env *env, const char *new_value, bool append)
+{
+	char	*tmp_value;
+
+	if (append && env->value)
+		tmp_value = ft_strjoin(env->value, new_value);
+	else
+		tmp_value = ft_strdup(new_value);
+	if (!tmp_value)
+		return (EXIT_FAILURE);
+	free(env->value);
+	env->value = tmp_value;
+	return (EXIT_SUCCESS);
+}
+
+static int	set_env_value(t_env *copied_env, const char *new_name,
 		const char *new_value, bool append)
 {
 	t_env	*new_env;
 
-	if (update_env_value_if_exists(copied_env, new_name, new_value, append))
-		return ;
-	new_env = create_new_env_util(new_name, new_value, NULL);
-	if (!new_env)
-		return ; // todo
-	env_add_back_util(copied_env, new_env);
+	new_env = get_env_if_exist(copied_env, new_name);
+	if (new_env)
+	{
+		return (update_env_value(new_env, new_value, append));
+	}
+	else
+	{
+		new_env = create_new_env_util(new_name, new_value, NULL);
+		if (!new_env)
+			return (EXIT_FAILURE);
+		env_add_back_util(&copied_env, new_env);
+		return (EXIT_SUCCESS);
+	}
 }
 
 //  ▗▄▄▖▗▄▄▄▖▗▄▄▄▖    ▗▖  ▗▖ ▗▄▖ ▗▖  ▗▖▗▄▄▄▖    ▗▖  ▗▖ ▗▄▖ ▗▖   ▗▖ ▗▖▗▄▄▄▖
@@ -61,11 +73,10 @@ static void	set_env_value(t_env **copied_env, const char *new_name,
 // ▐▌▝▜▌▐▛▀▀▘  █      ▐▌ ▝▜▌▐▛▀▜▌▐▌  ▐▌▐▛▀▀▘    ▐▌  ▐▌▐▛▀▜▌▐▌   ▐▌ ▐▌▐▛▀▀▘
 // ▝▚▄▞▘▐▙▄▄▖  █      ▐▌  ▐▌▐▌ ▐▌▐▌  ▐▌▐▙▄▄▖     ▝▚▞▘ ▐▌ ▐▌▐▙▄▄▖▝▚▄▞▘▐▙▄▄▖
 
-static size_t	skip_operands(const char *arg, size_t i, bool *append)
+static size_t	skip_operands(const char *arg, size_t i)
 {
 	if (arg[i] == '+' && arg[i + 1] == '=')
 	{
-		*append = true;
 		return (i + 2);
 	}
 	else if (arg[i] == '=')
@@ -73,7 +84,18 @@ static size_t	skip_operands(const char *arg, size_t i, bool *append)
 	return (i);
 }
 
-static void	get_name_and_value(char **name, char **value, char *arg,
+char	*get_value(char *arg, size_t i)
+{
+	char	*value;
+
+	if (arg[i])
+		value = ft_strdup(arg + i);
+	else
+		value = ft_strdup("");
+	return (value);
+}
+
+static bool	get_name_and_value(char *arg, char **name, char **value,
 		bool *append)
 {
 	size_t	i;
@@ -82,18 +104,38 @@ static void	get_name_and_value(char **name, char **value, char *arg,
 	while (arg[i] && arg[i] != '=' && arg[i] != '+')
 		i++;
 	*name = ft_strndup(arg, i);
-	// if name = NULL todo error
+	if (!name)
+		return (false);
+	*append = false;
+	if (arg[i] == '+' && arg[i + 1] == '=')
+		*append = true;
+	i = skip_operands(arg, i);
+	*value = NULL;
 	if (arg[i])
 	{
-		i = skip_operands(arg, i, append);
-		if (arg[i])
-			*value = ft_strdup(arg + i);
-		else
-			*value = ft_strdup("");
+		*value = get_value(arg, i);
+		if (!*value)
+			return (free(*name), false);
 	}
-	else
-		*value = NULL;
-	// if value = NULL todo error
+	return (true);
+}
+
+static bool	set_new_env_variable(char *arg, t_env *copied_env)
+{
+	char	*name;
+	char	*value;
+	bool	append;
+	int		exit_status;
+
+	if (!get_name_and_value(arg, &name, &value, &append))
+		return (EXIT_FAILURE);
+	printf("kkljfds;lkfjasd;lkfjas;lkfj%s\n", value);
+	exit_status = set_env_value(copied_env, name, value, append);
+	if (name)
+		free(name);
+	if (value)
+		free(value);
+	return (exit_status);
 }
 
 // ▗▄▄▖  ▗▄▖ ▗▄▄▖  ▗▄▄▖▗▄▄▄▖▗▄▄▖
@@ -108,8 +150,6 @@ static bool	is_invalid_arg(char *arg)
 	i = 0;
 	if (!arg || arg[0] == '\0')
 		return (true);
-	// if (!ft_strchr(arg, '='))
-	// 	return (true);
 	if (!(ft_isalpha(arg[0]) || arg[0] == '_'))
 		return (true);
 	while (arg[i] && arg[i] != '=')
@@ -123,32 +163,16 @@ static bool	is_invalid_arg(char *arg)
 	return (false);
 }
 
-static void	set_new_env_variables(char *arg, t_env **copied_env)
-{
-	char	*name;
-	char	*value;
-	bool	append;
-
-	if (is_invalid_arg(arg))
-	{
-		ft_fprintf(STDERR_FILENO, "export: `%s': not a valid idenifier\n", arg);
-		return ;
-	} // todo
-	get_name_and_value(&name, &value, arg, &append);
-	set_env_value(copied_env, name, value, append);
-	free(name);
-	free(value);
-}
-
 //  ▗▄▄▖▗▄▄▄▖▗▄▖ ▗▄▄▖▗▄▄▄▖
 // ▐▌     █ ▐▌ ▐▌▐▌ ▐▌ █
 //  ▝▀▚▖  █ ▐▛▀▜▌▐▛▀▚▖ █
 // ▗▄▄▞▘  █ ▐▌ ▐▌▐▌ ▐▌ █
 
-void	ft_export(t_minishell *shell)
+int	ft_export(t_minishell *shell)
 {
 	size_t		i;
 	t_command	*cmd;
+	int			exit_status;
 
 	cmd = shell->commands;
 	if (cmd->args[1])
@@ -156,13 +180,20 @@ void	ft_export(t_minishell *shell)
 		i = 1;
 		while (cmd->args[i])
 		{
-			set_new_env_variables(cmd->args[i], &shell->env);
+			if (is_invalid_arg(cmd->args[i]))
+			{
+				ft_fprintf(STDERR_FILENO, "MINISHELL: export: %s: not a valid idenifier\n",
+					cmd->args[i]);
+				exit_status = EXIT_FAILURE;
+			}
+			else
+				exit_status = set_new_env_variable(cmd->args[i], shell->env);
 			i++;
 		}
 	}
 	else
-		sort_and_print_env(&shell->env);
-	return ;
+		exit_status = sort_and_print_env(&shell->env);
+	return (exit_status);
 }
 
 // int	main(void)

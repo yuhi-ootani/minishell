@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 18:00:40 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/01 17:34:48 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/03 10:47:15 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ bool	append_to_buffer(t_minishell *shell, t_expanded_str *expanded_str,
 		new_buffer = ft_realloc(expanded_str->buffer, old_size, new_size);
 		if (!new_buffer)
 		{
+			shell->exit_status = EXIT_FAILURE;
 			shell->exit_status = EXIT_FAILURE;
 			return (false);
 		}
@@ -153,7 +154,7 @@ bool	append_one_char(t_minishell *shell, t_expanded_str *s_expanded_str,
 // 		j = 0;
 // 		while (splited_args[j])
 // 		{
-// 			tmp = remove_quotes(splited_args[j]);
+// 			tmp = strdup_except_quotes_util(splited_args[j]);
 // 			if (tmp)
 // 			{
 // 				free(splited_args[j]);

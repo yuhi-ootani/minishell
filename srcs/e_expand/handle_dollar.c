@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 16:37:29 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/30 16:45:29 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/03 12:02:01 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,11 @@ bool	append_env_value(t_minishell *shell, t_expanded_str *expanded_str,
 		return (false);
 	name_len = ft_strlen(name);
 	*i += name_len;
-	value = get_env_value(shell, name);
+	if (!get_env_value(shell, name, &value))
+	{
+		free(name);
+		return (false);
+	}
 	free(name);
 	if (value)
 	{

@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/04/01 11:33:36 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/03 11:30:27 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,8 +133,14 @@ bool							add_argument(t_minishell *shell, t_command *cmd,
 // ▐▛▀▚▖▐▛▀▀▘▐▌  █  █  ▐▛▀▚▖▐▛▀▀▘▐▌     █    █  ▐▌ ▐▌▐▌ ▝▜▌
 // ▐▌ ▐▌▐▙▄▄▖▐▙▄▄▀▗▄█▄▖▐▌ ▐▌▐▙▄▄▖▝▚▄▄▖  █  ▗▄█▄▖▝▚▄▞▘▐▌  ▐▌
 
-void							handle_redirection(t_minishell *shell,
+bool							handle_redirection(t_minishell *shell,
 									t_command *cmd);
+bool							input_redirection(t_minishell *shell,
+									t_command *cmd);
+bool							output_redirection(t_minishell *shell,
+									t_command *cmd);
+bool							handle_heredoc(t_minishell *shell);
+void							clean_heredoc_tmpfile(t_minishell *shell);
 
 //  ▗▄▄▖▗▄▄▄▖ ▗▄▄▖▗▖  ▗▖ ▗▄▖ ▗▖
 // ▐▌     █  ▐▌   ▐▛▚▖▐▌▐▌ ▐▌▐▌
@@ -159,8 +165,10 @@ t_env							*create_new_env_util(const char *new_name,
 									const char *new_value, t_env *new_next);
 void							env_add_back_util(t_env **copied_env,
 									t_env *new_env);
-char							*get_env_value(t_minishell *shell,
-									const char *name);
+char							*strdup_except_quotes_util(const char *input);
+bool							get_env_value(t_minishell *shell,
+									const char *name, char **result);
+void							set_exit_status_failure(t_minishell *shell);
 
 // ▗▄▄▄▖      ▗▖  ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖   ▗▖
 //   █        ▐▛▚▞▜▌  █  ▐▛▚▖▐▌  █  ▐▌   ▐▌ ▐▌▐▌   ▐▌   ▐▌
@@ -243,26 +251,32 @@ typedef struct s_exec
 	int							input_fd;
 	int							pipe_fds[2];
 	t_builtin_id				builtin_id;
-	void						(*builtins[NUM_BUILTINS])(t_minishell *);
+	int							(*builtins[NUM_BUILTINS])(t_minishell *);
 }								t_exec;
 
 // prototype
 void							cmd_executor(t_minishell *shell);
-char							**build_envp_array(t_env *env);
-
+char							**build_envp_array(t_minishell *shell);
+void							run_commands_in_child(t_minishell *shell,
+									t_exec *exec_info);
+t_builtin_id					is_builtin(char *command_str);
+void							execute_child_process(t_minishell *shell,
+									t_exec *exec_info, t_command *cmd);
+void							cleanup_and_exit_failure(t_minishell *shell,
+									t_exec *exec_info);
 // ▗▄▄▖ ▗▖ ▗▖▗▄▄▄▖▗▖ ▗▄▄▄▖▗▄▄▄▖▗▖  ▗▖ ▗▄▄▖
 // ▐▌ ▐▌▐▌ ▐▌  █  ▐▌   █    █  ▐▛▚▖▐▌▐▌
 // ▐▛▀▚▖▐▌ ▐▌  █  ▐▌   █    █  ▐▌ ▝▜▌ ▝▀▚▖
 // ▐▙▄▞▘▝▚▄▞▘▗▄█▄▖▐▙▄▄▖█  ▗▄█▄▖▐▌  ▐▌▗▄▄▞▘
 
-void							ft_echo(t_minishell *shell);
-void							ft_cd(t_minishell *shell);
-void							ft_pwd(t_minishell *shell);
-void							ft_export(t_minishell *shell);
-void							sort_and_print_env(t_env **copied_env);
-void							ft_unset(t_minishell *shell);
-void							ft_env(t_minishell *shell);
-void							ft_exit(t_minishell *shell);
+int								ft_echo(t_minishell *shell);
+int								ft_cd(t_minishell *shell);
+int								ft_pwd(t_minishell *shell);
+int								ft_export(t_minishell *shell);
+int								sort_and_print_env(t_env **copied_env);
+int								ft_unset(t_minishell *shell);
+int								ft_env(t_minishell *shell);
+int								ft_exit(t_minishell *shell);
 
 typedef enum e_exit_status
 {

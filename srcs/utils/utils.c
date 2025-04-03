@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 10:17:05 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/29 15:24:59 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/03 13:51:05 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,42 @@ char	*remove_quotes(t_minishell *shell, const char *input)
 		return (NULL);
 	}
 	remove_quotes_and_copy(result, input);
+	return (result);
+}
+
+void	strcpy_except_quotes(char *dst, const char *src)
+{
+	bool	in_single;
+	bool	in_double;
+	size_t	i;
+
+	i = 0;
+	in_single = false;
+	in_double = false;
+	while (*src)
+	{
+		if (*src == '\'' && !in_double)
+			in_single = !in_single;
+		else if (*src == '"' && !in_single)
+			in_double = !in_double;
+		else
+		{
+			dst[i] = *src;
+			i++;
+		}
+		src++;
+	}
+	dst[i] = '\0';
+}
+
+char	*strdup_except_quotes_util(const char *input)
+{
+	char	*result;
+
+	result = (char *)ft_calloc(sizeof(char), ft_strlen(input) + 1);
+	if (!result)
+		return (NULL);
+	strcpy_except_quotes(result, input);
 	return (result);
 }
 
@@ -86,29 +122,31 @@ void	env_add_back_util(t_env **copied_env, t_env *new_env)
 	tmp->next = new_env;
 }
 
-char	*get_env_value(t_minishell *shell, const char *name)
+bool	get_env_value(t_minishell *shell, const char *name, char **result)
 {
-	char	*copied_value;
 	t_env	*env;
 
 	env = shell->env;
 	if (!env || !name)
-		return (NULL);
+		return (result);
+	*result = NULL;
 	while (env)
 	{
 		if (ft_strcmp(env->name, name) == 0)
 		{
 			if (env->value == NULL)
-				return (NULL);
-			copied_value = ft_strdup(env->value);
-			if (!copied_value)
-			{
-				shell->exit_status = EXIT_FAILURE;
-				return (NULL);
-			}
-			return (copied_value);
+				return (true);
+			*result = ft_strdup(env->value);
+			if (!*result)
+				return (false);
+			return (true);
 		}
 		env = env->next;
 	}
-	return (NULL);
+	return (true);
+}
+
+void	set_exit_status_failure(t_minishell *shell)
+{
+	shell->exit_status = EXIT_FAILURE;
 }
