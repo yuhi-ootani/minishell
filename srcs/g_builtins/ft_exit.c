@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:44:02 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/03 13:37:26 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/03 16:43:39 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static bool	check_out_of_range(int neg, unsigned long long num, bool *error)
 	return (*error);
 }
 
-int	ft_atoi_long(const char *str, bool *error)
+int	atoi_long(const char *str, bool *error)
 {
 	unsigned long long	num;
 	int					neg;
@@ -54,19 +54,19 @@ int	ft_atoi_long(const char *str, bool *error)
 	return ((long long)(num * neg));
 }
 
-bool	more_than_two_arguments(t_minishell *shell)
-{
-	t_command	*cmd;
+// bool	more_than_two_arguments(t_minishell *shell)
+// {
+// 	t_command	*cmd;
 
-	cmd = shell->commands;
-	if (cmd->args[1] && cmd->args[2])
-	{
-		ft_fprintf(STDERR_FILENO, "exit: too many arguments\n");
-		shell->exit_status = 2;
-		return (true);
-	}
-	return (false);
-}
+// 	cmd = shell->commands;
+// 	if (cmd->args[1] && cmd->args[2])
+// 	{
+// 		ft_fprintf(STDERR_FILENO, "exit: too many arguments\n");
+// 		shell->exit_status = 2;
+// 		return (true);
+// 	}
+// 	return (false);
+// }
 
 int	handle_exit_status(t_minishell *shell, t_command *cmd, long long exit_code,
 		bool error)
@@ -103,12 +103,12 @@ int	ft_exit(t_minishell *shell)
 			cmd->args[1]);
 		shell->exit_status = 2;
 		free_shell(shell);
-		exit(2);
+		exit(shell->exit_status);
 	}
 	if (cmd->args[1])
 	{
-		exit_code = ft_atoi_long(cmd->args[1], &error);
-		return(handle_exit_status(shell, cmd, exit_code, error));
+		exit_code = atoi_long(cmd->args[1], &error);
+		return (handle_exit_status(shell, cmd, exit_code, error));
 	}
 	free_shell(shell);
 	exit(shell->exit_status);

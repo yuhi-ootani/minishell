@@ -2,13 +2,6 @@
 
 #include "../../include/minishell.h"
 
-t_token_type	last_infile_type(t_command *cmd)
-{
-	if (cmd->infile_count == 0)
-		return (TOKEN_WORD);
-	return (cmd->infiles[cmd->infile_count - 1].type);
-}
-
 bool	input_redirection(t_minishell *shell, t_command *cmd)
 {
 	size_t	i;
@@ -44,17 +37,20 @@ t_token_type	last_outfile_type(t_command *cmd)
 	return (cmd->outfiles[cmd->outfile_count - 1].type);
 }
 
-int	handle_open_flags(t_command *cmd, size_t i)
+int	open_outfile(t_command *cmd, size_t i, char *filename)
 {
 	int	flags;
+	int	outfile_fd;
 
+	outfile_fd = -1;
 	flags = O_WRONLY | O_CREAT;
 	if (i + 1 == cmd->outfile_count && last_outfile_type(cmd) == TOKEN_APPEND)
 		flags |= O_APPEND;
 	else if (i + 1 == cmd->outfile_count
 		&& last_outfile_type(cmd) == TOKEN_REDIR_OUT)
 		flags |= O_TRUNC;
-	return (flags);
+	outfile_fd = open(filename, flags, 0644);
+	return (outfile_fd);
 }
 
 bool	output_redirection(t_minishell *shell, t_command *cmd)
@@ -62,14 +58,12 @@ bool	output_redirection(t_minishell *shell, t_command *cmd)
 	int		outfile_fd;
 	size_t	i;
 	char	*filename;
-	int		flags;
 
 	i = 0;
 	while (i < cmd->outfile_count)
 	{
 		filename = cmd->outfiles[i].filename;
-		flags = handle_open_flags(cmd, i);
-		outfile_fd = open(filename, flags, 0644);
+		outfile_fd = open_outfile(cmd, i, filename);
 		if (outfile_fd < 0)
 		{
 			ft_fprintf(STDERR_FILENO, "MINISHELL: %s: %s\n", filename,

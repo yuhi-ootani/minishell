@@ -6,97 +6,128 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 10:17:05 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/03 15:55:43 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/03 19:23:39 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-size_t	count_env_util(t_env *env)
-{
-	size_t	count;
-
-	count = 0;
-	if (!env)
-		return (count);
-	while (env)
-	{
-		count++;
-		env = env->next;
-	}
-	return (count);
-}
-
-t_env	*create_new_env_util(const char *new_name, const char *new_value,
-		t_env *new_next)
-{
-	t_env	*new_env;
-
-	new_env = malloc(sizeof(t_env));
-	if (!new_env)
-		return (NULL);
-	new_env->name = ft_strdup(new_name);
-	if (!new_env->name)
-	{
-		free(new_env);
-		return (NULL);
-	}
-	if (new_value)
-	{
-		new_env->value = ft_strdup(new_value);
-		if (!new_env->value)
-		{
-			free(new_env->name);
-			free(new_env);
-			return (NULL);
-		}
-	}
-	else
-		new_env->value = NULL;
-	new_env->next = new_next;
-	return (new_env);
-}
-
-void	env_add_back_util(t_env **copied_env, t_env *new_env)
-{
-	t_env	*tmp;
-
-	tmp = *copied_env;
-	if (!tmp)
-	{
-		*copied_env = new_env;
-		return ;
-	}
-	while (tmp->next)
-		tmp = tmp->next;
-	tmp->next = new_env;
-}
-
-bool	get_env_value_util(t_minishell *shell, const char *name, char **result)
-{
-	t_env	*env;
-
-	env = shell->env;
-	if (!env || !name)
-		return (result);
-	*result = NULL;
-	while (env)
-	{
-		if (ft_strcmp(env->name, name) == 0)
-		{
-			if (env->value == NULL)
-				return (true);
-			*result = ft_strdup(env->value);
-			if (!*result)
-				return (false);
-			return (true);
-		}
-		env = env->next;
-	}
-	return (true);
-}
-
 void	set_exit_failure(t_minishell *shell)
 {
 	shell->exit_status = EXIT_FAILURE;
+}
+
+// ▗▄▄▖ ▗▄▄▖ ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖    ▗▄▄▄▖▗▖ ▗▖▗▖  ▗▖ ▗▄▄▖ ▗▄▄▖
+// ▐▌ ▐▌▐▌ ▐▌  █  ▐▛▚▖▐▌  █      ▐▌   ▐▌ ▐▌▐▛▚▖▐▌▐▌   ▐▌
+// ▐▛▀▘ ▐▛▀▚▖  █  ▐▌ ▝▜▌  █      ▐▛▀▀▘▐▌ ▐▌▐▌ ▝▜▌▐▌    ▝▀▚▖
+// ▐▌   ▐▌ ▐▌▗▄█▄▖▐▌  ▐▌  █      ▐▌   ▝▚▄▞▘▐▌  ▐▌▝▚▄▄▖▗▄▄▞▘
+
+void	print_cmd(t_command *cmd, int cmd_index)
+{
+	size_t	i;
+	char	*redir_type;
+
+	printf("cmd %d:\n", cmd_index);
+	// Print arguments.
+	if (cmd->args)
+	{
+		i = 0;
+		while (cmd->args[i])
+		{
+			printf("  Arg %zu: %s\n", i, cmd->args[i]);
+			i++;
+		}
+	}
+	else
+	{
+		printf("  No arguments\n");
+	}
+	// Print input redirections.
+	if (cmd->infile_count > 0)
+	{
+		i = 0;
+		while (i < cmd->infile_count)
+		{
+			if (cmd->infiles[i].type == TOKEN_REDIR_IN)
+				redir_type = "INPUT (<)";
+			else if (cmd->infiles[i].type == TOKEN_HEREDOC)
+				redir_type = "HEREDOC (<<)";
+			else
+				redir_type = "UNKNOWN";
+			printf("  Input redirection [%s]: %s\n", redir_type,
+				cmd->infiles[i].filename);
+			i++;
+		}
+	}
+	// Print output redirections.
+	if (cmd->outfile_count > 0)
+	{
+		i = 0;
+		while (i < cmd->outfile_count)
+		{
+			if (cmd->outfiles[i].type == TOKEN_REDIR_OUT)
+				redir_type = "OUTPUT (>)";
+			else if (cmd->outfiles[i].type == TOKEN_APPEND)
+				redir_type = "APPEND (>>)";
+			else
+				redir_type = "UNKNOWN";
+			printf("  Output redirection [%s]: %s\n", redir_type,
+				cmd->outfiles[i].filename);
+			i++;
+		}
+	}
+	printf("\n");
+}
+// Print all commands in the linked list
+void	print_cmds(t_command *head)
+{
+	int			cmd_index;
+	t_command	*current;
+
+	cmd_index = 0;
+	current = head;
+	while (current)
+	{
+		print_cmd(current, cmd_index);
+		current = current->next;
+		cmd_index++;
+	}
+}
+
+void	print_tokens(t_token *tokens)
+{
+	const char	*type_str;
+
+	while (tokens)
+	{
+		switch (tokens->type)
+		{
+		case TOKEN_WORD:
+			type_str = "ARG";
+			break ;
+		case TOKEN_PIPE:
+			type_str = "PIPE";
+			break ;
+		case TOKEN_REDIR_IN:
+			type_str = "REDIR_IN";
+			break ;
+		case TOKEN_REDIR_OUT:
+			type_str = "REDIR_OUT";
+			break ;
+		case TOKEN_APPEND:
+			type_str = "REDIR_APPEND";
+			break ;
+		case TOKEN_HEREDOC:
+			type_str = "HEREDOC";
+			break ;
+		case TOKEN_EOF:
+			type_str = "EOF";
+			break ;
+		default:
+			type_str = "UNKNOWN";
+			break ;
+		}
+		printf("[%s] '%s'\n", type_str, tokens->value ? tokens->value : "");
+		tokens = tokens->next;
+	}
 }

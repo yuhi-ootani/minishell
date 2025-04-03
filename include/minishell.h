@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/04/03 15:56:19 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/03 17:31:59 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,12 +246,12 @@ typedef struct s_exec
 
 // prototype
 void							cmd_executor(t_minishell *shell);
-char							**build_envp_array(t_minishell *shell,
-									t_exec *exec_info);
 void							run_commands_in_child(t_minishell *shell,
 									t_exec *exec_info);
 t_builtin_id					is_builtin(char *command_str);
 void							execute_child_process(t_minishell *shell,
+									t_exec *exec_info, t_command *cmd);
+void							execute_external_command(t_minishell *shell,
 									t_exec *exec_info, t_command *cmd);
 void							cleanup_and_exit_child(t_minishell *shell,
 									t_exec *exec_info, int exit_status);
