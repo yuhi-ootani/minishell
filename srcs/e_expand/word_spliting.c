@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 18:00:40 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/30 19:08:10 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/03 13:43:36 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,7 @@ char	**word_splitting(t_minishell *shell, char *str)
 {
 	char	**splited_args;
 
-	if (str[0] != '"' && str[ft_strlen(str) - 1] != '"')
-		splited_args = ft_split(str, DELIMITERS);
-	else
-		splited_args = ft_split(str, "");
+	splited_args = ft_split_not_inquote(str, DELIMITERS);
 	if (!splited_args)
 	{
 		shell->exit_status = EXIT_FAILURE;

@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 10:16:32 by knemcova          #+#    #+#             */
-/*   Updated: 2025/03/30 20:19:24 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/03 10:55:16 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ char	*get_dest_path(t_minishell *shell)
 			return (NULL);
 		if (!path)
 		{
-			ft_fprintf(STDERR_FILENO, "cd: HOME not set\n");
+			ft_fprintf(STDERR_FILENO, "MINISHELL: cd: HOME not set\n");
 			return (NULL);
 		}
 	}
@@ -41,6 +41,9 @@ int	ft_cd(t_minishell *shell)
 {
 	char	*path;
 
+	if (shell->commands->args[2])
+		return (ft_fprintf(STDERR_FILENO,
+				"MINISHELL: cd: too many arguments\n"), EXIT_FAILURE);
 	path = get_dest_path(shell);
 	if (!path)
 		return (EXIT_FAILURE);
