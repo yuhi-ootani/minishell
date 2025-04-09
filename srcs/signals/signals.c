@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 13:41:58 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/03 21:00:37 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/09 12:28:48 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void	sig_handler_heredoc(int sig)
 	if (sig == SIGINT)
 	{
 		g_signal = 1;
-		close(STDIN_FILENO);
-		// write(STDOUT_FILENO, "\n", 1);
+		write(STDOUT_FILENO, "\n", 1);
+		rl_replace_line("\0", 0);
 	}
 }

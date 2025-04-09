@@ -6,18 +6,18 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 14:29:30 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/03 14:30:15 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/09 13:15:16 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-t_token_type	last_infile_type(t_command *cmd)
-{
-	if (cmd->infile_count == 0)
-		return (TOKEN_WORD);
-	return (cmd->infiles[cmd->infile_count - 1].type);
-}
+// t_token_type	last_infile_type(t_command *cmd)
+// {
+// 	if (cmd->infile_count == 0)
+// 		return (TOKEN_WORD);
+// 	return (cmd->infiles[cmd->infile_count - 1].type);
+// }
 
 bool	input_redirection(t_minishell *shell, t_command *cmd)
 {

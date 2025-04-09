@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 11:10:44 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/03 19:07:47 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/09 13:16:14 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,6 @@ static void	wait_for_all_children(pid_t *pids, int count, t_minishell *shell)
 // // WEXITSTATUS holds the number exit give
 // // WIFSIGNALED turns true if the code was ended by a signl
 // // WTERMSIG holds the number of exit of the singal
-
-
 
 size_t	count_commands(t_minishell *shell)
 {

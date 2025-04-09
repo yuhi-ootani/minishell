@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/04/03 20:07:42 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/09 13:33:53 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,16 +256,29 @@ typedef struct s_exec
 	pid_t						*pid_array;
 }								t_exec;
 
-// prototype
-void							cmd_executor(t_minishell *shell);
+/*built_envp_array.c*/
 char							**build_envp_array(t_minishell *shell);
-void							run_commands_in_child(t_minishell *shell,
-									t_exec *exec_info);
-t_builtin_id					is_builtin(char *command_str);
-void							execute_child_process(t_minishell *shell,
-									t_exec *exec_info, t_command *cmd);
+/*child_process.c*/
 void							cleanup_and_exit_failure(t_minishell *shell,
 									t_exec *exec_info);
+void							execute_child_process(t_minishell *shell,
+									t_exec *exec_info, t_command *cmd);
+/*execute_cmd.c*/
+void							execute_external_command(t_minishell *shell,
+									t_command *cmd);
+/*executor.c*/									
+t_builtin_id					is_builtin(char *command_str);
+void							cmd_executor(t_minishell *shell);
+/*handle_heredoc.c*/
+bool							readline_till_eof(t_minishell *shell,
+									const char *eof_name, int fd);
+char							*create_tmpfile_path(t_minishell *shell);	
+/*run_commands_in_child*/			
+void							run_commands_in_child(t_minishell *shell,
+									t_exec *exec_info);
+/*set_heredoc_and_signals.c*/
+bool							start_heredoc_process(t_minishell *shell,
+									t_command *cmd, size_t i);
 
 // ▗▄▄▖ ▗▖ ▗▖▗▄▄▄▖▗▖ ▗▄▄▄▖▗▄▄▄▖▗▖  ▗▖ ▗▄▄▖
 // ▐▌ ▐▌▐▌ ▐▌  █  ▐▌   █    █  ▐▛▚▖▐▌▐▌
@@ -276,6 +289,9 @@ int								ft_echo(t_minishell *shell);
 int								ft_cd(t_minishell *shell);
 int								ft_pwd(t_minishell *shell);
 int								ft_export(t_minishell *shell);
+bool							is_invalid_arg(char *arg);
+bool							get_name_and_value(char *arg, char **name,
+									char **value, bool *append);
 int								sort_and_print_env(t_env **copied_env);
 int								ft_unset(t_minishell *shell);
 int								ft_env(t_minishell *shell);
