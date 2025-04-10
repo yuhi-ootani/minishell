@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 12:31:11 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/09 13:16:26 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/10 15:22:34 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ static void	child_heredoc(t_minishell *shell, char *filename, char *eof_name)
 	close(fd);
 	exit(EXIT_SUCCESS);
 }
+
 
 static bool	handle_heredoc_status(t_minishell *shell, int status,
 		char **filename)
