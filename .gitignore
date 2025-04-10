@@ -2,3 +2,5 @@ libft/
 test.c
 en.subject.pdf
 suppression.txt
+*.o
+minishell

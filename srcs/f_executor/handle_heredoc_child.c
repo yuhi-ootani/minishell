@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 12:31:11 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/10 11:51:35 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/10 18:51:25 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,18 +39,21 @@ bool	readline_till_eof(t_minishell *shell, const char *eof_name, int fd)
 {
 	char	*line;
 
-	while (1)
+	while (!g_signal)
 	{
 		line = readline("> ");
 		if (!line)
 			return (false);
-		if (ft_strcmp(line, eof_name) == 0)
+		if (ft_strcmp(line, eof_name) == 0) {
+			free(line);
 			break ;
+		}
 		if (!fprintf_to_tmpfile(shell, line, fd))
+		{
 			return (free(line), false);
+		}
 		free(line);
 	}
-	free(line);
 	return (true);
 }
 
@@ -58,7 +61,6 @@ void	child_heredoc(t_minishell *shell, char *filename, char *eof_name)
 {
 	int	fd;
 
-	sigaction(SIGINT, NULL, NULL);
 	setup_signals_heredoc();
 	fd = open(filename, O_RDWR | O_CREAT | O_TRUNC, 0644);
 	if (fd == -1)

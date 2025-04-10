@@ -6,7 +6,7 @@
 #    By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 11:52:00 by otaniyuhi         #+#    #+#              #
-#    Updated: 2025/04/10 10:58:11 by oyuhi            ###   ########.fr        #
+#    Updated: 2025/04/10 17:37:28 by oyuhi            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -81,4 +81,7 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+valgrind: all
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --suppressions=suppression.txt ./minishell 
+
+.PHONY: all clean fclean re valgrind

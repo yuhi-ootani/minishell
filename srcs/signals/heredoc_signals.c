@@ -4,7 +4,11 @@
 
 void	setup_signals_heredoc(void)
 {
-	signal(SIGINT, SIG_DFL);
+	struct sigaction sa;
+    sa.sa_handler = sig_handler_heredoc;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = SA_RESTART;
+    sigaction(SIGINT, &sa, NULL);
 	signal(SIGQUIT, SIG_IGN);
 }
 
@@ -13,8 +17,7 @@ void	sig_handler_heredoc(int sig)
 	if (sig == SIGINT)
 	{
 		g_signal = 1;
-		write(STDOUT_FILENO, "\n", 1);
-		rl_replace_line("\0", 0);
+		rl_done = 1;
 	}
 }
 
