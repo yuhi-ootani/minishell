@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prompt.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:32:43 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/03/30 14:23:21 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/10 14:13:01 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ char	*prompt(t_minishell *shell)
 char	*get_uncomment_line(void)
 {
 	char	*result;
+	size_t	i;
 
 	while (1)
 	{
@@ -70,7 +71,23 @@ char	*get_uncomment_line(void)
 			free(result);
 		}
 		else
+		{
+			i = 0;
+			while (result[i])
+			{
+				if (ft_isascii(result[i]) == 0)
+				{
+					free(result);
+					result = NULL;
+					errno = 1;
+					printf("Error: Non-ASCII character detected.\n");
+					break ;
+				}
+				result[i] = '\0';
+				i++;
+			}
 			return (result);
+		}
 	}
 }
 

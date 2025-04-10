@@ -3,56 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   handle_heredoc.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 19:28:50 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/10 10:09:19 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/10 11:45:24 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-bool	fprintf_to_tmpfile(t_minishell *shell, char *line, int fd)
-{
-	char	*tmp;
-
-	tmp = NULL;
-	if (ft_strchr(line, '$'))
-	{
-		tmp = get_expanded_str(shell, line);
-		if (!tmp)
-			return (false);
-		free(line);
-		line = tmp;
-		tmp = remove_quotes_util(line);
-		if (!tmp)
-			return (set_exit_failure(shell), false);
-		free(line);
-		line = tmp;
-	}
-	if (ft_fprintf(fd, "%s\n", line) == -1)
-		return (set_exit_failure(shell), false);
-	return (true);
-}
-
-bool	readline_till_eof(t_minishell *shell, const char *eof_name, int fd)
-{
-	char	*line;
-
-	while (1)
-	{
-		line = readline("> ");
-		if (!line)
-			return (false);
-		if (ft_strcmp(line, eof_name) == 0)
-			break ;
-		if (!fprintf_to_tmpfile(shell, line, fd))
-			return (free(line), false);
-		free(line);
-	}
-	free(line);
-	return (true);
-}
 
 char	*create_tmpfile_path(t_minishell *shell)
 {
@@ -77,6 +35,54 @@ char	*create_tmpfile_path(t_minishell *shell)
 	if (!result)
 		shell->exit_status = EXIT_FAILURE;
 	return (result);
+}
+
+static bool	handle_heredoc_status(t_minishell *shell, char **filename)
+{
+	int	status;
+
+	status = shell->exit_status;
+	(void)filename; // clean
+	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+	{
+		write(STDOUT_FILENO, "\n", 1);
+		// unlink(*filename);
+		// free(*filename);
+		// *filename = NULL;
+		shell->exit_status = 130;
+		return (false);
+	}
+	else if (WEXITSTATUS(status) != 0)
+	{
+		// unlink(*filename);
+		// free(*filename);
+		// *filename = NULL;
+		return (false);
+	}
+	return (true);
+}
+
+bool	start_heredoc_process(t_minishell *shell, t_command *cmd, size_t i)
+{
+	pid_t				pid;
+	struct sigaction	sa_original;
+	char				*eof_name;
+
+	eof_name = cmd->infiles[i].filename;
+	cmd->infiles[i].filename = create_tmpfile_path(shell);
+	if (!cmd->infiles[i].filename)
+		return (free(eof_name), false);
+	ignore_sigint(&sa_original);
+	pid = fork();
+	if (pid == -1)
+		return (restore_sigint(&sa_original), free(eof_name),
+			set_exit_failure(shell), false);
+	else if (pid == 0)
+		child_heredoc(shell, cmd->infiles[i].filename, eof_name);
+	waitpid(pid, &shell->exit_status, 0);
+	restore_sigint(&sa_original);
+	free(eof_name);
+	return (handle_heredoc_status(shell, &cmd->infiles[i].filename));
 }
 
 bool	handle_heredoc(t_minishell *shell)

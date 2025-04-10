@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 13:41:58 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/09 12:28:48 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/10 10:59:11 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,20 +41,4 @@ void	setup_signals_parent(void)
 	sa.sa_flags = SA_RESTART;
 	sigaction(SIGINT, &sa, NULL);
 	signal(SIGQUIT, SIG_IGN);
-}
-
-void	setup_signals_heredoc(void)
-{
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_IGN);
-}
-
-void	sig_handler_heredoc(int sig)
-{
-	if (sig == SIGINT)
-	{
-		g_signal = 1;
-		write(STDOUT_FILENO, "\n", 1);
-		rl_replace_line("\0", 0);
-	}
 }

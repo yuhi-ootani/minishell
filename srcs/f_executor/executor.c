@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/04/09 19:02:49 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/10 11:31:21 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void	cmd_executor(t_minishell *shell)
 
 	init_exec_info(&exec_info);
 	if (!handle_heredoc(shell))
-		return ;
+		return (clean_heredoc_tmpfile(shell));
 	if (is_executed_in_parent(shell, &exec_info))
 	{
 		if (!handle_redirection(shell, shell->commands))

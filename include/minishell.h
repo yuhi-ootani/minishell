@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/04/10 09:31:42 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/10 10:50:52 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,7 @@ bool							input_redirection(t_minishell *shell,
 									t_command *cmd);
 bool							output_redirection(t_minishell *shell,
 									t_command *cmd);
-bool							handle_heredoc(t_minishell *shell);
+
 void							clean_heredoc_tmpfile(t_minishell *shell);
 
 //  ▗▄▄▖▗▄▄▄▖ ▗▄▄▖▗▖  ▗▖ ▗▄▖ ▗▖
@@ -153,6 +153,8 @@ void							setup_signals_child(void);
 void							setup_signals_parent(void);
 void							setup_signals_heredoc(void);
 void							sig_handler_heredoc(int sig);
+void							ignore_sigint(struct sigaction *original);
+void							restore_sigint(struct sigaction *original);
 
 // ▗▖ ▗▖▗▄▄▄▖▗▄▄▄▖▗▖    ▗▄▄▖
 // ▐▌ ▐▌  █    █  ▐▌   ▐▌
@@ -257,16 +259,15 @@ void							execute_external_command(t_minishell *shell,
 /*executor.c*/
 t_builtin_id					is_builtin(char *command_str);
 void							cmd_executor(t_minishell *shell);
+
 /*handle_heredoc.c*/
-bool							readline_till_eof(t_minishell *shell,
-									const char *eof_name, int fd);
-char							*create_tmpfile_path(t_minishell *shell);
+void							child_heredoc(t_minishell *shell,
+									char *filename, char *eof_name);
+bool							handle_heredoc(t_minishell *shell);
+
 /*run_commands_in_child*/
 void							run_commands_in_child(t_minishell *shell,
 									t_exec *exec_info);
-/*set_heredoc_and_signals.c*/
-bool							start_heredoc_process(t_minishell *shell,
-									t_command *cmd, size_t i);
 
 // ▗▄▄▖ ▗▖ ▗▖▗▄▄▄▖▗▖ ▗▄▄▄▖▗▄▄▄▖▗▖  ▗▖ ▗▄▄▖
 // ▐▌ ▐▌▐▌ ▐▌  █  ▐▌   █    █  ▐▛▚▖▐▌▐▌
