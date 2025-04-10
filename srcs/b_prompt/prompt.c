@@ -6,32 +6,20 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:32:43 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/04/10 14:13:01 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/10 14:43:25 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-char	*get_current_directory(t_minishell *shell)
-{
-	char	*cwd;
-
-	cwd = getcwd(NULL, 0);
-	if (cwd == NULL)
-	{
-		shell->exit_status = EXIT_FAILURE;
-	}
-	return (cwd);
-}
 
 char	*get_prompt_str(t_minishell *shell)
 {
 	char	*cwd;
 	char	*result;
 
-	cwd = get_current_directory(shell);
+	cwd = getcwd(NULL, 0);
 	if (!cwd)
-		return (NULL);
+		return (set_exit_failure(shell), NULL);
 	result = ft_strjoin_three("MINISHELL:", cwd, "$> ");
 	if (!result)
 		shell->exit_status = EXIT_FAILURE;
@@ -58,10 +46,29 @@ char	*prompt(t_minishell *shell)
 	return (input);
 }
 
+bool	contains_non_ascii(char *str)
+{
+	size_t	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (ft_isascii(str[i]) == 0)
+		{
+			free(str);
+			str = NULL;
+			errno = 1;
+			printf("Error: Non-ASCII character detected.\n");
+			return (true);
+		}
+		i++;
+	}
+	return (false);
+}
+
 char	*get_uncomment_line(void)
 {
 	char	*result;
-	size_t	i;
 
 	while (1)
 	{
@@ -72,20 +79,6 @@ char	*get_uncomment_line(void)
 		}
 		else
 		{
-			i = 0;
-			while (result[i])
-			{
-				if (ft_isascii(result[i]) == 0)
-				{
-					free(result);
-					result = NULL;
-					errno = 1;
-					printf("Error: Non-ASCII character detected.\n");
-					break ;
-				}
-				result[i] = '\0';
-				i++;
-			}
 			return (result);
 		}
 	}
@@ -98,7 +91,7 @@ char	*get_input(t_minishell *shell, bool interactive_mode)
 	if (!interactive_mode)
 	{
 		input_line = get_uncomment_line();
-		if (!input_line)
+		if (!input_line || contains_non_ascii(input_line))
 		{
 			free_shell(shell);
 			if (errno)
