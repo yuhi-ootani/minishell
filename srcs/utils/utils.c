@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 10:17:05 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/03 19:23:39 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/09 19:04:40 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,97 +37,38 @@ void	print_cmd(t_command *cmd, int cmd_index)
 			printf("  Arg %zu: %s\n", i, cmd->args[i]);
 			i++;
 		}
+		src++;
 	}
-	else
-	{
-		printf("  No arguments\n");
-	}
-	// Print input redirections.
-	if (cmd->infile_count > 0)
-	{
-		i = 0;
-		while (i < cmd->infile_count)
-		{
-			if (cmd->infiles[i].type == TOKEN_REDIR_IN)
-				redir_type = "INPUT (<)";
-			else if (cmd->infiles[i].type == TOKEN_HEREDOC)
-				redir_type = "HEREDOC (<<)";
-			else
-				redir_type = "UNKNOWN";
-			printf("  Input redirection [%s]: %s\n", redir_type,
-				cmd->infiles[i].filename);
-			i++;
-		}
-	}
-	// Print output redirections.
-	if (cmd->outfile_count > 0)
-	{
-		i = 0;
-		while (i < cmd->outfile_count)
-		{
-			if (cmd->outfiles[i].type == TOKEN_REDIR_OUT)
-				redir_type = "OUTPUT (>)";
-			else if (cmd->outfiles[i].type == TOKEN_APPEND)
-				redir_type = "APPEND (>>)";
-			else
-				redir_type = "UNKNOWN";
-			printf("  Output redirection [%s]: %s\n", redir_type,
-				cmd->outfiles[i].filename);
-			i++;
-		}
-	}
-	printf("\n");
-}
-// Print all commands in the linked list
-void	print_cmds(t_command *head)
-{
-	int			cmd_index;
-	t_command	*current;
-
-	cmd_index = 0;
-	current = head;
-	while (current)
-	{
-		print_cmd(current, cmd_index);
-		current = current->next;
-		cmd_index++;
-	}
+	dst[i] = '\0';
 }
 
-void	print_tokens(t_token *tokens)
+char	*strdup_except_quotes_util(const char *input)
 {
-	const char	*type_str;
+	char	*result;
 
-	while (tokens)
+	result = (char *)ft_calloc(sizeof(char), ft_strlen(input) + 1);
+	if (!result)
+		return (NULL);
+	strcpy_except_quotes(result, input);
+	return (result);
+}
+
+size_t	count_env_util(t_env *env)
+{
+	size_t	count;
+
+	count = 0;
+	if (!env)
+		return (count);
+	while (env)
 	{
-		switch (tokens->type)
-		{
-		case TOKEN_WORD:
-			type_str = "ARG";
-			break ;
-		case TOKEN_PIPE:
-			type_str = "PIPE";
-			break ;
-		case TOKEN_REDIR_IN:
-			type_str = "REDIR_IN";
-			break ;
-		case TOKEN_REDIR_OUT:
-			type_str = "REDIR_OUT";
-			break ;
-		case TOKEN_APPEND:
-			type_str = "REDIR_APPEND";
-			break ;
-		case TOKEN_HEREDOC:
-			type_str = "HEREDOC";
-			break ;
-		case TOKEN_EOF:
-			type_str = "EOF";
-			break ;
-		default:
-			type_str = "UNKNOWN";
-			break ;
-		}
-		printf("[%s] '%s'\n", type_str, tokens->value ? tokens->value : "");
-		tokens = tokens->next;
+		count++;
+		env = env->next;
 	}
+	return (count);
+}
+
+void	set_exit_failure(t_minishell *shell)
+{
+	shell->exit_status = EXIT_FAILURE;
 }

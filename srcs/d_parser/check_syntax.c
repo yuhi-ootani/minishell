@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:42:43 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/01 17:35:57 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/03 14:17:21 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ bool	detect_unclosed_quotes(t_token *tokens, char *unclosed_quote)
 		while (tokens->value && tokens->value[i])
 		{
 			if ((tokens->value[i] == '\'' || tokens->value[i] == '"')
-					&& quote == 0)
+				&& quote == 0)
 				quote = tokens->value[i];
 			else if (tokens->value[i] == quote)
 				quote = 0;

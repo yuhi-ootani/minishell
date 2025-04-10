@@ -1,6 +1,23 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   redirection.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/03 14:29:30 by knemcova          #+#    #+#             */
+/*   Updated: 2025/04/09 19:00:53 by knemcova         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+// t_token_type	last_infile_type(t_command *cmd)
+// {
+// 	if (cmd->infile_count == 0)
+// 		return (TOKEN_WORD);
+// 	return (cmd->infiles[cmd->infile_count - 1].type);
+// }
 
 bool	input_redirection(t_minishell *shell, t_command *cmd)
 {
@@ -20,10 +37,7 @@ bool	input_redirection(t_minishell *shell, t_command *cmd)
 			return (set_exit_failure(shell), close(infile_fd), false);
 		}
 		if (cmd->infile_count == i + 1)
-		{
-			if (dup2(infile_fd, STDIN_FILENO) == -1)
-				return (set_exit_failure(shell), close(infile_fd), false);
-		}
+			dup2(infile_fd, STDIN_FILENO);
 		close(infile_fd);
 		i++;
 	}
