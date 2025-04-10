@@ -1,4 +1,14 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_export_set_env.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/09 19:54:35 by knemcova          #+#    #+#             */
+/*   Updated: 2025/04/10 09:40:08 by knemcova         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
@@ -36,7 +46,7 @@ int	update_env_value(t_env *env, const char *new_value, bool append)
 int	set_env_value(t_env *copied_env, const char *new_name,
 		const char *new_value, bool append)
 {
-	t_env *new_env;
+	t_env	*new_env;
 
 	new_env = get_env_if_exist(copied_env, new_name);
 	if (new_env)
