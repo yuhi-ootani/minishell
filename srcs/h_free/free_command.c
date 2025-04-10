@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 13:37:45 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/01 17:26:45 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/03 14:44:19 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ static void	free_cmd_outfiles(t_redirection *outfiles, size_t count)
 
 void	free_all_cmds(t_command *head)
 {
-	t_command *tmp;
+	t_command	*tmp;
 
 	while (head)
 	{

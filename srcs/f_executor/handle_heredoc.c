@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   handle_heredoc.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/03 19:28:50 by knemcova          #+#    #+#             */
+/*   Updated: 2025/04/09 19:03:54 by knemcova         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
@@ -45,11 +56,12 @@ bool	readline_till_eof(t_minishell *shell, const char *eof_name, int fd)
 
 char	*create_tmpfile_path(t_minishell *shell)
 {
-	char		tmpfile_path[] = "/tmp/minishell_heredoc_";
+	char		*tmpfile_path;
 	static int	i = 0;
 	char		*tmpfile_index;
 	char		*result;
 
+	tmpfile_path = "/tmp/minishell_heredoc_";
 	tmpfile_index = ft_itoa(i);
 	if (i == INT_MAX)
 		i = 0;
@@ -67,32 +79,12 @@ char	*create_tmpfile_path(t_minishell *shell)
 	return (result);
 }
 
-bool	start_heredoc_process(t_minishell *shell, t_command *cmd, size_t i)
-{
-	int		fd;
-	char	*eof_name;
-
-	eof_name = cmd->infiles[i].filename;
-	cmd->infiles[i].filename = create_tmpfile_path(shell);
-	if (!cmd->infiles[i].filename)
-		return (set_exit_failure(shell), false);
-	fd = open(cmd->infiles[i].filename, O_RDWR | O_CREAT | O_TRUNC, 0644);
-	if (fd == -1)
-		return (set_exit_failure(shell), false);
-	if (!readline_till_eof(shell, eof_name, fd))
-		return (close(fd), free(eof_name), false);
-	close(fd);
-	free(eof_name);
-	return (true);
-}
-
 bool	handle_heredoc(t_minishell *shell)
 {
 	t_command	*current_cmd;
 	size_t		i;
 
 	current_cmd = shell->commands;
-	setup_signals_heredoc();
 	while (current_cmd)
 	{
 		i = 0;
@@ -101,7 +93,10 @@ bool	handle_heredoc(t_minishell *shell)
 			if (current_cmd->infiles[i].type == TOKEN_HEREDOC)
 			{
 				if (!start_heredoc_process(shell, current_cmd, i))
+				{
+					setup_signals_parent();
 					return (false);
+				}
 			}
 			i++;
 		}
