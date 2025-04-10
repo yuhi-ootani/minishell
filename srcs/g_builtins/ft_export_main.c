@@ -6,69 +6,57 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:45:23 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/09 18:59:18 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/10 09:39:55 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-//  ▗▄▄▖▗▄▄▄▖▗▄▄▄▖    ▗▖  ▗▖▗▄▄▄▖▗▖ ▗▖    ▗▄▄▄▖▗▖  ▗▖▗▖  ▗▖
-// ▐▌   ▐▌     █      ▐▛▚▖▐▌▐▌   ▐▌ ▐▌    ▐▌   ▐▛▚▖▐▌▐▌  ▐▌
-//  ▝▀▚▖▐▛▀▀▘  █      ▐▌ ▝▜▌▐▛▀▀▘▐▌ ▐▌    ▐▛▀▀▘▐▌ ▝▜▌▐▌  ▐▌
-// ▗▄▄▞▘▐▙▄▄▖  █      ▐▌  ▐▌▐▙▄▄▖▐▙█▟▌    ▐▙▄▄▖▐▌  ▐▌ ▝▚▞▘
+//  ▗▄▄▖▗▄▄▄▖▗▄▄▄▖    ▗▖  ▗▖ ▗▄▖ ▗▖  ▗▖▗▄▄▄▖    ▗▖  ▗▖ ▗▄▖ ▗▖   ▗▖ ▗▖▗▄▄▄▖
+// ▐▌   ▐▌     █      ▐▛▚▖▐▌▐▌ ▐▌▐▛▚▞▜▌▐▌       ▐▌  ▐▌▐▌ ▐▌▐▌   ▐▌ ▐▌▐▌
+// ▐▌▝▜▌▐▛▀▀▘  █      ▐▌ ▝▜▌▐▛▀▜▌▐▌  ▐▌▐▛▀▀▘    ▐▌  ▐▌▐▛▀▜▌▐▌   ▐▌ ▐▌▐▛▀▀▘
+// ▝▚▄▞▘▐▙▄▄▖  █      ▐▌  ▐▌▐▌ ▐▌▐▌  ▐▌▐▙▄▄▖     ▝▚▞▘ ▐▌ ▐▌▐▙▄▄▖▝▚▄▞▘▐▙▄▄▖
 
-static t_env	*get_env_if_exist(t_env *copied_env, const char *new_name)
+static size_t	skip_operands(const char *arg, size_t i)
 {
-	t_env	*env;
-
-	env = copied_env;
-	while (env)
+	if (arg[i] == '+' && arg[i + 1] == '=')
 	{
-		if (ft_strcmp(env->name, new_name) == 0)
-		{
-			return (env);
-		}
-		env = env->next;
+		return (i + 2);
 	}
-	return (NULL);
+	else if (arg[i] == '=')
+		return (i + 1);
+	return (i);
 }
 
-int	update_env_value(t_env *env, const char *new_value, bool append)
+bool	get_name_and_value(char *arg, char **name, char **value,
+		bool *append)
 {
-	char	*tmp_value;
+	size_t	i;
 
-	if (append && env->value)
-		tmp_value = ft_strjoin(env->value, new_value);
-	else
-		tmp_value = ft_strdup(new_value);
-	if (!tmp_value)
-		return (EXIT_FAILURE);
-	free(env->value);
-	env->value = tmp_value;
-	return (EXIT_SUCCESS);
+	i = 0;
+	while (arg[i] && arg[i] != '=' && arg[i] != '+')
+		i++;
+	*name = ft_strndup(arg, i);
+	if (!name)
+		return (false);
+	*append = false;
+	if (arg[i] == '+' && arg[i + 1] == '=')
+		*append = true;
+	i = skip_operands(arg, i);
+	*value = NULL;
+	if (arg[i - 1] == '=')
+	{
+		if (arg[i])
+			*value = ft_strdup(arg + i);
+		else
+			*value = ft_strdup("");
+		if (!*value)
+			return (free(*name), false);
+	}
+	return (true);
 }
 
-static int	set_env_value(t_env *copied_env, const char *new_name,
-		const char *new_value, bool append)
-{
-	t_env	*new_env;
-
-	new_env = get_env_if_exist(copied_env, new_name);
-	if (new_env)
-	{
-		return (update_env_value(new_env, new_value, append));
-	}
-	else
-	{
-		new_env = create_new_env_util(new_name, new_value, NULL);
-		if (!new_env)
-			return (EXIT_FAILURE);
-		env_add_back_util(&copied_env, new_env);
-		return (EXIT_SUCCESS);
-	}
-}
-
-static bool	set_new_env_variable(char *arg, t_env *copied_env)
+bool	set_new_env_variable(char *arg, t_env *copied_env)
 {
 	char	*name;
 	char	*value;
@@ -84,6 +72,36 @@ static bool	set_new_env_variable(char *arg, t_env *copied_env)
 		free(value);
 	return (exit_status);
 }
+
+// ▗▄▄▖  ▗▄▖ ▗▄▄▖  ▗▄▄▖▗▄▄▄▖▗▄▄▖
+// ▐▌ ▐▌▐▌ ▐▌▐▌ ▐▌▐▌   ▐▌   ▐▌ ▐▌
+// ▐▛▀▘ ▐▛▀▜▌▐▛▀▚▖ ▝▀▚▖▐▛▀▀▘▐▛▀▚▖
+// ▐▌   ▐▌ ▐▌▐▌ ▐▌▗▄▄▞▘▐▙▄▄▖▐▌ ▐▌
+
+bool	is_invalid_arg(char *arg)
+{
+	size_t	i;
+
+	i = 0;
+	if (!arg || arg[0] == '\0')
+		return (true);
+	if (!(ft_isalpha(arg[0]) || arg[0] == '_'))
+		return (true);
+	while (arg[i] && arg[i] != '=')
+	{
+		if (arg[i] == '+' && arg[i + 1] == '=')
+			break ;
+		if (!(ft_isalnum(arg[i]) || arg[i] == '_'))
+			return (true);
+		i++;
+	}
+	return (false);
+}
+
+//  ▗▄▄▖▗▄▄▄▖▗▄▖ ▗▄▄▖▗▄▄▄▖
+// ▐▌     █ ▐▌ ▐▌▐▌ ▐▌ █
+//  ▝▀▚▖  █ ▐▛▀▜▌▐▛▀▚▖ █
+// ▗▄▄▞▘  █ ▐▌ ▐▌▐▌ ▐▌ █
 
 int	ft_export(t_minishell *shell)
 {

@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/04/09 18:57:30 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/10 09:31:42 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,8 +159,6 @@ void							sig_handler_heredoc(int sig);
 // ▐▌ ▐▌  █    █  ▐▌    ▝▀▚▖
 // ▝▚▄▞▘  █  ▗▄█▄▖▐▙▄▄▖▗▄▄▞▘
 
-char							*remove_quotes(t_minishell *shell,
-									const char *input);
 size_t							count_env_util(t_env *env);
 void							set_exit_failure(t_minishell *shell);
 t_env							*create_new_env_util(const char *new_name,
@@ -169,6 +167,9 @@ void							env_add_back_util(t_env **copied_env,
 									t_env *new_env);
 bool							get_env_value_util(t_minishell *shell,
 									const char *name, char **result);
+char							**split_quoted_words_util(char const *s,
+									const char *delimiters);
+char							*remove_quotes_util(const char *input);
 
 // ▗▄▄▄▖      ▗▖  ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖   ▗▖
 //   █        ▐▛▚▞▜▌  █  ▐▛▚▖▐▌  █  ▐▌   ▐▌ ▐▌▐▌   ▐▌   ▐▌
@@ -243,23 +244,24 @@ typedef struct s_exec
 }								t_exec;
 
 /*built_envp_array.c*/
-char							**build_envp_array(t_minishell *shell);
-/*child_process.c*/
-void							cleanup_and_exit_failure(t_minishell *shell,
+char							**build_envp_array(t_minishell *shell,
 									t_exec *exec_info);
+/*child_process.c*/
+void							cleanup_and_exit_child(t_minishell *shell,
+									t_exec *exec_info, int exit_status);
 void							execute_child_process(t_minishell *shell,
 									t_exec *exec_info, t_command *cmd);
 /*execute_cmd.c*/
 void							execute_external_command(t_minishell *shell,
-									t_command *cmd);
-/*executor.c*/									
+									t_exec *exec_info, t_command *cmd);
+/*executor.c*/
 t_builtin_id					is_builtin(char *command_str);
 void							cmd_executor(t_minishell *shell);
 /*handle_heredoc.c*/
 bool							readline_till_eof(t_minishell *shell,
 									const char *eof_name, int fd);
-char							*create_tmpfile_path(t_minishell *shell);	
-/*run_commands_in_child*/			
+char							*create_tmpfile_path(t_minishell *shell);
+/*run_commands_in_child*/
 void							run_commands_in_child(t_minishell *shell,
 									t_exec *exec_info);
 /*set_heredoc_and_signals.c*/
@@ -307,7 +309,6 @@ size_t							ft_array_count_str(char **array);
 // ▐▛▀▀▘▐▛▀▚▖▐▛▀▀▘▐▛▀▀▘
 // ▐▌   ▐▌ ▐▌▐▙▄▄▖▐▙▄▄▖
 
-void							free_cmd(t_command *cmd);
 void							free_all_cmds(t_command *head);
 void							free_shell(t_minishell *shell);
 int								get_exit_status(int err);

@@ -3,22 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   child_process_setup.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 11:11:54 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/03 20:46:00 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/10 09:41:27 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
-// void	handle_unset_path_error(t_minishell *shell, const char *cmd_str)
-// {
-// 	ft_fprintf(STDERR_FILENO, "MINISHELL: %s: No such file or directory\n",
-// 		cmd_str);
-// 	free_shell(shell);
-// 	exit(127);
-// }
 
 void	cleanup_and_exit_child(t_minishell *shell, t_exec *exec_info,
 		int exit_status)

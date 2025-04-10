@@ -1,4 +1,14 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   child_process_execute.c                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/09 20:26:51 by knemcova          #+#    #+#             */
+/*   Updated: 2025/04/10 09:34:56 by knemcova         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
@@ -30,47 +40,47 @@ char	**build_envp_array(t_minishell *shell, t_exec *exec_info)
 char	**get_splited_path(t_minishell *shell, t_exec *exec_info,
 		const char *cmd_str)
 {
-	char	*env_PATH;
-	char	**splited_PATH;
+	char	*env_path;
+	char	**splited_path;
 
-	if (!get_env_value_util(shell, "PATH", &env_PATH))
+	if (!get_env_value_util(shell, "PATH", &env_path))
 		return (NULL);
-	if (!env_PATH)
+	if (!env_path)
 	{
 		ft_fprintf(STDERR_FILENO, "MINISHELL: %s: No such file or directory\n",
 			cmd_str);
 		cleanup_and_exit_child(shell, exec_info, 127);
 	}
-	splited_PATH = ft_split(env_PATH, ":");
-	free(env_PATH);
-	return (splited_PATH);
+	splited_path = ft_split(env_path, ":");
+	free(env_path);
+	return (splited_path);
 }
 
 char	*search_command_in_path(t_minishell *shell, t_exec *exec_info,
 		const char *command)
 {
-	char	**splited_PATH;
+	char	**splited_path;
 	int		i;
 	char	*full_command_path;
 
-	splited_PATH = get_splited_path(shell, exec_info, command);
-	if (!splited_PATH)
+	splited_path = get_splited_path(shell, exec_info, command);
+	if (!splited_path)
 		cleanup_and_exit_child(shell, exec_info, EXIT_FAILURE);
 	i = 0;
-	while (splited_PATH && splited_PATH[i])
+	while (splited_path && splited_path[i])
 	{
-		full_command_path = ft_strjoin_three(splited_PATH[i], "/", command);
+		full_command_path = ft_strjoin_three(splited_path[i], "/", command);
 		if (!full_command_path)
 		{
-			ft_array_free(splited_PATH);
+			ft_array_free(splited_path);
 			cleanup_and_exit_child(shell, exec_info, EXIT_FAILURE);
 		}
 		if (access(full_command_path, F_OK | X_OK) == 0)
-			return (ft_array_free(splited_PATH), full_command_path);
+			return (ft_array_free(splited_path), full_command_path);
 		free(full_command_path);
 		i++;
 	}
-	ft_array_free(splited_PATH);
+	ft_array_free(splited_path);
 	return (NULL);
 }
 

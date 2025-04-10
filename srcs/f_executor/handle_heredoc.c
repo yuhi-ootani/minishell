@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 19:28:50 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/09 19:03:54 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/10 10:09:19 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,10 +93,7 @@ bool	handle_heredoc(t_minishell *shell)
 			if (current_cmd->infiles[i].type == TOKEN_HEREDOC)
 			{
 				if (!start_heredoc_process(shell, current_cmd, i))
-				{
-					setup_signals_parent();
 					return (false);
-				}
 			}
 			i++;
 		}

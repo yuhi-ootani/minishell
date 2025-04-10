@@ -1,4 +1,14 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env_utils.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/09 20:06:21 by knemcova          #+#    #+#             */
+/*   Updated: 2025/04/10 09:43:07 by knemcova         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
@@ -64,7 +74,7 @@ void	env_add_back_util(t_env **copied_env, t_env *new_env)
 
 bool	get_env_value_util(t_minishell *shell, const char *name, char **result)
 {
-	t_env *env;
+	t_env	*env;
 
 	env = shell->env;
 	if (!env || !name)
