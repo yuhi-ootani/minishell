@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 13:37:45 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/03 14:27:14 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/11 11:36:16 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,22 +37,6 @@ void	free_tokens(t_token *tokens)
 		free(tmp);
 	}
 }
-
-void	free_env(t_env *env)
-{
-	t_env	*temp;
-
-	while (env)
-	{
-		temp = env->next;
-		free(env->name);
-		free(env->value);
-		free(env);
-		env = temp;
-	}
-}
-
-//free_env is not used anywhere
 
 void	free_copied_env(t_env *env)
 {

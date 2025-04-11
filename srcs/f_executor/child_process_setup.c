@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 11:11:54 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/10 09:41:27 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/11 14:49:39 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,6 @@ bool	setup_outfile(t_minishell *shell, t_exec *exec_info,
 				cleanup_and_exit_child(shell, exec_info, EXIT_FAILURE);
 			}
 		}
-		// exec_info->input_fd = exec_info->pipe_fds[0];
 		close(exec_info->pipe_fds[1]);
 		exec_info->pipe_fds[1] = -1;
 	}

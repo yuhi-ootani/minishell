@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_heredoc.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 19:28:50 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/10 18:48:05 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/11 14:49:51 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,21 +42,15 @@ static bool	handle_heredoc_status(t_minishell *shell, char **filename)
 	int	status;
 
 	status = shell->exit_status;
-	(void)filename; // clean
+	(void)filename;
 	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 	{
 		write(STDOUT_FILENO, "\n", 1);
-		// unlink(*filename);
-		// free(*filename);
-		// *filename = NULL;
 		shell->exit_status = 130;
 		return (false);
 	}
 	else if (WEXITSTATUS(status) != 0)
 	{
-		// unlink(*filename);
-		// free(*filename);
-		// *filename = NULL;
 		return (false);
 	}
 	return (true);
@@ -78,7 +72,7 @@ bool	start_heredoc_process(t_minishell *shell, t_command *cmd, size_t i)
 		return (restore_sigint(&sa_original), free(eof_name),
 			set_exit_failure(shell), false);
 	else if (pid == 0)
-	child_heredoc(shell, cmd->infiles[i].filename, eof_name);
+		child_heredoc(shell, cmd->infiles[i].filename, eof_name);
 	waitpid(pid, &shell->exit_status, 0);
 	restore_sigint(&sa_original);
 	free(eof_name);
