@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 12:31:11 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/10 19:22:59 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/11 12:57:43 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,30 +35,55 @@ bool	fprintf_to_tmpfile(t_minishell *shell, char *line, int fd)
 	return (true);
 }
 
+// bool	readline_till_eof(t_minishell *shell, const char *eof_name, int fd)
+// {
+// 	char	*line;
+
+// 	while (1)
+// 	{
+// 		line = readline("> ");
+// 		if (!line)
+// 			return (false);
+// 		if (ft_strcmp(line, eof_name) == 0)
+// 		{
+// 			free(line);
+// 			break ;
+// 		}
+// 		if (!fprintf_to_tmpfile(shell, line, fd))
+// 			return (free(line), false);
+// 		free(line);
+// 	}
+// 	return (true);
+// }
+
 bool	readline_till_eof(t_minishell *shell, const char *eof_name, int fd)
 {
 	char	*line;
 
-	while (1)
+	while (!g_signal)
 	{
 		line = readline("> ");
 		if (!line)
-			return (false);
-		if (ft_strcmp(line, eof_name) == 0)
 			break ;
+		if (ft_strcmp(line, eof_name) == 0)
+		{
+			free(line);
+			break ;
+		}
 		if (!fprintf_to_tmpfile(shell, line, fd))
+		{
 			return (free(line), false);
+		}
 		free(line);
 	}
-	free(line);
 	return (true);
 }
+// jeremys code
 
 void	child_heredoc(t_minishell *shell, char *filename, char *eof_name)
 {
 	int	fd;
 
-	sigaction(SIGINT, NULL, NULL);
 	setup_signals_heredoc();
 	fd = open(filename, O_RDWR | O_CREAT | O_TRUNC, 0644);
 	if (fd == -1)

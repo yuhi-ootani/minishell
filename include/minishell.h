@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/04/10 10:50:52 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/11 12:44:36 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 # include <sys/wait.h>  //waitpid
 # include <termios.h>
 # include <unistd.h> //getcwd
+#include <sys/ioctl.h>
 
 # define DELIMITERS " \t\n"
 
