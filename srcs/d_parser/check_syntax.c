@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_syntax.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:42:43 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/11 10:41:51 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/11 14:47:00 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ bool	detect_unclosed_quotes(t_token *tokens, char *unclosed_quote)
 		while (tokens->value && tokens->value[i])
 		{
 			if ((tokens->value[i] == '\'' || tokens->value[i] == '"')
-					&& quote == 0)
+				&& quote == 0)
 				quote = tokens->value[i];
 			else if (tokens->value[i] == quote)
 				quote = 0;

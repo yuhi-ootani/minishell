@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prompt.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:32:43 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/04/10 14:43:25 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/11 09:26:47 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,13 +74,9 @@ char	*get_uncomment_line(void)
 	{
 		result = ft_get_next_line(STDIN_FILENO);
 		if (result && ft_strncmp(result, "#", 1) == 0)
-		{
 			free(result);
-		}
 		else
-		{
 			return (result);
-		}
 	}
 }
 
