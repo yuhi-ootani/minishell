@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/04/10 11:31:21 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/11 14:57:16 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 static void	run_single_builtin_in_parent(t_minishell *shell, t_exec *exec_info)
 {
-	if (!handle_redirection(shell, shell->commands))
+	if (!input_redirection(shell, shell->commands) || !output_redirection(shell,
+			shell->commands))
 	{
 		shell->exit_status = EXIT_FAILURE;
 		return ;
@@ -82,10 +83,7 @@ void	cmd_executor(t_minishell *shell)
 		return (clean_heredoc_tmpfile(shell));
 	if (is_executed_in_parent(shell, &exec_info))
 	{
-		if (!handle_redirection(shell, shell->commands))
-			return (clean_heredoc_tmpfile(shell));
-		if (exec_info.builtin_id != NOT_BUILTIN)
-			run_single_builtin_in_parent(shell, &exec_info);
+		run_single_builtin_in_parent(shell, &exec_info);
 	}
 	else
 		run_commands_in_child(shell, &exec_info);

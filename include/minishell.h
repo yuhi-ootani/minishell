@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/04/11 12:42:33 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/11 15:18:00 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,8 +133,8 @@ bool							add_argument(t_minishell *shell, t_command *cmd,
 // ▐▛▀▚▖▐▛▀▀▘▐▌  █  █  ▐▛▀▚▖▐▛▀▀▘▐▌     █    █  ▐▌ ▐▌▐▌ ▝▜▌
 // ▐▌ ▐▌▐▙▄▄▖▐▙▄▄▀▗▄█▄▖▐▌ ▐▌▐▙▄▄▖▝▚▄▄▖  █  ▗▄█▄▖▝▚▄▞▘▐▌  ▐▌
 
-bool							handle_redirection(t_minishell *shell,
-									t_command *cmd);
+// bool							handle_redirection(t_minishell *shell,
+// 									t_command *cmd);
 bool							input_redirection(t_minishell *shell,
 									t_command *cmd);
 bool							output_redirection(t_minishell *shell,
@@ -277,11 +277,6 @@ void							run_commands_in_child(t_minishell *shell,
 int								ft_echo(t_minishell *shell);
 int								ft_cd(t_minishell *shell);
 int								ft_pwd(t_minishell *shell);
-int								ft_export(t_minishell *shell);
-bool							is_invalid_arg(char *arg);
-bool							get_name_and_value(char *arg, char **name,
-									char **value, bool *append);
-int								sort_and_print_env(t_env **copied_env);
 int								ft_unset(t_minishell *shell);
 int								ft_env(t_minishell *shell);
 int								ft_exit(t_minishell *shell);

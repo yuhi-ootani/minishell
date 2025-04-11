@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 14:29:30 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/11 12:53:28 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/11 14:58:38 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,25 +103,25 @@ bool	output_redirection(t_minishell *shell, t_command *cmd)
 	return (true);
 }
 
-bool	handle_redirection(t_minishell *shell, t_command *cmd)
-{
-	int	error;
+// bool	handle_redirection(t_minishell *shell, t_command *cmd)
+// {
+// 	int	error;
 
-	error = 0;
-	if (cmd->infile_count > 0)
-	{
-		if (!input_redirection(shell, cmd))
-			error++;
-	}
-	if (cmd->outfile_count > 0)
-	{
-		if (!output_redirection(shell, cmd))
-			error++;
-	}
-	if (error > 0)
-		return (false);
-	return (true);
-}
+// 	error = 0;
+// 	if (cmd->infile_count > 0)
+// 	{
+// 		if (!input_redirection(shell, cmd))
+// 			error++;
+// 	}
+// 	if (cmd->outfile_count > 0)
+// 	{
+// 		if (!output_redirection(shell, cmd))
+// 			error++;
+// 	}
+// 	if (error > 0)
+// 		return (false);
+// 	return (true);
+// }
 
 // int	main(int argc, char **argv, char **envp)
 // {
