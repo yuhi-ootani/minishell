@@ -6,7 +6,7 @@
 /*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/04/11 14:46:29 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/11 15:17:34 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -285,7 +285,6 @@ int								sort_and_print_env(t_env **copied_env);
 int								ft_unset(t_minishell *shell);
 int								ft_env(t_minishell *shell);
 int								ft_exit(t_minishell *shell);
-int								ft_export(t_minishell *shell);
 int								sort_and_print_env(t_env **copied_env);
 int								set_env_value(t_env *copied_env,
 									const char *new_name, const char *new_value,
