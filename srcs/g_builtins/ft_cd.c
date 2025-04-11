@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
+/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 10:16:32 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/11 12:53:01 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/11 19:10:07 by knemcova         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	ft_cd(t_minishell *shell)
 {
 	char	*path;
 
-	if (shell->commands->args[2])
+	if (shell->commands->args[1] && shell->commands->args[2])
 		return (ft_fprintf(STDERR_FILENO,
 				"MINISHELL: cd: too many arguments\n"), EXIT_FAILURE);
 	path = get_dest_path(shell);
