@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 14:29:30 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/09 19:00:53 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/11 12:53:28 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,14 @@
 // 	return (cmd->infiles[cmd->infile_count - 1].type);
 // }
 
+static void	print_error_message(t_minishell *shell, char *filename)
+{
+	ft_fprintf(STDERR_FILENO, "MINISHELL:%s: %s\n", filename, strerror(errno));
+	set_exit_failure(shell);
+	if (filename)
+		free(filename);
+}
+
 bool	input_redirection(t_minishell *shell, t_command *cmd)
 {
 	size_t	i;
@@ -28,28 +36,30 @@ bool	input_redirection(t_minishell *shell, t_command *cmd)
 	i = 0;
 	while (i < cmd->infile_count)
 	{
-		filename = cmd->infiles[i].filename;
+		filename = expand_filename(shell, cmd->infiles[i]);
+		if (!filename)
+			return (false);
 		infile_fd = open(filename, O_RDONLY);
 		if (infile_fd < 0)
-		{
-			ft_fprintf(STDERR_FILENO, "MINISHELL: %s: %s\n", filename,
-				strerror(errno));
-			return (set_exit_failure(shell), close(infile_fd), false);
-		}
+			return (print_error_message(shell, filename), false);
+		free(filename);
 		if (cmd->infile_count == i + 1)
-			dup2(infile_fd, STDIN_FILENO);
+		{
+			if (dup2(infile_fd, STDIN_FILENO) == -1)
+				return (set_exit_failure(shell), close(infile_fd), false);
+		}
 		close(infile_fd);
 		i++;
 	}
 	return (true);
 }
 
-t_token_type	last_outfile_type(t_command *cmd)
-{
-	if (cmd->outfile_count == 0)
-		return (TOKEN_WORD);
-	return (cmd->outfiles[cmd->outfile_count - 1].type);
-}
+// t_token_type	last_outfile_type(t_command *cmd)
+// {
+// 	if (cmd->outfile_count == 0)
+// 		return (TOKEN_WORD);
+// 	return (cmd->outfiles[cmd->outfile_count - 1].type);
+// }
 
 int	open_outfile(t_command *cmd, size_t i, char *filename)
 {
@@ -58,10 +68,9 @@ int	open_outfile(t_command *cmd, size_t i, char *filename)
 
 	outfile_fd = -1;
 	flags = O_WRONLY | O_CREAT;
-	if (i + 1 == cmd->outfile_count && last_outfile_type(cmd) == TOKEN_APPEND)
+	if (cmd->outfiles[i].type == TOKEN_APPEND)
 		flags |= O_APPEND;
-	else if (i + 1 == cmd->outfile_count
-		&& last_outfile_type(cmd) == TOKEN_REDIR_OUT)
+	else if (cmd->outfiles[i].type == TOKEN_REDIR_OUT)
 		flags |= O_TRUNC;
 	outfile_fd = open(filename, flags, 0644);
 	return (outfile_fd);
@@ -76,14 +85,13 @@ bool	output_redirection(t_minishell *shell, t_command *cmd)
 	i = 0;
 	while (i < cmd->outfile_count)
 	{
-		filename = cmd->outfiles[i].filename;
+		filename = expand_filename(shell, cmd->outfiles[i]);
+		if (!filename)
+			return (false);
 		outfile_fd = open_outfile(cmd, i, filename);
 		if (outfile_fd < 0)
-		{
-			ft_fprintf(STDERR_FILENO, "MINISHELL: %s: %s\n", filename,
-				strerror(errno));
-			return (set_exit_failure(shell), close(outfile_fd), false);
-		}
+			return (print_error_message(shell, filename), false);
+		free(filename);
 		if (i + 1 == cmd->outfile_count)
 		{
 			if (dup2(outfile_fd, STDOUT_FILENO) == -1)

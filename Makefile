@@ -6,7 +6,7 @@
 #    By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/11 11:52:00 by otaniyuhi         #+#    #+#              #
-#    Updated: 2025/04/10 17:37:28 by oyuhi            ###   ########.fr        #
+#    Updated: 2025/04/11 11:36:01 by oyuhi            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,7 +37,7 @@ SRCS = $(MAIN_DIR)/main.c $(MAIN_DIR)/main_init.c  \
 	   $(PROMPT_DIR)/prompt.c \
 	   $(TOKENIZATION_DIR)/tokenization.c $(TOKENIZATION_DIR)/token_word.c $(TOKENIZATION_DIR)/token_utils.c \
 	   $(PARSER_DIR)/parser.c $(PARSER_DIR)/check_syntax.c $(PARSER_DIR)/create_command.c $(PARSER_DIR)/set_command_data.c \
-	   $(EXPAND_DIR)/expand.c $(EXPAND_DIR)/get_expanded_str.c $(EXPAND_DIR)/handle_dollar.c $(EXPAND_DIR)/split_and_quotes_removal.c \
+	   $(EXPAND_DIR)/expand.c $(EXPAND_DIR)/get_expanded_str.c $(EXPAND_DIR)/handle_dollar.c $(EXPAND_DIR)/split_and_quotes_removal.c $(EXPAND_DIR)/expand_filename.c \
        $(SIGNALS_DIR)/signals.c $(SIGNALS_DIR)/heredoc_signals.c\
 	   $(BUILTINS_DIR)/ft_cd.c $(BUILTINS_DIR)/ft_echo.c $(BUILTINS_DIR)/ft_env.c $(BUILTINS_DIR)/ft_exit.c $(BUILTINS_DIR)/ft_export_main.c $(BUILTINS_DIR)/ft_export_set_env.c $(BUILTINS_DIR)/ft_export_sort_print.c $(BUILTINS_DIR)/ft_unset.c $(BUILTINS_DIR)/ft_pwd.c \
 	   $(UTILS_DIR)/utils.c $(UTILS_DIR)/env_utils.c $(UTILS_DIR)/quotes_removal_utils.c $(UTILS_DIR)/split_quoted_words_utils.c \

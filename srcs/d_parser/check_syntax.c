@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_syntax.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:42:43 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/03 14:17:21 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/11 10:41:51 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,11 @@ bool	is_redirection_syntax_error(t_minishell *shell, t_token *current_token)
 			shell->exit_status = 2;
 			if (next_token && next_token->value)
 				ft_fprintf(STDERR_FILENO,
-					"syntax error near unexpected token `%s'\n",
+					"MINISHELL: syntax error near unexpected token `%s'\n",
 					next_token->value);
 			else
 				ft_fprintf(STDERR_FILENO,
-					"syntax error near unexpected token `newline'\n");
+					"MINISHELL: syntax error near unexpected token `newline'\n");
 			return (true);
 		}
 	}
@@ -46,7 +46,7 @@ bool	is_pipe_syntax_error(t_minishell *shell, t_token *current_token,
 		{
 			shell->exit_status = 2;
 			ft_fprintf(STDERR_FILENO,
-				"syntax error near unexpected token `|'\n");
+				"MINISHELL: syntax error near unexpected token `|'\n");
 			return (true);
 		}
 		if (current_token->next == NULL
@@ -54,7 +54,7 @@ bool	is_pipe_syntax_error(t_minishell *shell, t_token *current_token,
 		{
 			shell->exit_status = 2;
 			ft_fprintf(STDERR_FILENO,
-				"syntax error near unexpected token end of file\n");
+				"MINISHELL: syntax error near unexpected token end of file\n");
 			return (true);
 		}
 	}
@@ -73,7 +73,7 @@ bool	detect_unclosed_quotes(t_token *tokens, char *unclosed_quote)
 		while (tokens->value && tokens->value[i])
 		{
 			if ((tokens->value[i] == '\'' || tokens->value[i] == '"')
-				&& quote == 0)
+					&& quote == 0)
 				quote = tokens->value[i];
 			else if (tokens->value[i] == quote)
 				quote = 0;
@@ -96,10 +96,10 @@ bool	is_quotes_syntax_error(t_minishell *shell, t_token *tokens)
 	if (detect_unclosed_quotes(tokens, &unclosed_quote))
 	{
 		ft_fprintf(STDERR_FILENO,
-			"minishell: unexpected EOF while looking for matching `%c'\n",
+			"MINISHELL:  unexpected EOF while looking for matching `%c'\n",
 			unclosed_quote);
 		ft_fprintf(STDERR_FILENO,
-			"minishell: syntax error: unexpected end of file\n");
+			"MINISHELL: syntax error: unexpected end of file\n");
 		shell->exit_status = 2;
 		return (true);
 	}

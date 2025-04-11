@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/04/10 10:50:52 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/11 12:42:33 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,8 +205,6 @@ typedef struct s_expanded_str
 bool							expand_all_cmd_args(t_minishell *shell);
 char							*get_expanded_str(t_minishell *shell,
 									const char *src_input);
-char							*get_env_name(t_minishell *shell,
-									const char *input);
 bool							append_to_buffer(t_minishell *shell,
 									t_expanded_str *expanded_str,
 									const char *src, size_t src_len);
@@ -216,6 +214,8 @@ bool							handle_dollar(t_minishell *shell,
 bool							quote_removal_args(t_minishell *shell,
 									char **args);
 char							**word_splitting(t_minishell *shell, char *str);
+char							*expand_filename(t_minishell *shell,
+									t_redirection file);
 
 // ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▄▖ ▗▄▄▖
 // ▐▌    ▝▚▞▘ ▐▌   ▐▌   ▐▌ ▐▌  █ ▐▌ ▐▌▐▌ ▐▌

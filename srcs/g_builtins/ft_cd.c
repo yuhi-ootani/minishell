@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 10:16:32 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/09 18:57:52 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/11 12:53:01 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,8 @@ int	ft_cd(t_minishell *shell)
 	}
 	if (chdir(path) != 0)
 	{
-		ft_fprintf(STDERR_FILENO, "cd: %s: %s\n", path, strerror(errno));
+		ft_fprintf(STDERR_FILENO, "MINISHELL: cd: %s: %s\n", path,
+			strerror(errno));
 		free(path);
 		return (EXIT_FAILURE);
 	}
