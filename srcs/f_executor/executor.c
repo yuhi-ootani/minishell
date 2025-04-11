@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/04/11 14:57:16 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/11 16:28:18 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,18 @@
 
 static void	run_single_builtin_in_parent(t_minishell *shell, t_exec *exec_info)
 {
-	if (!input_redirection(shell, shell->commands) || !output_redirection(shell,
-			shell->commands))
+	if (shell->commands->infile_count > 0)
 	{
-		shell->exit_status = EXIT_FAILURE;
-		return ;
+		if (!input_redirection(shell, shell->commands))
+			return (set_exit_failure(shell));
 	}
-	shell->exit_status = exec_info->builtins[exec_info->builtin_id](shell);
+	if (shell->commands->outfile_count > 0)
+	{
+		if (!output_redirection(shell, shell->commands))
+			return (set_exit_failure(shell));
+	}
+	if (exec_info->builtin_id != NOT_BUILTIN)
+		shell->exit_status = exec_info->builtins[exec_info->builtin_id](shell);
 	return ;
 }
 
@@ -82,9 +87,7 @@ void	cmd_executor(t_minishell *shell)
 	if (!handle_heredoc(shell))
 		return (clean_heredoc_tmpfile(shell));
 	if (is_executed_in_parent(shell, &exec_info))
-	{
 		run_single_builtin_in_parent(shell, &exec_info);
-	}
 	else
 		run_commands_in_child(shell, &exec_info);
 	clean_heredoc_tmpfile(shell);
