@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/04/11 16:28:18 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/11 17:46:11 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,8 @@ bool	is_executed_in_parent(t_minishell *shell, t_exec *exec_info)
 {
 	if (!shell->commands->next)
 	{
-		if (!shell->commands->args || !shell->commands->args[0][0])
+		if (!shell->commands->args || !shell->commands->args[0]
+			|| !shell->commands->args[0][0])
 			return (true);
 		else
 			exec_info->builtin_id = is_builtin(shell->commands->args[0]);
