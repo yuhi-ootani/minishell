@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:44:02 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/11 20:04:39 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/11 20:17:32 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ int	atoi_long(const char *str, bool *error)
 	}
 	return ((long long)(num * neg));
 }
-
 
 int	handle_exit_status(t_minishell *shell, t_command *cmd, long long exit_code,
 		bool error)

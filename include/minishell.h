@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/04/11 20:05:09 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/11 20:17:59 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@
 # define DELIMITERS " \t\n"
 
 typedef struct s_minishell		t_minishell;
+typedef struct s_command		t_command;
+
 // RubiFont
 // ▗▖  ▗▖ ▗▄▖ ▗▄▄▄▖▗▖  ▗▖
 // ▐▛▚▞▜▌▐▌ ▐▌  █  ▐▛▚▖▐▌
@@ -46,6 +48,21 @@ typedef struct s_env
 	char						*value;
 	struct s_env				*next;
 }								t_env;
+
+// ▗▄▄▄▖      ▗▖  ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖   ▗▖
+//   █        ▐▛▚▞▜▌  █  ▐▛▚▖▐▌  █  ▐▌   ▐▌ ▐▌▐▌   ▐▌   ▐▌
+//   █        ▐▌  ▐▌  █  ▐▌ ▝▜▌  █   ▝▀▚▖▐▛▀▜▌▐▛▀▀▘▐▌   ▐▌
+//   █  ▗▄▄▄▄ ▐▌  ▐▌▗▄█▄▖▐▌  ▐▌▗▄█▄▖▗▄▄▞▘▐▌ ▐▌▐▙▄▄▖▐▙▄▄▖▐▙▄▄▖
+
+typedef struct s_minishell
+{
+	t_env						*env;
+	char						*input;
+	t_command					*commands;
+	int							exit_status;
+	int							original_stdin;
+	int							original_stdout;
+}								t_minishell;
 
 /* main.c */
 void							init_shell_struct(t_minishell *shell,
@@ -134,60 +151,12 @@ bool							add_argument(t_minishell *shell, t_command *cmd,
 // ▐▛▀▚▖▐▛▀▀▘▐▌  █  █  ▐▛▀▚▖▐▛▀▀▘▐▌     █    █  ▐▌ ▐▌▐▌ ▝▜▌
 // ▐▌ ▐▌▐▙▄▄▖▐▙▄▄▀▗▄█▄▖▐▌ ▐▌▐▙▄▄▖▝▚▄▄▖  █  ▗▄█▄▖▝▚▄▞▘▐▌  ▐▌
 
-// bool							handle_redirection(t_minishell *shell,
-// 									t_command *cmd);
 bool							input_redirection(t_minishell *shell,
 									t_command *cmd);
 bool							output_redirection(t_minishell *shell,
 									t_command *cmd);
 
 void							clean_heredoc_tmpfile(t_minishell *shell);
-
-//  ▗▄▄▖▗▄▄▄▖ ▗▄▄▖▗▖  ▗▖ ▗▄▖ ▗▖
-// ▐▌     █  ▐▌   ▐▛▚▖▐▌▐▌ ▐▌▐▌
-//  ▝▀▚▖  █  ▐▌▝▜▌▐▌ ▝▜▌▐▛▀▜▌▐▌
-// ▗▄▄▞▘▗▄█▄▖▝▚▄▞▘▐▌  ▐▌▐▌ ▐▌▐▙▄▄▖
-
-extern volatile sig_atomic_t	g_signal;
-
-void							setup_signals_child(void);
-void							setup_signals_parent(void);
-void							setup_signals_heredoc(void);
-void							sig_handler_heredoc(int sig);
-void							ignore_sigint(struct sigaction *original);
-void							restore_sigint(struct sigaction *original);
-
-// ▗▖ ▗▖▗▄▄▄▖▗▄▄▄▖▗▖    ▗▄▄▖
-// ▐▌ ▐▌  █    █  ▐▌   ▐▌
-// ▐▌ ▐▌  █    █  ▐▌    ▝▀▚▖
-// ▝▚▄▞▘  █  ▗▄█▄▖▐▙▄▄▖▗▄▄▞▘
-
-size_t							count_env_util(t_env *env);
-void							set_exit_failure_util(t_minishell *shell);
-t_env							*create_new_env_util(const char *new_name,
-									const char *new_value, t_env *new_next);
-void							env_add_back_util(t_env **copied_env,
-									t_env *new_env);
-bool							get_env_value_util(t_minishell *shell,
-									const char *name, char **result);
-char							**split_quoted_words_util(char const *s,
-									const char *delimiters);
-char							*remove_quotes_util(const char *input);
-
-// ▗▄▄▄▖      ▗▖  ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖   ▗▖
-//   █        ▐▛▚▞▜▌  █  ▐▛▚▖▐▌  █  ▐▌   ▐▌ ▐▌▐▌   ▐▌   ▐▌
-//   █        ▐▌  ▐▌  █  ▐▌ ▝▜▌  █   ▝▀▚▖▐▛▀▜▌▐▛▀▀▘▐▌   ▐▌
-//   █  ▗▄▄▄▄ ▐▌  ▐▌▗▄█▄▖▐▌  ▐▌▗▄█▄▖▗▄▄▞▘▐▌ ▐▌▐▙▄▄▖▐▙▄▄▖▐▙▄▄▖
-
-typedef struct s_minishell
-{
-	t_env						*env;
-	char						*input;
-	t_command					*commands;
-	int							exit_status;
-	int							original_stdin;
-	int							original_stdout;
-}								t_minishell;
 
 // ▗▄▄▄▖▗▖  ▗▖▗▄▄▖  ▗▄▖ ▗▖  ▗▖▗▄▄▄
 // ▐▌    ▝▚▞▘ ▐▌ ▐▌▐▌ ▐▌▐▛▚▖▐▌▐▌  █
@@ -286,10 +255,36 @@ int								set_env_value(t_env *copied_env,
 									const char *new_name, const char *new_value,
 									bool append);
 
-typedef enum e_exit_status
-{
-	FAIL_DUP = 255,
-}								t_exit_status;
+//  ▗▄▄▖▗▄▄▄▖ ▗▄▄▖▗▖  ▗▖ ▗▄▖ ▗▖
+// ▐▌     █  ▐▌   ▐▛▚▖▐▌▐▌ ▐▌▐▌
+//  ▝▀▚▖  █  ▐▌▝▜▌▐▌ ▝▜▌▐▛▀▜▌▐▌
+// ▗▄▄▞▘▗▄█▄▖▝▚▄▞▘▐▌  ▐▌▐▌ ▐▌▐▙▄▄▖
+
+extern volatile sig_atomic_t	g_signal;
+
+void							setup_signals_child(void);
+void							setup_signals_parent(void);
+void							setup_signals_heredoc(void);
+void							sig_handler_heredoc(int sig);
+void							ignore_sigint(struct sigaction *original);
+void							restore_sigint(struct sigaction *original);
+
+// ▗▖ ▗▖▗▄▄▄▖▗▄▄▄▖▗▖    ▗▄▄▖
+// ▐▌ ▐▌  █    █  ▐▌   ▐▌
+// ▐▌ ▐▌  █    █  ▐▌    ▝▀▚▖
+// ▝▚▄▞▘  █  ▗▄█▄▖▐▙▄▄▖▗▄▄▞▘
+
+size_t							count_env_util(t_env *env);
+void							set_exit_failure_util(t_minishell *shell);
+t_env							*create_new_env_util(const char *new_name,
+									const char *new_value, t_env *new_next);
+void							env_add_back_util(t_env **copied_env,
+									t_env *new_env);
+bool							get_env_value_util(t_minishell *shell,
+									const char *name, char **result);
+char							**split_quoted_words_util(char const *s,
+									const char *delimiters);
+char							*remove_quotes_util(const char *input);
 
 // ▗▄▄▄ ▗▄▄▄▖▗▄▄▖ ▗▖ ▗▖ ▗▄▄▖    ▗▖ ▗▖▗▄▄▄▖▗▄▄▄▖▗▖    ▗▄▄▖
 // ▐▌  █▐▌   ▐▌ ▐▌▐▌ ▐▌▐▌       ▐▌ ▐▌  █    █  ▐▌   ▐▌
