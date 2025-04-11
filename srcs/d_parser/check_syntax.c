@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_syntax.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/29 17:42:43 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/11 14:47:00 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/11 19:03:48 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,8 @@ bool	is_redirection_syntax_error(t_minishell *shell, t_token *current_token)
 				ft_fprintf(STDERR_FILENO,
 					"MINISHELL: syntax error near unexpected token `%s'\n",
 					next_token->value);
-			else
-				ft_fprintf(STDERR_FILENO,
-					"MINISHELL: syntax error near unexpected token `newline'\n");
+			ft_fprintf(STDERR_FILENO,
+				"MINISHELL: syntax error near unexpected token `newline'\n");
 			return (true);
 		}
 	}

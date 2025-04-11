@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/04/11 15:29:12 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/11 18:49:34 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <stdio.h>
 # include <stdlib.h>    //PATH_MAX
 # include <string.h>    //strcmp
+# include <sys/stat.h>  //struct stat	st; stat function
 # include <sys/types.h> //pid_t
 # include <sys/wait.h>  //waitpid
 # include <termios.h>
@@ -245,14 +246,13 @@ typedef struct s_exec
 	pid_t						*pid_array;
 }								t_exec;
 
-/*built_envp_array.c*/
-char							**build_envp_array(t_minishell *shell,
-									t_exec *exec_info);
 /*child_process.c*/
 void							cleanup_and_exit_child(t_minishell *shell,
 									t_exec *exec_info, int exit_status);
 void							execute_child_process(t_minishell *shell,
 									t_exec *exec_info, t_command *cmd);
+char							*search_command_in_path(t_minishell *shell,
+									t_exec *exec_info, const char *command);
 /*execute_cmd.c*/
 void							execute_external_command(t_minishell *shell,
 									t_exec *exec_info, t_command *cmd);
