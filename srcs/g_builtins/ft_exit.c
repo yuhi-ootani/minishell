@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:44:02 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/11 18:06:20 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/11 20:04:39 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,19 +54,6 @@ int	atoi_long(const char *str, bool *error)
 	return ((long long)(num * neg));
 }
 
-// bool	more_than_two_arguments(t_minishell *shell)
-// {
-// 	t_command	*cmd;
-
-// 	cmd = shell->commands;
-// 	if (cmd->args[1] && cmd->args[2])
-// 	{
-// 		ft_fprintf(STDERR_FILENO, "exit: too many arguments\n");
-// 		shell->exit_status = 2;
-// 		return (true);
-// 	}
-// 	return (false);
-// }
 
 int	handle_exit_status(t_minishell *shell, t_command *cmd, long long exit_code,
 		bool error)
@@ -113,51 +100,3 @@ int	ft_exit(t_minishell *shell)
 	free_shell(shell);
 	exit(shell->exit_status);
 }
-
-// long long	validate_and_exit_if_invalid(t_minishell *shell)
-// {
-// 	t_command	*cmd;
-// 	char		*arg;
-// 	bool		error;
-// 	long long	exit_code;
-
-// 	cmd = shell->commands;
-// 	arg = cmd->args[1];
-// 	if (!ft_isnumber(arg))
-// 	{
-// 		ft_fprintf(2, "exit: %s: numeric argument required\n", arg);
-// 		shell->exit_status = 2;
-// 		free_shell(shell);
-// 		exit(EXIT_FAILURE);
-// 	}
-// 	exit_code = ft_atoi_long(arg, &error);
-// 	if (error)
-// 	{
-// 		ft_fprintf(2, "exit: %s: numeric argument required\n", arg);
-// 		shell->exit_status = 2;
-// 		free_shell(shell);
-// 		exit(EXIT_FAILURE);
-// 	}
-// 	return (exit_code);
-// }
-
-// int	ft_exit(t_minishell *shell)
-// {
-// 	int			exit_code;
-// 	t_command	*cmd;
-
-// 	cmd = shell->commands;
-// 	if (more_than_two_arguments(shell))
-// 		return (EXIT_FAILURE);
-// 	if (!cmd->args[1])
-// 	{
-// 		exit_code = shell->exit_status;
-// 	}
-// 	else
-// 		exit_code = validate_and_exit_if_invalid(shell);
-// 	shell->exit_status = exit_code % 256;
-// 	free_shell(shell);
-// 	printf("exit\n");
-// 	exit(exit_code);
-// 	return (EXIT_SUCCESS);
-// }

@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:33:48 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/04/11 18:49:34 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/11 20:05:09 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,7 @@ void							restore_sigint(struct sigaction *original);
 // ▝▚▄▞▘  █  ▗▄█▄▖▐▙▄▄▖▗▄▄▞▘
 
 size_t							count_env_util(t_env *env);
-void							set_exit_failure(t_minishell *shell);
+void							set_exit_failure_util(t_minishell *shell);
 t_env							*create_new_env_util(const char *new_name,
 									const char *new_value, t_env *new_next);
 void							env_add_back_util(t_env **copied_env,

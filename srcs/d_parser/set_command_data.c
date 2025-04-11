@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   set_command_data.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 14:40:23 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/10 19:22:46 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/11 20:05:09 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,17 +31,10 @@ t_redirection	*add_redirection_file(t_minishell *shell, t_token *token,
 	new_size = (old_count + 2) * sizeof(t_redirection);
 	new_files = (t_redirection *)ft_realloc(old_files, old_size, new_size);
 	if (!new_files)
-	{
-		shell->exit_status = EXIT_FAILURE;
-		return (NULL);
-	}
+		return (set_exit_failure_util(shell), NULL);
 	new_files[old_count].filename = ft_strdup(filename);
 	if (!new_files[old_count].filename)
-	{
-		free(new_files);
-		shell->exit_status = EXIT_FAILURE;
-		return (NULL);
-	}
+		return (free(new_files), set_exit_failure_util(shell), NULL);
 	new_files[old_count].type = token->type;
 	new_files[old_count + 1].filename = NULL;
 	return (new_files);
@@ -80,17 +73,10 @@ bool	add_argument(t_minishell *shell, t_command *cmd, char *new_arg)
 	new_size = (count + 2) * sizeof(char *);
 	result = (char **)ft_realloc(cmd->args, old_size, new_size);
 	if (!result)
-	{
-		shell->exit_status = EXIT_FAILURE;
-		return (false);
-	}
+		return (set_exit_failure_util(shell), false);
 	result[count] = ft_strdup(new_arg);
 	if (!result[count])
-	{
-		free(result);
-		shell->exit_status = EXIT_FAILURE;
-		return (false);
-	}
+		return (free(result), set_exit_failure_util(shell), false);
 	result[count + 1] = NULL;
 	cmd->args = result;
 	return (true);

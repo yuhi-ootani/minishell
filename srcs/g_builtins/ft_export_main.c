@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export_main.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/01 15:45:23 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/10 09:39:55 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/11 19:49:27 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,7 @@ static size_t	skip_operands(const char *arg, size_t i)
 	return (i);
 }
 
-bool	get_name_and_value(char *arg, char **name, char **value,
-		bool *append)
+bool	get_name_and_value(char *arg, char **name, char **value, bool *append)
 {
 	size_t	i;
 
@@ -130,15 +129,3 @@ int	ft_export(t_minishell *shell)
 		exit_status = sort_and_print_env(&shell->env);
 	return (exit_status);
 }
-
-// int	main(void)
-// {
-// 	char	*input;
-
-// 	while ((input = readline("> ")))
-// 	{
-// 		printf("%d\n", is_invalid_arg(input));
-// 		free(input);
-// 	}
-// 	return (0);
-// }

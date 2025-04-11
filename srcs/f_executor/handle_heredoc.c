@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_heredoc.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 19:28:50 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/11 14:49:51 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/11 20:05:09 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,11 @@ char	*create_tmpfile_path(t_minishell *shell)
 	else
 		i++;
 	if (!tmpfile_index)
-	{
-		shell->exit_status = EXIT_FAILURE;
-		return (NULL);
-	}
+		return (set_exit_failure_util(shell), NULL);
 	result = ft_strjoin(tmpfile_path, tmpfile_index);
 	free(tmpfile_index);
 	if (!result)
-		shell->exit_status = EXIT_FAILURE;
+		set_exit_failure_util(shell);
 	return (result);
 }
 
@@ -70,7 +67,7 @@ bool	start_heredoc_process(t_minishell *shell, t_command *cmd, size_t i)
 	pid = fork();
 	if (pid == -1)
 		return (restore_sigint(&sa_original), free(eof_name),
-			set_exit_failure(shell), false);
+			set_exit_failure_util(shell), false);
 	else if (pid == 0)
 		child_heredoc(shell, cmd->infiles[i].filename, eof_name);
 	waitpid(pid, &shell->exit_status, 0);
@@ -122,113 +119,3 @@ void	clean_heredoc_tmpfile(t_minishell *shell)
 		cmd = cmd->next;
 	}
 }
-
-// ▗▄▄▖▗▄▄▄▖▗▄▄▖ ▗▄▄▄▖    ▗▖  ▗▖▗▄▄▄▖▗▄▄▖  ▗▄▄▖▗▄▄▄▖ ▗▄▖ ▗▖  ▗▖
-// ▐▌ ▐▌ █  ▐▌ ▐▌▐▌       ▐▌  ▐▌▐▌   ▐▌ ▐▌▐▌     █  ▐▌ ▐▌▐▛▚▖▐▌
-// ▐▛▀▘  █  ▐▛▀▘ ▐▛▀▀▘    ▐▌  ▐▌▐▛▀▀▘▐▛▀▚▖ ▝▀▚▖  █  ▐▌ ▐▌▐▌ ▝▜▌
-// ▐▌  ▗▄█▄▖▐▌   ▐▙▄▄▖     ▝▚▞▘ ▐▙▄▄▖▐▌ ▐▌▗▄▄▞▘▗▄█▄▖▝▚▄▞▘▐▌  ▐▌
-
-// bool	printf_line_to_pipe(t_minishell *shell, int fd, char *line)
-// {
-// 	char	*tmp;
-
-// 	tmp = NULL;
-// 	if (ft_strchr(line, '$'))
-// 	{
-// 		tmp = get_expanded_str(shell, line);
-// 		if (!tmp)
-// 			return (false);
-// 		free(line);
-// 		line = tmp;
-// 		tmp = strdup_except_quotes_util(line);
-// 		if (!tmp)
-// 		{
-// 			shell->exit_status = EXIT_FAILURE;
-// 			return (false);
-// 		}
-// 		free(line);
-// 		line = tmp;
-// 	}
-// 	if (ft_fprintf(fd, "%s\n", line) == -1)
-// 	{
-// 		shell->exit_status = EXIT_FAILURE;
-// 		return (false);
-// 	}
-// 	return (true);
-// }
-
-// bool	readline_till_EOF(t_minishell *shell, t_command *cmd, int *pipefd,
-// 		size_t i)
-// {
-// 	char	*line;
-// 	char	*EOF_name;
-
-// 	EOF_name = cmd->infiles[i].filename;
-// 	while (1)
-// 	{
-// 		line = readline("> ");
-// 		if (!line)
-// 			return (false);
-// 		if (ft_strcmp(line, EOF_name) == 0)
-// 			break ;
-// 		if (cmd->infile_count == i + 1)
-// 		{
-// 			if (!printf_line_to_pipe(shell, pipefd[1], line))
-// 				return (free(line), false);
-// 		}
-// 		free(line);
-// 	}
-// 	if (line)
-// 		free(line);
-// 	return (true);
-// }
-
-// bool	close_and_dup2_pipe(t_minishell *shell, int *pipefd)
-// {
-// 	close(pipefd[1]);
-// 	if (dup2(pipefd[0], STDIN_FILENO) == -1)
-// 	{
-// 		shell->exit_status = EXIT_FAILURE;
-// 		close(pipefd[0]);
-// 		return (false);
-// 	}
-// 	close(pipefd[0]);
-// 	return (true);
-// }
-
-// bool	init_pipe(t_minishell *shell, int *pipefd)
-// {
-// 	if (pipe(pipefd) == -1)
-// 	{
-// 		shell->exit_status = EXIT_FAILURE;
-// 		return (false);
-// 	}
-// 	return (true);
-// }
-
-// bool	handle_heredoc(t_minishell *shell, t_command *cmd)
-// {
-// 	int		pipefd[2];
-// 	size_t	i;
-
-// 	setup_signals_heredoc();
-// 	if (!init_pipe(shell, pipefd))
-// 		return (false);
-// 	i = 0;
-// 	while (i < cmd->infile_count)
-// 	{
-// 		if (cmd->infiles[i].type == TOKEN_HEREDOC)
-// 		{
-// 			if (!readline_till_EOF(shell, cmd, pipefd, i))
-// 			{
-// 				close(pipefd[0]);
-// 				close(pipefd[1]);
-// 				return (false);
-// 			}
-// 		}
-// 		i++;
-// 	}
-// 	if (!close_and_dup2_pipe(shell, pipefd))
-// 		return (false);
-// 	return (true);
-// }

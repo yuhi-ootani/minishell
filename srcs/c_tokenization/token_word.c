@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_word.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 16:34:11 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/03/30 14:31:03 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/11 20:05:09 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,10 +66,7 @@ static char	*extract_word(t_minishell *shell, size_t *i)
 	len = calculate_word_length(input, i);
 	word = (char *)ft_calloc(len + 1, sizeof(char));
 	if (!word)
-	{
-		shell->exit_status = EXIT_FAILURE;
-		return (NULL);
-	}
+		return (set_exit_failure_util(shell), NULL);
 	ft_memcpy(word, input + start, len);
 	word[len] = '\0';
 	return (word);

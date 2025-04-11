@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 14:16:13 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/04/11 17:46:11 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/11 20:05:09 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,12 @@ static void	run_single_builtin_in_parent(t_minishell *shell, t_exec *exec_info)
 	if (shell->commands->infile_count > 0)
 	{
 		if (!input_redirection(shell, shell->commands))
-			return (set_exit_failure(shell));
+			return (set_exit_failure_util(shell));
 	}
 	if (shell->commands->outfile_count > 0)
 	{
 		if (!output_redirection(shell, shell->commands))
-			return (set_exit_failure(shell));
+			return (set_exit_failure_util(shell));
 	}
 	if (exec_info->builtin_id != NOT_BUILTIN)
 		shell->exit_status = exec_info->builtins[exec_info->builtin_id](shell);
@@ -94,134 +94,3 @@ void	cmd_executor(t_minishell *shell)
 	clean_heredoc_tmpfile(shell);
 	return ;
 }
-
-// #define MAX_COMMANDS 1024
-
-// void	single_cmd_executor(t_command *cmd, char **envp)
-// {
-// 	pid_t			pids[MAX_COMMANDS];
-// 	size_t			i;
-// 	int				pipefd[2];
-// 	int				in_fd;
-// 	int				status;
-// 	t_builtin_id	builtin_index;
-
-// 	i = 0;
-// 	static int (*builtin_funcs[])(t_command *) = {ft_echo, ft_cd, ft_pwd,
-// 		ft_export, ft_unset, ft_env, ft_exit};
-// 	int pipefd[2];
-// 	int in_fd = STDIN_FILENO;
-// // 	// pid_t pid;
-// 	int status;
-
-// 	in_fd = STDIN_FILENO;
-// 	// pid_t pid;
-// 	while (cmd)
-// 	{
-// 		if (cmd->next)
-// 		{
-// 			if (pipe(pipefd) < 0)
-// 			{
-// 				perror("pipe");
-// 				return ;
-// 			}
-// 		}
-// 		pids[i] = fork();
-// 		if (pids[i] == 0)
-// 		{
-// 			if (in_fd != STDIN_FILENO)
-// 			{
-// 				dup2(in_fd, STDIN_FILENO);
-// 				close(in_fd);
-// 			}
-// 			if (cmd->next)
-// 			{
-// 				dup2(pipefd[1], STDOUT_FILENO);
-// 				close(pipefd[0]);
-// 				close(pipefd[1]);
-// 			}
-// 			handle_redirection(cmd);
-// 			builtin_index = is_builtin(cmd->args[0]);
-// 			if (builtin_index != NOT_BUILTIN)
-// 				builtin_funcs[builtin_index](cmd); // Execute the function
-// 			else
-// 				execute_external_cmd(cmd, envp);
-// 		}
-// 		else if (pids[i] < 0)
-// 		{
-// 			perror("fork");     // modified
-// 			exit(EXIT_FAILURE); // modified
-// 		}
-// 		// waitpid(pid, &status, 0);
-// 		if (in_fd != STDIN_FILENO)
-// 			close(in_fd);
-// 		if (cmd->next)
-// 		{
-// 			close(pipefd[1]);
-// 			in_fd = pipefd[0];
-// 		}
-// 		cmd = cmd->next;
-// 		i++;
-// 	}
-// 	// Wait for all children after forking them all.
-// 	for (size_t j = 0; j < i; j++)
-// 		waitpid(pids[j], &status, 0);
-// }
-
-// /*yuyu code with my signals, long version */
-
-// void	run_forked_cmds(t_minishell *shell, t_exec *exec_info)
-// {
-// 	int					i;
-// 	struct sigaction	old_int;
-
-// 	pid_t pids[1000]; // Array to store PIDs for all commands
-// 	i = 0;
-// 	while (shell->commands)
-// 	{
-// 		if (shell->commands->next)
-// 		{
-// 			if (pipe(exec_info->pipe_fds) < 0)
-// 			{
-// 				perror("pipe");
-// 				return ;
-// 			}
-// 		}
-// 		pids[i] = fork();
-// 		if (pids[i] == 0)
-// 		{
-// 			setup_signals_child();
-// 			execute_child_process(shell, exec_info);
-// 		}
-// 		else if (pids[i] < 0)
-// 		{
-// 			perror("fork");     // modified
-// 			exit(EXIT_FAILURE); // modified
-// 		}
-// 		if (exec_info->input_fd != STDIN_FILENO)
-// 			close(exec_info->input_fd);
-// 		if (shell->commands->next)
-// 		{
-// 			close(exec_info->pipe_fds[1]);
-// 			exec_info->input_fd = exec_info->pipe_fds[0];
-// 		}
-// 		shell->commands = shell->commands->next;
-// 		i++;
-// 	}
-// 	sigaction(SIGINT, NULL, &old_int);
-// 	signal(SIGINT, SIG_IGN);
-// 	for (int j = 0; j < i; j++)
-// 	{
-// 		waitpid(pids[j], &shell->exit_status, 0);
-// 		if (WIFEXITED(shell->exit_status))
-// 			shell->exit_status = WEXITSTATUS(shell->exit_status);
-// 		else if (WIFSIGNALED(shell->exit_status))
-// 		{
-// 			printf("\n");
-// 			shell->exit_status = 128 + WTERMSIG(shell->exit_status);
-// 		}
-// 		else
-// 			shell->exit_status = 1;
-// 	}
-// 	sigaction(SIGINT, &old_int, NULL);
-// }

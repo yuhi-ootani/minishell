@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split_and_quotes_removal.c                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 16:16:01 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/10 09:40:54 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/11 20:05:09 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,7 @@ bool	quote_removal_args(t_minishell *shell, char **args)
 			args[i] = tmp;
 		}
 		else
-		{
-			return (false);
-			shell->exit_status = EXIT_FAILURE;
-		}
+			return (set_exit_failure_util(shell), false);
 		i++;
 	}
 	return (true);
@@ -42,9 +39,6 @@ char	**word_splitting(t_minishell *shell, char *str)
 
 	splited_args = split_quoted_words_util(str, DELIMITERS);
 	if (!splited_args)
-	{
-		shell->exit_status = EXIT_FAILURE;
-		return (NULL);
-	}
+		return (set_exit_failure_util(shell), NULL);
 	return (splited_args);
 }

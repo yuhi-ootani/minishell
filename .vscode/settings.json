@@ -5,5 +5,11 @@
         "wait.h": "c",
         "minishell.h": "c",
         "cstdlib": "c"
+    },
+    "github.copilot.enable": {
+        "*": false,
+        "plaintext": false,
+        "markdown": false,
+        "scminput": false
     }
 }

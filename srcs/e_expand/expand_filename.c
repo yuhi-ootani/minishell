@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_filename.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 14:47:32 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/11 14:47:35 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/11 20:05:09 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static void	error_ambiguos_redirect(t_minishell *shell, char **tmp_array,
 		ft_array_free(tmp_array);
 	if (tmp)
 		free(tmp);
-	shell->exit_status = EXIT_FAILURE;
+	set_exit_failure_util(shell);
 	ft_fprintf(STDERR_FILENO, "MINISHELL: %s: ambiguous redirect\n", filename);
 }
 
@@ -31,19 +31,19 @@ char	*expander_filename(t_minishell *shell, char *filename)
 
 	tmp = get_expanded_str(shell, filename);
 	if (!tmp)
-		return (set_exit_failure(shell), NULL);
+		return (set_exit_failure_util(shell), NULL);
 	if (tmp[0] == '\0')
 		return (error_ambiguos_redirect(shell, NULL, tmp, filename), NULL);
 	tmp_array = split_quoted_words_util(tmp, DELIMITERS);
 	if (!tmp_array)
-		return (set_exit_failure(shell), free(tmp), NULL);
+		return (set_exit_failure_util(shell), free(tmp), NULL);
 	else if (tmp_array[1])
 		return (error_ambiguos_redirect(shell, tmp_array, tmp, filename), NULL);
 	result = remove_quotes_util(tmp);
 	free(tmp);
 	ft_array_free(tmp_array);
 	if (!result)
-		return (set_exit_failure(shell), NULL);
+		return (set_exit_failure_util(shell), NULL);
 	return (result);
 }
 
@@ -66,7 +66,7 @@ char	*expand_filename(t_minishell *shell, t_redirection file)
 	{
 		result = ft_strdup(filename);
 		if (!result)
-			return (set_exit_failure(shell), NULL);
+			return (set_exit_failure_util(shell), NULL);
 		return (result);
 	}
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_heredoc_child.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 12:31:11 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/11 14:42:50 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/11 19:46:24 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,27 +35,6 @@ bool	fprintf_to_tmpfile(t_minishell *shell, char *line, int fd)
 	return (true);
 }
 
-// bool	readline_till_eof(t_minishell *shell, const char *eof_name, int fd)
-// {
-// 	char	*line;
-
-// 	while (1)
-// 	{
-// 		line = readline("> ");
-// 		if (!line)
-// 			return (false);
-// 		if (ft_strcmp(line, eof_name) == 0)
-// 		{
-// 			free(line);
-// 			break ;
-// 		}
-// 		if (!fprintf_to_tmpfile(shell, line, fd))
-// 			return (free(line), false);
-// 		free(line);
-// 	}
-// 	return (true);
-// }
-
 bool	readline_till_eof(t_minishell *shell, const char *eof_name, int fd)
 {
 	char	*line;
@@ -78,7 +57,6 @@ bool	readline_till_eof(t_minishell *shell, const char *eof_name, int fd)
 	}
 	return (true);
 }
-// jeremys code
 
 void	child_heredoc(t_minishell *shell, char *filename, char *eof_name)
 {

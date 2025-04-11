@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 16:37:29 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/11 11:34:48 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/11 20:05:09 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,7 @@ bool	append_exit_status(t_minishell *shell, t_expanded_str *expanded_str)
 
 	exit_status = ft_itoa(shell->exit_status);
 	if (!exit_status)
-	{
-		shell->exit_status = EXIT_FAILURE;
-		return (false);
-	}
+		return (set_exit_failure_util(shell), false);
 	if (!append_to_buffer(shell, expanded_str, exit_status,
 			ft_strlen(exit_status)))
 	{
@@ -47,10 +44,7 @@ static char	*get_env_name(t_minishell *shell, const char *input)
 		len++;
 	name = (char *)ft_calloc((len + 1), sizeof(char));
 	if (!name)
-	{
-		shell->exit_status = EXIT_FAILURE;
-		return (NULL);
-	}
+		return (set_exit_failure_util(shell), NULL);
 	if (len > 0)
 		ft_strncpy(name, input, len);
 	name[len] = '\0';

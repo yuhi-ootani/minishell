@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prompt.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:32:43 by otaniyuhi         #+#    #+#             */
-/*   Updated: 2025/04/11 09:26:47 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/11 20:05:09 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ char	*get_prompt_str(t_minishell *shell)
 
 	cwd = getcwd(NULL, 0);
 	if (!cwd)
-		return (set_exit_failure(shell), NULL);
+		return (set_exit_failure_util(shell), NULL);
 	result = ft_strjoin_three("MINISHELL:", cwd, "$> ");
 	if (!result)
 		shell->exit_status = EXIT_FAILURE;

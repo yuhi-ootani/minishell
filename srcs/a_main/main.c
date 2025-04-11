@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:33:48 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/04/09 18:58:13 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/11 19:44:06 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,9 @@ void	reset_shell_for_next_input(t_minishell *shell, bool interactive_mode)
 	dup2(shell->original_stdout, STDOUT_FILENO);
 }
 
+// print_tokens(tokens);
+// print_cmds(shell->commands);
+
 void	build_cmds_struct(t_minishell *shell)
 {
 	t_token	*tokens;
@@ -57,9 +60,6 @@ void	build_cmds_struct(t_minishell *shell)
 	}
 	expand_all_cmd_args(shell);
 }
-
-// print_tokens(tokens);
-// print_cmds(shell->commands);
 
 void	exit_ctrl_d(t_minishell *shell)
 {

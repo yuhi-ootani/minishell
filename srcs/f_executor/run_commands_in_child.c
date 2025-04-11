@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 11:10:44 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/10 16:48:33 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/11 20:05:09 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,17 +59,11 @@ bool	setup_child_process(t_minishell *shell, t_exec *exec_info,
 	if (cmd->next)
 	{
 		if (pipe(exec_info->pipe_fds) < 0)
-		{
-			shell->exit_status = EXIT_FAILURE;
-			return (false);
-		}
+			return (set_exit_failure_util(shell), false);
 	}
 	*pid = fork();
 	if (*pid < 0)
-	{
-		shell->exit_status = EXIT_FAILURE;
-		return (false);
-	}
+		return (set_exit_failure_util(shell), false);
 	return (true);
 }
 
@@ -94,7 +88,7 @@ void	run_commands_in_child(t_minishell *shell, t_exec *exec_info)
 	current_cmd = shell->commands;
 	exec_info->pid_array = malloc(sizeof(pid_t) * count_commands(shell));
 	if (!exec_info->pid_array)
-		return (set_exit_failure(shell));
+		return (set_exit_failure_util(shell));
 	while (current_cmd)
 	{
 		if (!setup_child_process(shell, exec_info, current_cmd,

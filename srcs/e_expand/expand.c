@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 11:09:19 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/03 15:08:51 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/11 19:45:02 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,24 +77,3 @@ bool	expand_all_cmd_args(t_minishell *shell)
 	}
 	return (true);
 }
-
-// used in 2 functions
-
-// static int	append_to_buffer(t_expanded_str *expanded_str, const char *src,
-// 		size_t src_len)
-// {
-// 	char	*new_buffer;
-
-// 	if (expanded_str->index + src_len >= expanded_str->size)
-// 	{
-// 		expanded_str->size = expanded_str->index + src_len + 1;
-// 		new_buffer = realloc(expanded_str->buffer, expanded_str->size);
-// 		if (!new_buffer)
-// 			return (-1);
-// 		expanded_str->buffer = new_buffer;
-// 	}
-// 	ft_memcpy(expanded_str->buffer + expanded_str->index, src, src_len);
-// 	expanded_str->index += src_len;
-// 	expanded_str->buffer[expanded_str->index] = '\0';
-// 	return (0);
-// }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   create_command.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: knemcova <knemcova@student.42.fr>          +#+  +:+       +#+        */
+/*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 15:07:23 by oyuhi             #+#    #+#             */
-/*   Updated: 2025/04/01 11:54:11 by knemcova         ###   ########.fr       */
+/*   Updated: 2025/04/11 20:05:09 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,7 @@ t_command	*create_cmd_node(t_minishell *shell)
 
 	new_cmd = (t_command *)malloc(sizeof(t_command));
 	if (!new_cmd)
-	{
-		shell->exit_status = EXIT_FAILURE;
-		return (NULL);
-	}
+		return (set_exit_failure_util(shell), NULL);
 	new_cmd->args = NULL;
 	new_cmd->infiles = NULL;
 	new_cmd->infile_count = 0;
@@ -88,71 +85,3 @@ t_command	*convert_token_into_cmd(t_minishell *shell, t_token *tokens)
 	}
 	return (head_cmd);
 }
-// void	add_file_back(t_file **head, t_file *new_file)
-// {
-// 	t_file	*current;
-
-// 	if (!*head)
-// 	{
-// 		*head = new_file;
-// 		return ;
-// 	}
-// 	current = *head;
-// 	while (current->next)
-// 		current = current->next;
-// 	current->next = new_file;
-// }
-
-// bool	set_input_redirection(t_minishell *shell, t_command *cmd,
-// 		t_token *tokens)
-// {
-// 	t_file *new_file;
-
-// 	new_file = create_redir_file(shell, tokens);
-// 	if (!new_file)
-// 		return (false);
-// 	add_file_back(&cmd->infiles, new_file);
-// 	cmd->infile_count++;
-// 	return (true);
-// }
-
-// MUKASHINO YATSU
-
-// bool	set_input_redirection(t_minishell *shell, t_command *cmd,
-// 		char *filename)
-// {
-// 	cmd->is_heredoc = false;
-// 	cmd->input_file = ft_strdup(filename);
-// 	if (cmd->input_file)
-// 	{
-// 		shell->exit_status = EXIT_FAILURE;
-// 		return (false);
-// 	}
-// 	return (true);
-// }
-
-// bool	set_input_heredoc(t_minishell *shell, t_command *cmd, char *filename)
-// {
-// 	size_t	old_size;
-// 	size_t	new_size;
-
-// 	cmd->input_file = ft_strdup(filename); // may not update infile
-// 	old_size = sizeof(char *) * (cmd->heredoc_count + 1);
-// 	new_size = sizeof(char *) * (cmd->heredoc_count + 2);
-// 	cmd->heredoc_files = ft_realloc(cmd->heredoc_files, old_size, new_size);
-// 	if (!cmd->heredoc_files)
-// 	{
-// 		shell->exit_status = EXIT_FAILURE;
-// 		return (false);
-// 	}
-// 	cmd->heredoc_files[cmd->heredoc_count] = ft_strdup(filename);
-// 	if (!cmd->heredoc_files[cmd->heredoc_count])
-// 	{
-// 		shell->exit_status = EXIT_FAILURE;
-// 		return (false);
-// 	}
-// 	cmd->heredoc_count++;
-// 	cmd->heredoc_files[cmd->heredoc_count] = NULL;
-// 	cmd->is_heredoc = true;
-// 	return (true);
-// }
