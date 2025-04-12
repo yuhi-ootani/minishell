@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 12:31:11 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/11 19:46:24 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/12 12:43:05 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,5 +80,7 @@ void	child_heredoc(t_minishell *shell, char *filename, char *eof_name)
 	close(fd);
 	free(eof_name);
 	free_shell(shell);
+	if (g_signal)
+		exit(130);
 	exit(EXIT_SUCCESS);
 }

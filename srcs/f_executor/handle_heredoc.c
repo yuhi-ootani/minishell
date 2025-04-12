@@ -6,7 +6,7 @@
 /*   By: oyuhi <oyuhi@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 19:28:50 by knemcova          #+#    #+#             */
-/*   Updated: 2025/04/11 20:05:09 by oyuhi            ###   ########.fr       */
+/*   Updated: 2025/04/12 12:42:14 by oyuhi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,20 +34,19 @@ char	*create_tmpfile_path(t_minishell *shell)
 	return (result);
 }
 
-static bool	handle_heredoc_status(t_minishell *shell, char **filename)
+static bool	handle_heredoc_status(t_minishell *shell)
 {
-	int	status;
+	int	exit_code;
 
-	status = shell->exit_status;
-	(void)filename;
-	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+	exit_code = WEXITSTATUS(shell->exit_status);
+	if (exit_code == 130)
 	{
-		write(STDOUT_FILENO, "\n", 1);
 		shell->exit_status = 130;
 		return (false);
 	}
-	else if (WEXITSTATUS(status) != 0)
+	else if (exit_code != EXIT_SUCCESS)
 	{
+		shell->exit_status = 1;
 		return (false);
 	}
 	return (true);
@@ -73,7 +72,7 @@ bool	start_heredoc_process(t_minishell *shell, t_command *cmd, size_t i)
 	waitpid(pid, &shell->exit_status, 0);
 	restore_sigint(&sa_original);
 	free(eof_name);
-	return (handle_heredoc_status(shell, &cmd->infiles[i].filename));
+	return (handle_heredoc_status(shell));
 }
 
 bool	handle_heredoc(t_minishell *shell)
